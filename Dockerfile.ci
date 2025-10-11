@@ -1,0 +1,145 @@
+# Multi-stage Dockerfile for CI/CD
+FROM python:3.11-slim as base
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Backend stage
+FROM base as backend
+
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY backend/ ./backend/
+COPY *.py ./
+COPY indexer.py ./
+COPY vector_store.py ./
+COPY orchestrator.py ./
+
+# Frontend build stage
+FROM node:18-alpine as frontend
+
+WORKDIR /app/frontend
+
+# Copy package files
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy frontend source
+COPY frontend/ ./
+
+# Build frontend
+RUN npm run build
+
+# Production stage
+FROM base as production
+
+WORKDIR /app
+
+# Install production dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY backend/ ./backend/
+COPY *.py ./
+COPY indexer.py ./
+COPY vector_store.py ./
+COPY orchestrator.py ./
+
+# Copy built frontend
+COPY --from=frontend /app/frontend/dist ./frontend/dist
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app \
+    && chown -R app:app /app
+USER app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Start application
+CMD ["python", "main.py"]
+
+# Development stage
+FROM base as development
+
+WORKDIR /app
+
+# Install development dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional dev tools
+RUN pip install pytest pytest-cov black isort flake8 mypy bandit safety
+
+# Copy all code
+COPY . .
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app \
+    && chown -R app:app /app
+USER app
+
+# Expose port
+EXPOSE 8000
+
+# Start in development mode
+CMD ["python", "main.py", "--reload"]
+
+# Testing stage
+FROM base as testing
+
+WORKDIR /app
+
+# Install all dependencies including test dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install test dependencies
+RUN pip install pytest pytest-cov pytest-asyncio black isort flake8 mypy bandit safety
+
+# Copy all code
+COPY . .
+
+# Run tests
+RUN pytest backend/ --cov=backend --cov-report=xml --cov-report=html
+
+# Security scanning stage
+FROM base as security
+
+WORKDIR /app
+
+# Install security tools
+RUN pip install bandit safety
+
+# Copy code
+COPY . .
+
+# Run security scans
+RUN bandit -r backend/ -f json -o bandit-report.json || true
+RUN safety check --json --output safety-report.json || true
+
+# Copy reports to output
+RUN mkdir -p /output
+RUN cp bandit-report.json safety-report.json /output/ || true

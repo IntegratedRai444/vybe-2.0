@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # Main Vybe application
+  vybe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vybe-app
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    volumes:
+      # Mount project directory
+      - ./projects:/app/projects
+      # Mount data directory for persistence
+      - ./data:/app/data
+      # Mount backups
+      - ./.mcp_backups:/app/.mcp_backups
+      # Mount logs
+      - ./logs:/app/logs
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - DATABASE_PATH=/app/data/chat_history.db
+    depends_on:
+      - ollama
+    networks:
+      - vybe-network
+    restart: unless-stopped
+
+  # Ollama service for local AI
+  ollama:
+    image: ollama/ollama:latest
+    container_name: vybe-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - vybe-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Optional: Tabby code completion server
+  tabby:
+    image: tabbyml/tabby:latest
+    container_name: vybe-tabby
+    ports:
+      - "8080:8080"
+    volumes:
+      - tabby-data:/data
+    command: serve --model StarCoder-1B --device cuda
+    networks:
+      - vybe-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Optional: LM Studio (if using)
+  # lmstudio:
+  #   image: lmstudio/lmstudio:latest
+  #   container_name: vybe-lmstudio
+  #   ports:
+  #     - "1234:1234"
+  #   volumes:
+  #     - lmstudio-data:/data
+  #   networks:
+  #     - vybe-network
+  #   restart: unless-stopped
+
+volumes:
+  ollama-data:
+    driver: local
+  tabby-data:
+    driver: local
+  # lmstudio-data:
+  #   driver: local
+
+networks:
+  vybe-network:
+    driver: bridge

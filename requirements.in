@@ -1,0 +1,49 @@
+# Core dependencies
+fastapi>=0.104.1
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+websockets>=12.0
+
+# Database
+sqlalchemy>=2.0.23
+alembic>=1.13.1
+psycopg2-binary>=2.9.9
+
+# AI/ML
+openai>=1.3.0
+anthropic>=0.7.0
+langchain>=0.0.350
+transformers>=4.36.0
+torch>=2.1.0
+numpy>=1.24.0
+
+# Vector store
+faiss-cpu>=1.7.4
+chromadb>=0.4.18
+
+# Git operations
+GitPython>=3.1.40
+
+# Security
+cryptography>=41.0.8
+bcrypt>=4.1.2
+
+# HTTP client
+httpx>=0.25.2
+requests>=2.31.0
+
+# File operations
+pathlib2>=2.3.7
+watchdog>=3.0.1
+
+# Docker
+docker>=6.1.3
+
+# Monitoring
+prometheus-client>=0.19.0
+
+# Utilities
+python-dotenv>=1.0.0
+click>=8.1.7
+rich>=13.7.0

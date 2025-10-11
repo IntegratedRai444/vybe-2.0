@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Generate changelog from git commits
+          echo "## What's Changed" > CHANGELOG.md
+          git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+      
+      - name: Build release artifacts
+        run: |
+          mkdir -p release
+          
+          # Backend
+          cd backend
+          zip -r ../release/vybe-backend-${{ github.ref_name }}.zip .
+          cd ..
+          
+          # Frontend
+          cd frontend
+          npm ci
+          npm run build
+          zip -r ../release/vybe-frontend-${{ github.ref_name }}.zip dist
+          cd ..
+      
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts
+          path: release/
+      
+      - name: Publish to Docker Hub
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/vybe-ai-os:${{ github.ref_name }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/vybe-ai-os:${{ github.ref_name }}
+          docker tag ${{ secrets.DOCKER_USERNAME }}/vybe-ai-os:${{ github.ref_name }} ${{ secrets.DOCKER_USERNAME }}/vybe-ai-os:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/vybe-ai-os:latest

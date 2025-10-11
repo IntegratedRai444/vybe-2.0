@@ -1,0 +1,27 @@
+fastapi
+uvicorn[standard]
+gradio==4.31.5
+faiss-cpu
+tqdm
+requests
+GitPython
+
+# MCP Debugging System
+flake8
+mypy
+bandit
+pylint
+
+# AI Integrations
+openai
+anthropic
+groq
+langchain
+langchain-community
+transformers
+torch
+
+# Security & Sandboxing
+docker
+pip-audit
+safety

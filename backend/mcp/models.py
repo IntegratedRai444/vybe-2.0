@@ -1,0 +1,87 @@
+"""
+MCP Data Models
+"""
+from typing import List, Optional, Dict, Any
+from pydantic import BaseModel
+from enum import Enum
+
+class IssueSeverity(str, Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+    HINT = "hint"
+
+class IssueCategory(str, Enum):
+    SYNTAX = "syntax"
+    TYPE = "type"
+    SECURITY = "security"
+    STYLE = "style"
+    PERFORMANCE = "performance"
+    BUG = "bug"
+    COMPLEXITY = "complexity"
+    IMPORT = "import"
+
+class CodeIssue(BaseModel):
+    """Represents a single code issue"""
+    file_path: str
+    line_number: int
+    column: Optional[int] = None
+    severity: IssueSeverity
+    category: IssueCategory
+    message: str
+    rule_id: Optional[str] = None
+    analyzer: str  # Which tool found it
+    code_snippet: Optional[str] = None
+    
+class IssueFix(BaseModel):
+    """Represents a fix for an issue"""
+    issue: CodeIssue
+    analysis: str
+    fix_code: str
+    explanation: str
+    confidence: float  # 0.0 to 1.0
+    
+class ScanRequest(BaseModel):
+    """Request to scan a project"""
+    project_path: str
+    languages: Optional[List[str]] = None
+    analyzers: Optional[List[str]] = None
+    
+class ScanResult(BaseModel):
+    """Result of a code scan"""
+    project_path: str
+    total_files: int
+    scanned_files: int
+    total_issues: int
+    issues_by_severity: Dict[str, int]
+    issues_by_category: Dict[str, int]
+    issues: List[CodeIssue]
+    scan_time: float
+    
+class FixRequest(BaseModel):
+    """Request to fix issues"""
+    project_path: str
+    issues: Optional[List[CodeIssue]] = None  # If None, fix all
+    auto_apply: bool = False
+    dry_run: bool = True
+    
+class FixResult(BaseModel):
+    """Result of fix operation"""
+    total_issues: int
+    fixed_issues: int
+    failed_fixes: int
+    fixes: List[IssueFix]
+    applied: bool
+    errors: List[str]
+    
+class ExplainRequest(BaseModel):
+    """Request to explain an issue"""
+    issue: CodeIssue
+    include_examples: bool = True
+    
+class ExplainResult(BaseModel):
+    """Explanation of an issue"""
+    issue: CodeIssue
+    explanation: str
+    examples: Optional[List[str]] = None
+    references: Optional[List[str]] = None
