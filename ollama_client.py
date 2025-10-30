@@ -7,10 +7,22 @@ _HEADERS = {"Content-Type": "application/json"}
 
 
 def _post(endpoint: str, payload: dict):
-    url = f"{OLLAMA_HOST}{endpoint}"
-    r = requests.post(url, headers=_HEADERS, json=payload, timeout=120)
-    r.raise_for_status()
-    return r.json()
+    try:
+        url = f"{OLLAMA_HOST}{endpoint}"
+        r = requests.post(url, headers=_HEADERS, json=payload, timeout=120)
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.ConnectionError:
+        raise Exception("Cannot connect to Ollama. Please make sure Ollama is running.")
+    except requests.exceptions.Timeout:
+        raise Exception("Ollama request timed out. The model might be loading.")
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            raise Exception(f"Model not found. Please run: ollama pull {payload.get('model', 'llama2')}")
+        else:
+            raise Exception(f"Ollama error: {e.response.text}")
+    except Exception as e:
+        raise Exception(f"Unexpected error: {str(e)}")
 
 
 def generate(

@@ -1,0 +1,158 @@
+/* Breakpoint styling */
+.monaco-editor .debug-breakpoint {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.monaco-editor .debug-breakpoint-glyph {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTggMWE3IDcgMCAwIDAtNyA3YTcgNyAwIDAgMCA3IDcgNyA3IDAgMCAwIDctNyA3IDcgMCAwIDAtNy03eiIvPjwvc3ZnPg==") center center no-repeat;
+  width: 16px !important;
+  height: 16px !important;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+/* Current line styling */
+.monaco-editor .debug-current-line {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.monaco-editor .debug-current-line-glyph {
+  background-color: #2196f3;
+  width: 3px !important;
+  margin-left: 0;
+}
+
+/* Debug hover widget */
+.monaco-editor .debug-hover {
+  max-width: 500px;
+  max-height: 300px;
+  overflow: auto;
+  padding: 8px;
+  background-color: var(--vscode-editorHoverWidget-background);
+  border: 1px solid var(--vscode-editorHoverWidget-border);
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.debug-hover-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--vscode-editor-foreground);
+}
+
+.debug-hover-value {
+  font-family: var(--monaco-monospace-font);
+  white-space: pre-wrap;
+  color: var(--vscode-debugTokenExpression-value);
+}
+
+.debug-hover-type {
+  font-style: italic;
+  color: var(--vscode-debugTokenExpression-type);
+  margin-top: 4px;
+}
+
+/* Debug toolbar */
+.debug-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background-color: var(--vscode-editor-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.debug-toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--vscode-icon-foreground);
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.debug-toolbar-button:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.debug-toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Debug status bar item */
+.debug-status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 100%;
+  font-size: 12px;
+  color: var(--vscode-statusBar-foreground);
+  cursor: pointer;
+}
+
+.debug-status-bar-item:hover {
+  background-color: var(--vscode-statusBar-hoverBackground);
+}
+
+.debug-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.debug-status-indicator--running {
+  background-color: #4caf50;
+  animation: pulse 2s infinite;
+}
+
+.debug-status-indicator--paused {
+  background-color: #ff9800;
+}
+
+.debug-status-indicator--inactive {
+  background-color: #9e9e9e;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Debug console */
+.debug-console {
+  font-family: var(--monaco-monospace-font);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  padding: 8px;
+  overflow: auto;
+  flex: 1;
+}
+
+.debug-console-message {
+  margin: 0;
+  padding: 2px 0;
+}
+
+.debug-console-message--error {
+  color: #f44336;
+}
+
+.debug-console-message--warn {
+  color: #ff9800;
+}
+
+.debug-console-message--info {
+  color: #2196f3;
+}
+
+.debug-console-message--log {
+  color: var(--vscode-terminal-ansiWhite);
+}

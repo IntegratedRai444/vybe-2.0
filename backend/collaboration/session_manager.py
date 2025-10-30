@@ -44,10 +44,21 @@ class EditOperation:
 
 
 class CollaborationSession:
-    """Manages a single collaboration session for a file"""
+    """
+    Enhanced collaboration session with real-time editing, presence, and conflict resolution.
+    Implements Operational Transformation (OT) for consistency.
+    """
     
     def __init__(self, session_id: str, file_path: str):
         self.session_id = session_id
+        self.file_path = os.path.abspath(file_path)
+        self.version = 0  # Document version for OT
+        self.last_modified = time.time()
+        self.last_saved = None
+        self.is_saving = False
+        self.pending_operations = []
+        self.operation_lock = asyncio.Lock()
+        self.presence_timeout = 300  # 5 minutes
         self.file_path = file_path
         self.users: Dict[str, User] = {}
         self.connections: Dict[str, WebSocket] = {}

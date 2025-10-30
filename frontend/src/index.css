@@ -1,20 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+  /* Modern Color Palette */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+  
+  /* Blue Accent Colors */
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  
+  /* Semantic Colors */
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-purple-400: #c084fc;
+  --color-purple-500: #a855f7;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f97316;
+  
+  /* Typography */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-code: 'JetBrains Mono', 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0.0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-family: var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-slate-950);
+    color: var(--color-slate-100);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+  
+  #root {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--color-slate-900);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-slate-700);
+    border-radius: 4px;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-slate-600);
+  }
+  
+  ::-webkit-scrollbar-corner {
+    background: var(--color-slate-900);
+  }
+  
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-700) var(--color-slate-900);
+  }
 }
 
-#root {
-  height: 100vh;
+/* Error Boundary Styles */
+.error-boundary {
+  @apply p-8 text-center text-slate-100 bg-slate-800 rounded-lg border border-red-500 m-4;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.error-boundary h2 {
+  @apply text-2xl font-bold text-red-400 mb-2;
+}
+
+.error-boundary p {
+  @apply text-slate-300 mb-4;
+}
+
+.error-boundary button {
+  @apply px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors;
+}
+
+@layer components {
+  /* Modern Button Styles */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply active:scale-[0.98];
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 text-white border border-blue-600;
+    @apply hover:bg-blue-700 hover:border-blue-700;
+    @apply focus:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-slate-800 text-slate-200 border border-slate-700;
+    @apply hover:bg-slate-700 hover:border-slate-600;
+    @apply focus:ring-slate-500;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-slate-400 border border-transparent;
+    @apply hover:bg-slate-800 hover:text-slate-200;
+    @apply focus:ring-slate-500;
+  }
+  
+  /* Modern Input Styles */
+  .input {
+    @apply w-full rounded-lg border px-3 py-2 text-sm transition-all duration-150;
+    @apply bg-slate-800 text-slate-100 border-slate-700;
+    @apply placeholder:text-slate-400;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  /* Modern Card Styles */
+  .card {
+    @apply bg-slate-900/50 backdrop-blur-sm border border-slate-800/60 rounded-xl;
+    @apply shadow-lg;
+  }
+  
+  /* Modern Panel Styles */
+  .panel {
+    @apply bg-slate-900/50 backdrop-blur-sm border-slate-800/60;
+  }
+  
+  .panel-header {
+    @apply bg-slate-800/50 border-b border-slate-700/50 flex items-center px-3 gap-2;
+    @apply text-sm font-semibold text-slate-200;
+  }
+  
+  /* Animation Classes */
+  .animate-fade-in {
+    animation: fadeIn var(--duration-normal) var(--ease-out);
+  }
+  
+  .animate-slide-up {
+    animation: slideUp var(--duration-normal) var(--ease-out);
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn var(--duration-fast) var(--ease-out);
+  }
+}
+
+@layer utilities {
+  /* Glass Effect */
+  .glass {
+    @apply bg-slate-900/50 backdrop-blur-sm border border-slate-800/60;
+  }
+  
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent;
+  }
+  
+  /* Focus Ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 focus:ring-offset-slate-950;
+  }
+  
+  /* Hover Lift */
+  .hover-lift {
+    @apply transition-transform duration-150 hover:scale-105 active:scale-95;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Monaco Editor Customization */
+.monaco-editor {
+  @apply rounded-lg;
+}
+
+.monaco-editor .margin {
+  background-color: var(--color-slate-950) !important;
+}
+
+.monaco-editor .monaco-editor-background {
+  background-color: var(--color-slate-950) !important;
+}
+
+/* Terminal Customization */
+.xterm {
+  @apply rounded-lg;
+}
+
+.xterm .xterm-viewport {
+  background-color: var(--color-slate-950) !important;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: var(--color-blue-500);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--color-blue-500);
+  color: white;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-slate-800: #000000;
+    --color-slate-900: #000000;
+    --color-slate-950: #000000;
+    --color-slate-100: #ffffff;
+    --color-slate-200: #ffffff;
+  }
 }

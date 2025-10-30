@@ -32,16 +32,20 @@ def handle_request(
     model_override: str | None = None,
     top_k: int = 5,
 ) -> str:
-    context = _retrieve_context(user_prompt, k=top_k)
-    full_prompt = build_prompt(user_prompt, context)
-    ext = Path(file_path).suffix
-    model_name = _pick_model(ext, explicit=model_override)
-    system_prompt = f"You are a coding assistant specialized in {ext.lstrip('.')} files."
-    result = generate(
-        model=model_name,
-        system_prompt=system_prompt,
-        user_prompt=full_prompt,
-        temperature=0.2,
-        max_tokens=1500,
-    )
-    return result
+    try:
+        context = _retrieve_context(user_prompt, k=top_k)
+        full_prompt = build_prompt(user_prompt, context)
+        ext = Path(file_path).suffix
+        model_name = _pick_model(ext, explicit=model_override)
+        system_prompt = f"You are a coding assistant specialized in {ext.lstrip('.')} files."
+        result = generate(
+            model=model_name,
+            system_prompt=system_prompt,
+            user_prompt=full_prompt,
+            temperature=0.2,
+            max_tokens=1500,
+        )
+        return result
+    except Exception as e:
+        # Return a helpful error message instead of crashing
+        return f"I'm currently unavailable. Please make sure Ollama is running and try again.\n\nError: {str(e)}\n\nTo fix this:\n1. Install Ollama from https://ollama.ai\n2. Run: ollama pull {model_override or DEFAULT_CODE_MODEL}\n3. Make sure Ollama is running"

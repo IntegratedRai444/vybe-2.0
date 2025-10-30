@@ -1,0 +1,607 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  FiFolder,
+  FiSearch,
+  FiGitBranch,
+  FiSettings,
+  FiPlus,
+  FiRefreshCw,
+  FiChevronDown,
+  FiChevronRight,
+  FiFile,
+  FiFolder as FiFolderClosed,
+  FiFileText,
+  FiCode,
+  FiImage,
+  FiDatabase,
+  FiTerminal,
+  FiFilePlus,
+  FiFolderPlus,
+  FiTrash2,
+  FiEdit2,
+  FiX,
+  FiSearch as FiSearchIcon
+} from 'react-icons/fi';
+
+interface FileItem {
+  id: string;
+  name: string;
+  path: string;
+  type: 'file' | 'folder';
+  children?: FileItem[];
+  isOpen?: boolean;
+  extension?: string;
+}
+
+interface SearchResult {
+  file: string;
+  line: number;
+  content: string;
+  matches: { line: number; content: string }[];
+}
+
+interface ContextMenuState {
+  x: number;
+  y: number;
+  item: FileItem | null;
+  type: 'file' | 'folder' | 'root';
+}
+
+interface VSModernSidebarProps {
+  onSectionSelect: (section: string) => void;
+  activeSection: string;
+  onFileSelect: (file: FileItem) => void;
+}
+
+const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
+  onSectionSelect,
+  activeSection = 'explorer',
+  onFileSelect
+}) => {
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Load initial file structure
+  useEffect(() => {
+    loadFileStructure();
+  }, []);
+
+  const loadFileStructure = async (path = '') => {
+    try {
+      setLoading(true);
+      // In a real app, this would be an API call
+      // const response = await fetch('/api/files?path=' + encodeURIComponent(path));
+      // const data = await response.json();
+      // setFiles(processFileStructure(data));
+      
+      // Mock data for demonstration
+      setFiles([
+        {
+          id: 'vybe-2.0',
+          name: 'VYBE 2.0',
+          path: '/vybe-2.0',
+          type: 'folder',
+          isOpen: true,
+          children: [
+            { 
+              id: 'app', 
+              name: 'app', 
+              path: '/vybe-2.0/app',
+              type: 'folder',
+              children: []
+            },
+            { 
+              id: 'components', 
+              name: 'components', 
+              path: '/vybe-2.0/components',
+              type: 'folder',
+              children: []
+            },
+            { 
+              id: 'package.json', 
+              name: 'package.json', 
+              path: '/vybe-2.0/package.json',
+              type: 'file',
+              extension: 'json'
+            },
+          ]
+        }
+      ]);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to load file structure');
+      setLoading(false);
+    }
+  };
+
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    explorer: true,
+    search: false,
+    git: true
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  // File operations
+  const handleCreateFile = async (parentPath: string) => {
+    const fileName = prompt('Enter file name:');
+    if (!fileName) return;
+    
+    try {
+      const filePath = `${parentPath}/${fileName}`;
+      // In a real app, this would be an API call
+      // await createFile(filePath, '');
+      console.log('Creating file:', filePath);
+      // Refresh file structure
+      await loadFileStructure();
+    } catch (error) {
+      console.error('Error creating file:', error);
+      alert('Failed to create file');
+    }
+  };
+
+  const handleCreateFolder = async (parentPath: string) => {
+    const folderName = prompt('Enter folder name:');
+    if (!folderName) return;
+    
+    try {
+      const folderPath = `${parentPath}/${folderName}`;
+      // In a real app, this would be an API call
+      // await createFolder(folderPath);
+      console.log('Creating folder:', folderPath);
+      // Refresh file structure
+      await loadFileStructure();
+    } catch (error) {
+      console.error('Error creating folder:', error);
+      alert('Failed to create folder');
+    }
+  };
+
+  const handleDeleteItem = async (item: FileItem) => {
+    if (!confirm(`Are you sure you want to delete ${item.name}?`)) return;
+    
+    try {
+      // In a real app, this would be an API call
+      // await deleteFileOrFolder(item.path);
+      console.log('Deleting:', item.path);
+      // Refresh file structure
+      await loadFileStructure();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item');
+    }
+  };
+
+  // Search functionality
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    
+    try {
+      setIsSearching(true);
+      // In a real app, this would be an API call
+      // const results = await searchInFiles({
+      //   query: searchQuery,
+      //   path: '/'
+      // });
+      
+      // Mock search results
+      const mockResults: SearchResult[] = [
+        {
+          file: '/vybe-2.0/package.json',
+          line: 10,
+          content: '  "name": "vybe-2.0",',
+          matches: [{ line: 10, content: '  "name": "vybe-2.0",' }]
+        }
+      ];
+      
+      setSearchResults(mockResults);
+    } catch (error) {
+      console.error('Search error:', error);
+      alert('Search failed');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Toggle folder open/closed
+  const toggleFolder = (folderId: string) => {
+    const updateFiles = (items: FileItem[]): FileItem[] => {
+      return items.map(item => {
+        if (item.id === folderId) {
+          return { ...item, isOpen: !item.isOpen };
+        }
+        if (item.children) {
+          return { ...item, children: updateFiles(item.children) };
+        }
+        return item;
+      });
+    };
+    setFiles(prevFiles => updateFiles(prevFiles));
+  };
+
+  // Render file/folder icon based on type and extension
+  const renderFileIcon = (item: FileItem) => {
+    if (item.type === 'folder') {
+      return item.isOpen ? 
+        <FiFolder className="text-blue-400 mr-2" size={16} /> : 
+        <FiFolderClosed className="text-blue-400 mr-2" size={16} />;
+    }
+    
+    // File icons based on extension
+    const extension = item.name.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'js':
+      case 'jsx':
+      case 'ts':
+      case 'tsx':
+        return <FiCode className="text-yellow-400 mr-2" size={16} />;
+      case 'json':
+        return <FiFileText className="text-yellow-600 mr-2" size={16} />;
+      case 'md':
+        return <FiFileText className="text-blue-400 mr-2" size={16} />;
+      case 'css':
+      case 'scss':
+      case 'sass':
+        return <FiFileText className="text-pink-400 mr-2" size={16} />;
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'gif':
+      case 'svg':
+        return <FiImage className="text-purple-400 mr-2" size={16} />;
+      case 'sql':
+      case 'db':
+        return <FiDatabase className="text-orange-400 mr-2" size={16} />;
+      case 'sh':
+      case 'bat':
+      case 'cmd':
+        return <FiTerminal className="text-green-400 mr-2" size={16} />;
+      default:
+        return <FiFile className="text-gray-400 mr-2" size={16} />;
+    }
+  };
+
+  // Render file tree recursively
+  const renderFileTree = (items: FileItem[], depth = 0) => {
+    return items.map(item => (
+      <div key={item.id} className="w-full">
+        <div 
+          className={`flex items-center py-1 px-2 hover:bg-[#2A2D2E] cursor-pointer ${depth > 0 ? 'pl-4' : ''}`}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setContextMenu({
+              x: e.clientX,
+              y: e.clientY,
+              item,
+              type: item.type
+            });
+          }}
+          onClick={() => {
+            if (item.type === 'folder') {
+              toggleFolder(item.id);
+            } else {
+              onFileSelect(item);
+            }
+          }}
+          style={{ paddingLeft: `${depth * 12 + 8}px` }}
+        >
+          {item.type === 'folder' ? (
+            <>
+              <span className="text-gray-400 mr-1">
+                {item.isOpen ? <FiChevronDown size={14} /> : <FiChevronRight size={14} />}
+              </span>
+              {renderFileIcon(item)}
+            </>
+          ) : (
+            renderFileIcon(item)
+          )}
+          <span className="text-sm text-gray-200 truncate">{item.name}</span>
+        </div>
+        
+        {item.type === 'folder' && item.isOpen && item.children && (
+          <div>
+            {renderFileTree(item.children, depth + 1)}
+          </div>
+        )}
+      </div>
+    ));
+  };
+
+  // Render search results
+  const renderSearchResults = () => {
+    if (!searchResults.length) return null;
+
+    return (
+      <div className="mt-2">
+        <div className="text-xs font-medium text-gray-400 px-4 py-2">
+          {searchResults.length} results for "{searchQuery}"
+        </div>
+        <div className="max-h-64 overflow-y-auto">
+          {searchResults.map((result, idx) => (
+            <div 
+              key={`${result.file}-${idx}`} 
+              className="px-4 py-1 hover:bg-[#2A2D2E] cursor-pointer text-xs"
+              onClick={() => {
+                // Find the file in the tree and select it
+                const file = findFileByPath(result.file);
+                if (file) onFileSelect(file);
+              }}
+            >
+              <div className="text-blue-400 truncate">{result.file}</div>
+              <div className="text-gray-400 truncate">
+                {result.matches[0].content.trim()}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Helper to find file by path
+  const findFileByPath = (path: string): FileItem | null => {
+    const searchInTree = (items: FileItem[]): FileItem | null => {
+      for (const item of items) {
+        if (item.path === path) return item;
+        if (item.children) {
+          const found = searchInTree(item.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return searchInTree(files);
+  };
+
+  // Close context menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (contextMenu) {
+        setContextMenu(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [contextMenu]);
+
+  const sections = [
+    {
+      id: 'explorer',
+      title: 'EXPLORER',
+      icon: <FiFolder size={16} className="text-[#E8E8E8]" />,
+      content: (
+        <div className="mt-1">
+          {loading ? (
+            <div className="text-center py-4 text-gray-400">Loading...</div>
+          ) : error ? (
+            <div className="text-center py-4 text-red-400">{error}</div>
+          ) : (
+            <div className="file-tree">
+              {files.map(item => renderFileTree([item]))}
+              
+              {/* Context Menu */}
+              {contextMenu && (
+                <div 
+                  className="fixed bg-[#252526] border border-[#454545] shadow-lg rounded z-50"
+                  style={{
+                    left: `${contextMenu.x}px`,
+                    top: `${contextMenu.y}px`,
+                    minWidth: '200px'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {contextMenu.type === 'folder' && (
+                    <>
+                      <div 
+                        className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
+                        onClick={() => {
+                          handleCreateFile(contextMenu.item?.path || '');
+                          setContextMenu(null);
+                        }}
+                      >
+                        <FiFilePlus className="mr-2" size={14} />
+                        <span>New File</span>
+                      </div>
+                      <div 
+                        className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
+                        onClick={() => {
+                          handleCreateFolder(contextMenu.item?.path || '');
+                          setContextMenu(null);
+                        }}
+                      >
+                        <FiFolderPlus className="mr-2" size={14} />
+                        <span>New Folder</span>
+                      </div>
+                      <div className="border-t border-[#454545] my-1"></div>
+                    </>
+                  )}
+                  
+                  {contextMenu.item && (
+                    <>
+                      <div 
+                        className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
+                        onClick={() => {
+                          // Implement rename functionality
+                          const newName = prompt('Enter new name:', contextMenu.item?.name);
+                          if (newName && newName !== contextMenu.item?.name) {
+                            console.log(`Renaming ${contextMenu.item?.path} to ${newName}`);
+                            // In a real app, this would be an API call
+                            // await renameFile(contextMenu.item.path, newName);
+                            loadFileStructure();
+                          }
+                          setContextMenu(null);
+                        }}
+                      >
+                        <FiEdit2 className="mr-2" size={14} />
+                        <span>Rename</span>
+                      </div>
+                      <div 
+                        className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center text-red-400"
+                        onClick={() => {
+                          if (contextMenu.item) {
+                            handleDeleteItem(contextMenu.item);
+                          }
+                          setContextMenu(null);
+                        }}
+                      >
+                        <FiTrash2 className="mr-2" size={14} />
+                        <span>Delete</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ),
+      expanded: expandedSections.explorer
+    },
+    {
+      id: 'search',
+      title: 'SEARCH',
+      icon: <FiSearch size={16} className="text-[#E8E8E8]" />,
+      content: (
+        <div className="p-2">
+          <form onSubmit={handleSearch} className="mb-2">
+            <div className="relative">
+              <input
+                type="text"
+                ref={searchInputRef}
+                className="w-full bg-[#333] text-[#E8E8E8] text-sm px-3 py-1.5 pl-8 rounded border border-[#454545] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                placeholder="Search (Ctrl+Shift+F)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <FiSearchIcon className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-200"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <FiX size={16} />
+                </button>
+              )}
+            </div>
+          </form>
+          
+          {isSearching ? (
+            <div className="text-center py-4 text-gray-400">Searching...</div>
+          ) : searchResults.length > 0 ? (
+            renderSearchResults()
+          ) : searchQuery ? (
+            <div className="text-center py-4 text-gray-400">No results found</div>
+          ) : (
+            <div className="text-center py-4 text-gray-500 text-sm">
+              Enter a search term to find files
+            </div>
+          )}
+        </div>
+      ),
+      expanded: expandedSections.search
+    },
+    {
+      id: 'git',
+      title: 'SOURCE CONTROL',
+      icon: <FiGitBranch size={16} className="text-[#E8E8E8]" />,
+      content: (
+        <div className="p-2 text-sm text-[#A9B7C6]">
+          Git integration will appear here
+        </div>
+      ),
+      expanded: expandedSections.git
+    }
+  ];
+
+  return (
+    <div 
+      className="h-full flex bg-[#252526] text-[#E8E8E8] w-64 select-none flex-col"
+      onClick={() => setContextMenu(null)}
+    >
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        {sections.map((section) => (
+          <div key={section.id} className="mb-1">
+            <div 
+              className="flex items-center justify-between px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSection(section.id);
+              }}
+            >
+              <div className="flex items-center space-x-2">
+                <span className={`transition-transform ${section.expanded ? 'rotate-0' : '-rotate-90'}`}>
+                  <FiChevronDown size={14} className="text-[#858585]" />
+                </span>
+                <span className="text-xs font-medium tracking-wider text-[#9CDCFE]">
+                  {section.title}
+                </span>
+              </div>
+              {section.id === 'explorer' && (
+                <div className="flex items-center space-x-1">
+                  <button 
+                    className="text-[#858585] hover:text-[#E8E8E8] p-1 rounded hover:bg-[#3C3C3C]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCreateFile('');
+                    }}
+                    title="New File"
+                  >
+                    <FiFilePlus size={14} />
+                  </button>
+                  <button 
+                    className="text-[#858585] hover:text-[#E8E8E8] p-1 rounded hover:bg-[#3C3C3C]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCreateFolder('');
+                    }}
+                    title="New Folder"
+                  >
+                    <FiFolderPlus size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {section.expanded && section.content}
+          </div>
+        ))}
+      </div>
+      
+      {/* Bottom Bar */}
+      <div className="border-t border-[#454545] p-2 flex justify-between items-center bg-[#252526]">
+        <button 
+          className="p-1 text-[#858585] hover:text-[#E8E8E8] hover:bg-[#3C3C3C] rounded"
+          title="Refresh"
+          onClick={() => loadFileStructure()}
+        >
+          <FiRefreshCw size={16} />
+        </button>
+        <div className="flex-1"></div>
+        <button 
+          className="p-1 text-[#858585] hover:text-[#E8E8E8] hover:bg-[#3C3C3C] rounded"
+          title="Settings"
+          onClick={() => onSectionSelect('settings')}
+        >
+          <FiSettings size={16} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default VSModernSidebar;

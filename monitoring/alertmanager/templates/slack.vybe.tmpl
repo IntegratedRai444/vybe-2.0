@@ -1,0 +1,25 @@
+{{ define "slack.vybe.title" }}{{ .Status | toUpper }}{{ if eq .Status "firing" }}: {{ .Alerts.Firing | len }} alert(s) firing{{ end }}{{ end }}
+
+{{ define "slack.vybe.text" }}
+{{ if eq .Status "firing" }}🚨 *Alerting!* 🚨{{ else }}✅ *Resolved* ✅{{ end }}
+
+{{ range .Alerts }}
+*Alert:* {{ .Labels.alertname }}
+*Severity:* {{ .Labels.severity | title }}
+*Status:* {{ .Status | title }}
+*Summary:* {{ .Annotations.summary }}
+*Description:* {{ .Annotations.description }}
+*Starts at:* {{ .StartsAt | time }}
+{{ if ne .Status "firing" }}*Ends at:* {{ .EndsAt | time }}
+{{ end }}
+*Details:*
+{{ range $key, $value := .Labels }}- *{{ $key }}*: `{{ $value }}`
+{{ end }}
+{{ end }}
+
+{{ if gt (len .Alerts.Firing) 0 -}}
+:point_right: *Actions:*
+- Acknowledge: `/ack {{ .GroupLabels.alertname }}`
+- Silence: `/silence {{ .GroupLabels.alertname }}`
+{{- end }}
+{{ end }}

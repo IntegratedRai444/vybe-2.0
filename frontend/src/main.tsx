@@ -1,13 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import { ErrorBoundary } from './components/ErrorBoundary'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import AppWrapper from './AppWrapper';
+import EnhancedErrorBoundary from './components/EnhancedErrorBoundary';
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <EnhancedErrorBoundary>
+      <AppWrapper />
+    </EnhancedErrorBoundary>
   </React.StrictMode>,
-)
+);

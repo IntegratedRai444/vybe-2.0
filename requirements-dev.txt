@@ -1,0 +1,27 @@
+# Testing
+pytest>=7.0.0
+pytest-asyncio>=0.20.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# Code Quality
+black>=22.0.0
+isort>=5.10.0
+flake8>=4.0.0
+mypy>=0.910
+
+# Documentation
+sphinx>=4.0.0
+sphinx-rtd-theme>=1.0.0
+
+# Development
+pre-commit>=2.0.0
+ipython>=8.0.0
+
+# Test Coverage
+coverage>=6.0.0
+codecov>=2.0.0
+
+# API Testing
+httpx>=0.23.0
+pytest-httpx>=0.18.0

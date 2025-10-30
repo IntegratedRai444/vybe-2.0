@@ -1,51 +1,98 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  scrape_timeout: 10s
 
 rule_files:
-  - "rules/*.yml"
+  - 'alert.rules.yml'
+  - 'rules/*.rules.yml'
 
 alerting:
   alertmanagers:
     - static_configs:
-        - targets:
-          - alertmanager:9093
+        - targets: ['alertmanager:9093']
+    # Alertmanager configuration
+    scheme: http
+    timeout: 10s
 
+# Scrape configurations
 scrape_configs:
   # Vybe application metrics
-  - job_name: 'vybe-staging'
-    static_configs:
-      - targets: ['vybe-staging:8000']
-    metrics_path: '/metrics'
-    scrape_interval: 30s
-
-  - job_name: 'vybe-production'
-    static_configs:
-      - targets: ['vybe-production:8000']
+  - job_name: 'vybe-application'
     metrics_path: '/metrics'
     scrape_interval: 15s
+    static_configs:
+      - targets: 
+        - 'vybe-backend:8001'  # Metrics endpoint
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __metrics_path__
+        replacement: /metrics
+
+  # Vybe API metrics
+  - job_name: 'vybe-api'
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['vybe-backend:8000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'vybe-backend:8000'
 
   # Node exporter for system metrics
   - job_name: 'node-exporter'
+    scrape_interval: 10s
     static_configs:
       - targets: ['node-exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: '${1}:9100'
 
   # PostgreSQL metrics
-  - job_name: 'postgres'
+  - job_name: 'postgres-exporter'
+    scrape_interval: 20s
     static_configs:
       - targets: ['postgres-exporter:9187']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'postgres:5432'
 
   # Redis metrics
-  - job_name: 'redis'
+  - job_name: 'redis-exporter'
+    scrape_interval: 15s
     static_configs:
       - targets: ['redis-exporter:9121']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'redis:6379'
 
   # Docker metrics
-  - job_name: 'docker'
+  - job_name: 'cadvisor'
+    scrape_interval: 15s
     static_configs:
-      - targets: ['docker-exporter:9323']
+      - targets: ['cadvisor:8080']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'docker-host'
 
-  # Nginx metrics
-  - job_name: 'nginx'
+  # Blackbox exporter for HTTP/HTTPS checks
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
     static_configs:
-      - targets: ['nginx-exporter:9113']
+      - targets:
+        - 'http://vybe-backend:8000/health'
+        - 'http://vybe-frontend:80'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 'blackbox-exporter:9115'

@@ -1,0 +1,5 @@
+{"prompt": "Write a Python function to reverse a string", "completion": "def reverse_string(s):\n    return s[::-1]"}
+{"prompt": "Explain bubble sort in Python", "completion": "def bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n-i-1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]\n    return arr"}
+{"prompt": "How to read a file in Python?", "completion": "# Reading a file in Python\nwith open('filename.txt', 'r') as file:\n    content = file.read()"}
+{"prompt": "Write a function to check if a string is a palindrome", "completion": "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1]"}
+{"prompt": "How to make an HTTP GET request in Python?", "completion": "import requests\n\nresponse = requests.get('https://api.example.com/data')\nif response.status_code == 200:\n    data = response.json()"}
