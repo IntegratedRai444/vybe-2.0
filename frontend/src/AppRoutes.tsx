@@ -1,17 +1,17 @@
-import { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Suspense, lazy } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 // Lazy load page components
-const EditorPage = lazy(() => import('@/pages/EditorPage'));
-const AIPage = lazy(() => import('@/pages/AIPage'));
-const SettingsPage = lazy(() => import('@/pages/Settings'));
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const DashboardPage = lazy(() => import('@/pages/Dashboard'));
-const NotFound = lazy(() => import('@/pages/NotFound'));
+const EditorPage = lazy(() => import("@/pages/EditorPage"));
+const AIPage = lazy(() => import("@/pages/AIPage"));
+const SettingsPage = lazy(() => import("@/pages/Settings"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const DashboardPage = lazy(() => import("@/pages/Dashboard"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Import HOC
-import { withAuth } from './contexts/AuthContext';
+import { withAuth } from "./contexts/AuthContext";
 
 // Loading component
 const LoadingFallback = () => (
@@ -33,18 +33,18 @@ export const AppRoutes = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
-        
+
         {/* Protected routes */}
         <Route path="/" element={<ProtectedDashboard />} />
-        
+
         <Route path="/editor" element={<ProtectedEditor />}>
           <Route path=":filePath" element={null} />
         </Route>
-        
+
         <Route path="/ai" element={<ProtectedAI />} />
-        
+
         <Route path="/settings" element={<ProtectedSettings />} />
-        
+
         {/* 404 route - must be the last route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

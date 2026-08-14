@@ -1,11 +1,11 @@
 // Default project templates
 export const defaultTemplates = {
   basic: {
-    name: 'Basic Project',
-    description: 'A basic project structure',
+    name: "Basic Project",
+    description: "A basic project structure",
     files: [
       {
-        name: 'index.html',
+        name: "index.html",
         content: `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,24 +18,25 @@ export const defaultTemplates = {
   <div id="app"></div>
   <script src="app.js"></script>
 </body>
-</html>`
+</html>`,
       },
       {
-        name: 'styles.css',
-        content: '/* Your styles here */\nbody {\n  margin: 0;\n  font-family: Arial, sans-serif;\n  line-height: 1.6;\n}'
+        name: "styles.css",
+        content:
+          "/* Your styles here */\nbody {\n  margin: 0;\n  font-family: Arial, sans-serif;\n  line-height: 1.6;\n}",
       },
       {
-        name: 'app.js',
-        content: '// Your JavaScript code here\nconsole.log(\'Hello, world!\');'
-      }
-    ]
+        name: "app.js",
+        content: "// Your JavaScript code here\nconsole.log('Hello, world!');",
+      },
+    ],
   },
   react: {
-    name: 'React Project',
-    description: 'A basic React project structure',
+    name: "React Project",
+    description: "A basic React project structure",
     files: [
       {
-        name: 'src/App.jsx',
+        name: "src/App.jsx",
         content: `import React from 'react';
 
 function App() {
@@ -46,10 +47,10 @@ function App() {
   );
 }
 
-export default App;`
+export default App;`,
       },
       {
-        name: 'src/index.jsx',
+        name: "src/index.jsx",
         content: `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -60,10 +61,10 @@ root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-);`
+);`,
       },
       {
-        name: 'src/index.css',
+        name: "src/index.css",
         content: `body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -76,9 +77,9 @@ root.render(
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}`
-      }
-    ]
+}`,
+      },
+    ],
   },
   // Add more templates as needed
 };

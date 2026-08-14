@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { apiClient } from '../../services/apiClient';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiClient } from "../../services/apiClient";
 
 // Types
 export interface User {
@@ -36,56 +36,68 @@ interface AuthResponse {
 
 // Helper function to safely access localStorage
 const safeGetItem = (key: string): string | null => {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(key);
 };
 
 // Async thunks
-export const login = createAsyncThunk<AuthResponse, LoginCredentials, { rejectValue: string }>(
-  'auth/login',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
-    }
-  }
-);
-
-export const refreshToken = createAsyncThunk<AuthResponse, void, { state: { auth: AuthState } }>(
-  'auth/refreshToken',
-  async (_, { getState, rejectWithValue }) => {
-    const { refreshToken } = getState().auth;
-    if (!refreshToken) {
-      return rejectWithValue('No refresh token available');
-    }
-
-    try {
-      const response = await apiClient.post<AuthResponse>('/auth/refresh-token', { refreshToken });
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Token refresh failed');
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk('auth/logout', async (_, { dispatch }) => {
+export const login = createAsyncThunk<
+  AuthResponse,
+  LoginCredentials,
+  { rejectValue: string }
+>("auth/login", async (credentials, { rejectWithValue }) => {
   try {
-    await apiClient.post('/auth/logout');
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    // Clear local storage and state even if API call fails
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    dispatch(clearAuthState());
+    const response = await apiClient.post<AuthResponse>(
+      "/auth/login",
+      credentials,
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Login failed");
   }
 });
 
+export const refreshToken = createAsyncThunk<
+  AuthResponse,
+  void,
+  { state: { auth: AuthState } }
+>("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
+  const { refreshToken } = getState().auth;
+  if (!refreshToken) {
+    return rejectWithValue("No refresh token available");
+  }
+
+  try {
+    const response = await apiClient.post<AuthResponse>("/auth/refresh-token", {
+      refreshToken,
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Token refresh failed",
+    );
+  }
+});
+
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch }) => {
+    try {
+      await apiClient.post("/auth/logout");
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      // Clear local storage and state even if API call fails
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      dispatch(clearAuthState());
+    }
+  },
+);
+
 const initialState: AuthState = {
-  token: safeGetItem('token'),
-  refreshToken: safeGetItem('refreshToken'),
+  token: safeGetItem("token"),
+  refreshToken: safeGetItem("refreshToken"),
   isAuthenticated: false,
   user: null,
   loading: false,
@@ -95,10 +107,17 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    setCredentials: (state: AuthState, action: PayloadAction<{ token: string; refreshToken: string; user: User }>) => {
+    setCredentials: (
+      state: AuthState,
+      action: PayloadAction<{
+        token: string;
+        refreshToken: string;
+        user: User;
+      }>,
+    ) => {
       const { token, refreshToken, user } = action.payload;
       state.token = token;
       state.refreshToken = refreshToken;
@@ -107,9 +126,9 @@ const authSlice = createSlice({
       state.lastActive = new Date().toISOString();
 
       // Store tokens in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
       }
     },
     clearAuthState: (state: AuthState) => {
@@ -123,9 +142,9 @@ const authSlice = createSlice({
       state.isTokenRefreshing = false;
 
       // Clear tokens from localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
       }
     },
     updateUser: (state: AuthState, action: PayloadAction<Partial<User>>) => {
@@ -147,21 +166,24 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state: AuthState, action: PayloadAction<AuthResponse>) => {
-        const { token, refreshToken, user } = action.payload;
-        state.token = token;
-        state.refreshToken = refreshToken;
-        state.user = user;
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.lastActive = new Date().toISOString();
+      .addCase(
+        login.fulfilled,
+        (state: AuthState, action: PayloadAction<AuthResponse>) => {
+          const { token, refreshToken, user } = action.payload;
+          state.token = token;
+          state.refreshToken = refreshToken;
+          state.user = user;
+          state.isAuthenticated = true;
+          state.loading = false;
+          state.lastActive = new Date().toISOString();
 
-        // Store tokens in localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', refreshToken);
-        }
-      })
+          // Store tokens in localStorage
+          if (typeof window !== "undefined") {
+            localStorage.setItem("token", token);
+            localStorage.setItem("refreshToken", refreshToken);
+          }
+        },
+      )
       .addCase(login.rejected, (state: AuthState, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -176,21 +198,24 @@ const authSlice = createSlice({
       .addCase(refreshToken.pending, (state: AuthState) => {
         state.isTokenRefreshing = true;
       })
-      .addCase(refreshToken.fulfilled, (state: AuthState, action: PayloadAction<AuthResponse>) => {
-        const { token, refreshToken, user } = action.payload;
-        state.token = token;
-        state.refreshToken = refreshToken;
-        state.user = user;
-        state.isAuthenticated = true;
-        state.isTokenRefreshing = false;
-        state.lastActive = new Date().toISOString();
+      .addCase(
+        refreshToken.fulfilled,
+        (state: AuthState, action: PayloadAction<AuthResponse>) => {
+          const { token, refreshToken, user } = action.payload;
+          state.token = token;
+          state.refreshToken = refreshToken;
+          state.user = user;
+          state.isAuthenticated = true;
+          state.isTokenRefreshing = false;
+          state.lastActive = new Date().toISOString();
 
-        // Update tokens in localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', refreshToken);
-        }
-      })
+          // Update tokens in localStorage
+          if (typeof window !== "undefined") {
+            localStorage.setItem("token", token);
+            localStorage.setItem("refreshToken", refreshToken);
+          }
+        },
+      )
       .addCase(refreshToken.rejected, (state: AuthState) => {
         state.isTokenRefreshing = false;
         state.isAuthenticated = false;
@@ -199,9 +224,9 @@ const authSlice = createSlice({
         state.user = null;
 
         // Clear tokens from localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
         }
       });
 
@@ -219,18 +244,22 @@ const authSlice = createSlice({
   },
 });
 
-export const { 
-  setCredentials, 
-  clearAuthState, 
-  updateUser, 
+export const {
+  setCredentials,
+  clearAuthState,
+  updateUser,
   setLastActive,
-  clearError 
+  clearError,
 } = authSlice.actions;
 
 // Selectors
-export const selectCurrentUser = (state: { auth: AuthState }): User | null => state.auth.user;
-export const selectIsAuthenticated = (state: { auth: AuthState }): boolean => state.auth.isAuthenticated;
-export const selectAuthLoading = (state: { auth: AuthState }): boolean => state.auth.loading;
-export const selectAuthError = (state: { auth: AuthState }): string | null => state.auth.error;
+export const selectCurrentUser = (state: { auth: AuthState }): User | null =>
+  state.auth.user;
+export const selectIsAuthenticated = (state: { auth: AuthState }): boolean =>
+  state.auth.isAuthenticated;
+export const selectAuthLoading = (state: { auth: AuthState }): boolean =>
+  state.auth.loading;
+export const selectAuthError = (state: { auth: AuthState }): string | null =>
+  state.auth.error;
 
 export default authSlice.reducer;

@@ -18,7 +18,7 @@ import {
 
 // Use Vite's environment variables
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const WS_URL = API_BASE_URL.replace(/^http/, 'ws') + "/api/debug/ws";
+const WS_URL = API_BASE_URL.replace(/^http/, "ws") + "/api/debug/ws";
 
 export interface DebugSessionInfo {
   id: string;

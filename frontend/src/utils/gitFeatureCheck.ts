@@ -1,4 +1,4 @@
-import { getGitStatus, stageFiles } from './gitUtils';
+import { getGitStatus, stageFiles } from "./gitUtils";
 
 export interface GitFeatureStatus {
   name: string;
@@ -11,8 +11,8 @@ export interface GitFeatureStatus {
 export const checkGitFeatures = async (): Promise<GitFeatureStatus[]> => {
   const features: GitFeatureStatus[] = [
     {
-      name: 'Git Status',
-      description: 'Check repository status',
+      name: "Git Status",
+      description: "Check repository status",
       isAvailable: false,
       async testFunction() {
         try {
@@ -22,11 +22,11 @@ export const checkGitFeatures = async (): Promise<GitFeatureStatus[]> => {
           this.error = error instanceof Error ? error.message : String(error);
           return false;
         }
-      }
+      },
     },
     {
-      name: 'Stage Files',
-      description: 'Stage modified/untracked files',
+      name: "Stage Files",
+      description: "Stage modified/untracked files",
       isAvailable: false,
       async testFunction() {
         try {
@@ -37,38 +37,38 @@ export const checkGitFeatures = async (): Promise<GitFeatureStatus[]> => {
           this.error = error instanceof Error ? error.message : String(error);
           return false;
         }
-      }
+      },
     },
     {
-      name: 'Commit Changes',
-      description: 'Create commits',
+      name: "Commit Changes",
+      description: "Create commits",
       isAvailable: false,
-      error: 'Not implemented'
+      error: "Not implemented",
     },
     {
-      name: 'Branch Operations',
-      description: 'Create, switch, delete branches',
+      name: "Branch Operations",
+      description: "Create, switch, delete branches",
       isAvailable: false,
-      error: 'Not implemented'
+      error: "Not implemented",
     },
     {
-      name: 'Remote Operations',
-      description: 'Push, pull, fetch from remote',
+      name: "Remote Operations",
+      description: "Push, pull, fetch from remote",
       isAvailable: false,
-      error: 'Not implemented'
+      error: "Not implemented",
     },
     {
-      name: 'View History',
-      description: 'View commit history',
+      name: "View History",
+      description: "View commit history",
       isAvailable: false,
-      error: 'Not fully implemented'
+      error: "Not fully implemented",
     },
     {
-      name: 'Diff View',
-      description: 'View changes in files',
+      name: "Diff View",
+      description: "View changes in files",
       isAvailable: false,
-      error: 'Not implemented'
-    }
+      error: "Not implemented",
+    },
   ];
 
   // Test each feature that has a test function
@@ -88,16 +88,18 @@ export const checkGitFeatures = async (): Promise<GitFeatureStatus[]> => {
 
 export const getGitImplementationStatus = (features: GitFeatureStatus[]) => {
   const totalFeatures = features.length;
-  const availableFeatures = features.filter(f => f.isAvailable).length;
+  const availableFeatures = features.filter((f) => f.isAvailable).length;
   const percentage = Math.round((availableFeatures / totalFeatures) * 100);
-  
+
   return {
     totalFeatures,
     availableFeatures,
     percentage,
-    status: percentage === 100 ? 'Complete' : 'Partial',
-    hasCriticalFeatures: features.some(f => 
-      ['Git Status', 'Stage Files', 'Commit Changes'].includes(f.name) && !f.isAvailable
-    )
+    status: percentage === 100 ? "Complete" : "Partial",
+    hasCriticalFeatures: features.some(
+      (f) =>
+        ["Git Status", "Stage Files", "Commit Changes"].includes(f.name) &&
+        !f.isAvailable,
+    ),
   };
 };

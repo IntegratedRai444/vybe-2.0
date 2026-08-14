@@ -4,10 +4,9 @@ CRUD operations for User model.
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy.orm import Session
-
 from core.security import get_password_hash, verify_password
-from models.user import User, UserCreate, UserUpdate, UserRole
+from models.user import User, UserCreate, UserRole, UserUpdate
+from sqlalchemy.orm import Session
 
 
 def get_user(db: Session, user_id: int) -> Optional[User]:

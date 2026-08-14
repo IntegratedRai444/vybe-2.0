@@ -41,6 +41,7 @@ vybe-2.0/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Python 3.9+
 - Node.js 16+
 - Docker (optional)
@@ -48,12 +49,14 @@ vybe-2.0/
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/vybe-2.0.git
    cd vybe-2.0
    ```
 
 2. Set up the backend:
+
    ```bash
    cd backend
    python -m venv venv
@@ -62,22 +65,25 @@ vybe-2.0/
    ```
 
 3. Set up the frontend:
+
    ```bash
    cd ../frontend
    npm install
    ```
 
 4. Configure environment variables:
+
    ```bash
    cp .env.example .env
    # Update the .env file with your configuration
    ```
 
 5. Start the development servers:
+
    ```bash
    # In the backend directory
    uvicorn main:app --reload
-   
+
    # In the frontend directory
    npm run dev
    ```
@@ -95,6 +101,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## ✨ **Features**
 
 ### 🎯 **Core IDE Features**
+
 - ✅ **File Tree Navigation** - Full project explorer with folder management
 - ✅ **Monaco Code Editor** - Professional code editing with syntax highlighting
 - ✅ **Multi-Tab Support** - Work on multiple files simultaneously
@@ -109,6 +116,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Deployment** - One-click deploy to Vercel/Netlify
 
 ### 🤖 **AI Orchestrator** (Multi-Provider Support)
+
 - ✅ **Ollama** - Local AI models (CodeLlama, Llama2, etc.)
 - ✅ **OpenAI** - GPT-3.5/GPT-4 integration
 - ✅ **Anthropic** - Claude integration
@@ -120,6 +128,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Auto-Switching** - Automatically picks best available provider
 
 ### 🔍 **MCP Debugging System** (NEW!)
+
 The core differentiator - AI-powered auto-debug and fix system:
 
 - ✅ **Multi-Language Scanner** - Analyzes Python, JavaScript, TypeScript
@@ -133,6 +142,7 @@ The core differentiator - AI-powered auto-debug and fix system:
 - ✅ **Severity Levels** - Error, Warning, Info, Hint
 
 ### 📊 **Project Management**
+
 - ✅ **Vector Store** - FAISS-powered semantic code search
 - ✅ **Project Indexing** - Fast code understanding
 - ✅ **File Operations** - Create, delete, rename files/folders
@@ -140,30 +150,35 @@ The core differentiator - AI-powered auto-debug and fix system:
 - ✅ **Git Panel** - Visual git interface
 
 ### 🔒 **Security & Sandboxing**
+
 - ✅ **Docker Sandbox** - Isolated code execution (Python, JS, Shell)
 - ✅ **Vulnerability Scanner** - Dependency security checks
 - ✅ **Secrets Detector** - Find hardcoded credentials (20+ patterns)
 - ✅ **Security Dashboard** - Comprehensive security overview
 
 ### 💬 **Chat Persistence**
+
 - ✅ **SQLite Database** - Persistent chat history
 - ✅ **Session Management** - Create, load, delete sessions
 - ✅ **Export** - JSON and Markdown formats
 - ✅ **Search** - Full-text search across conversations
 
 ### 🧪 **Testing Infrastructure**
+
 - ✅ **Multi-Framework** - pytest, unittest, doctest support
 - ✅ **Test Discovery** - Automatic test file detection
 - ✅ **Coverage Reports** - Code coverage analysis
 - ✅ **Test Runner** - Execute tests from UI
 
 ### ⚡ **Code Profiling**
+
 - ✅ **Performance Profiling** - cProfile integration
 - ✅ **Memory Profiling** - Track memory usage
 - ✅ **Hotspot Analysis** - Identify performance bottlenecks
 - ✅ **Benchmarking** - Compare function implementations
 
 ### 📈 **Code Analysis**
+
 - ✅ **Complexity Metrics** - Cyclomatic complexity
 - ✅ **Maintainability Index** - Code quality scoring
 - ✅ **Code Smells** - Detect anti-patterns
@@ -171,12 +186,14 @@ The core differentiator - AI-powered auto-debug and fix system:
 - ✅ **Project Metrics** - Comprehensive statistics
 
 ### 🎨 **Theme System**
+
 - ✅ **Dark Mode** - Professional dark theme
 - ✅ **Light Mode** - Clean light theme
 - ✅ **Auto Mode** - Follow system preferences
 - ✅ **Persistence** - Remember theme choice
 
 ### ⚙️ **Layout Customization** (NEW!)
+
 - ✅ **Resizable Panels** - Adjust panel sizes dynamically
 - ✅ **Layout Presets** - Default, Coding, Debugging, Reviewing, Minimal
 - ✅ **Panel Visibility** - Show/hide any panel
@@ -184,6 +201,7 @@ The core differentiator - AI-powered auto-debug and fix system:
 - ✅ **Custom Arrangements** - Create your perfect workspace
 
 ### 👥 **Collaborative Editing** (NEW!)
+
 - ✅ **Real-Time Collaboration** - Edit files together
 - ✅ **WebSocket Support** - Low-latency synchronization
 - ✅ **User Presence** - See who's editing
@@ -192,6 +210,7 @@ The core differentiator - AI-powered auto-debug and fix system:
 - ✅ **Conflict Resolution** - Automatic merge handling
 
 ### 🚀 **CI/CD Pipeline** (NEW!)
+
 - ✅ **GitHub Actions** - Automated workflows
 - ✅ **Automated Testing** - Run tests on every push
 - ✅ **Code Quality Checks** - Flake8, Bandit, Black
@@ -206,6 +225,7 @@ The core differentiator - AI-powered auto-debug and fix system:
 ## 🛠️ **Setup**
 
 ### **Prerequisites**
+
 - Python 3.8+
 - Node.js 16+
 - Ollama (for local AI)
@@ -214,17 +234,20 @@ The core differentiator - AI-powered auto-debug and fix system:
 ### **Installation**
 
 1. **Clone the repository:**
+
 ```bash
 git clone <your-repo-url>
 cd "vybe 2.0"
 ```
 
 2. **Install Python dependencies:**
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. **Install frontend dependencies:**
+
 ```bash
 cd frontend
 npm install
@@ -232,6 +255,7 @@ cd ..
 ```
 
 4. **Install Ollama and pull a model:**
+
 ```bash
 # Install Ollama from https://ollama.ai
 ollama pull codellama:7b
@@ -240,6 +264,7 @@ ollama pull llama2:7b
 ```
 
 5. **Optional: Install code analyzers for MCP:**
+
 ```bash
 # Python analyzers
 pip install flake8 mypy bandit pylint
@@ -253,22 +278,25 @@ npm install -g eslint
 ## 🚀 **Running**
 
 ### **Option 1: Use the run script (recommended)**
+
 ```bash
 python run.py
 ```
 
 ### **Option 2: Manual startup**
+
 ```bash
 # Terminal 1 - Backend
 cd backend
 python main.py
 
-# Terminal 2 - Frontend  
+# Terminal 2 - Frontend
 cd frontend
 npm run dev
 ```
 
 ### **Access the IDE**
+
 1. Open http://localhost:5173
 2. Click "Open Project"
 3. Enter the absolute path to your project
@@ -279,6 +307,7 @@ npm run dev
 ## 🎮 **Usage**
 
 ### **Keyboard Shortcuts**
+
 - `Cmd/Ctrl + S` - Save file
 - `Cmd/Ctrl + P` - Quick open file
 - `Cmd/Ctrl + N` - New file
@@ -287,18 +316,21 @@ npm run dev
 - `Cmd/Ctrl + Shift + G` - Toggle Gradio UI
 
 ### **MCP Debugging System**
+
 1. Click the **"Debug"** button in the toolbar
 2. View scan results with issue breakdown
 3. Click **"Auto-Fix"** to automatically fix issues
 4. Review changes in the Problems panel
 
 ### **AI Chat**
+
 1. Open the Chat panel (right side)
 2. Ask questions about your code
 3. Request code generation or explanations
 4. AI has full project context via vector store
 
 ### **Git Operations**
+
 1. Open Git panel (right side)
 2. View changed files
 3. Stage, commit, push, pull
@@ -360,7 +392,9 @@ vybe 2.0/
 ## 🔧 **Configuration**
 
 ### **AI Providers**
+
 Configure API keys in the UI or environment variables:
+
 ```bash
 export OPENAI_API_KEY="your-key"
 export ANTHROPIC_API_KEY="your-key"
@@ -368,7 +402,9 @@ export GROQ_API_KEY="your-key"
 ```
 
 ### **MCP Analyzers**
+
 Configure which analyzers to use in `backend/mcp/config.py`:
+
 ```python
 LANGUAGE_ANALYZERS = {
     "python": ["flake8", "mypy", "bandit"],
@@ -382,6 +418,7 @@ LANGUAGE_ANALYZERS = {
 ## 📊 **API Endpoints**
 
 ### **Core**
+
 - `POST /index` - Index project
 - `POST /search` - Semantic search
 - `POST /generate` - AI generation
@@ -389,6 +426,7 @@ LANGUAGE_ANALYZERS = {
 - `POST /complete` - Code completion
 
 ### **Files**
+
 - `GET /files` - List files
 - `GET /file/content` - Get file
 - `POST /file/save` - Save file
@@ -397,6 +435,7 @@ LANGUAGE_ANALYZERS = {
 - `POST /file/rename` - Rename file
 
 ### **Git**
+
 - `GET /git/status` - Git status
 - `GET /git/diff` - File diff
 - `POST /git/stage` - Stage files
@@ -407,6 +446,7 @@ LANGUAGE_ANALYZERS = {
 - `GET /git/remotes` - List remotes
 
 ### **MCP Debugging**
+
 - `POST /mcp/scan` - Scan project
 - `POST /mcp/fix` - Generate fixes
 - `POST /mcp/explain` - Explain issue
@@ -414,6 +454,7 @@ LANGUAGE_ANALYZERS = {
 - `GET /mcp/health` - Check analyzers
 
 ### **Other**
+
 - `POST /format` - Format code
 - `POST /deploy` - Deploy project
 - `GET /packages` - List packages
@@ -425,6 +466,7 @@ LANGUAGE_ANALYZERS = {
 ## 🎯 **Roadmap**
 
 ### **Phase 1: MCP Debugging System** ✅ COMPLETE
+
 - [x] Multi-language scanner
 - [x] AI fix generator
 - [x] Patch executor
@@ -432,29 +474,34 @@ LANGUAGE_ANALYZERS = {
 - [x] Issue explainer
 
 ### **Phase 2: AI Integrations** ✅ COMPLETE
+
 - [x] LangChain integration
 - [x] Tabby integration
 - [x] LM Studio integration
 - [x] Transformers integration
 
 ### **Phase 3: Git Enhancements** ✅ COMPLETE
+
 - [x] Push/Pull operations
 - [x] Clone repositories
 - [x] Remote management
 
 ### **Phase 4: Security & Sandboxing** ✅ COMPLETE
+
 - [x] Docker sandbox for code execution
 - [x] Security scanning
 - [x] Dependency vulnerability checks
 - [x] Secrets detection
 
 ### **Phase 5: Chat Persistence** ✅ COMPLETE
+
 - [x] SQLite database for chat history
 - [x] Session management
 - [x] Export to JSON/Markdown
 - [x] Search functionality
 
 ### **Phase 6: Testing Infrastructure** ✅ COMPLETE
+
 - [x] pytest integration
 - [x] unittest support
 - [x] doctest support
@@ -462,6 +509,7 @@ LANGUAGE_ANALYZERS = {
 - [x] Coverage reports
 
 ### **Phase 7: Code Profiling** ✅ COMPLETE
+
 - [x] cProfile integration
 - [x] Memory profiling
 - [x] Hotspot analysis
@@ -469,6 +517,7 @@ LANGUAGE_ANALYZERS = {
 - [x] Performance comparison
 
 ### **Phase 8: Code Analysis** ✅ COMPLETE
+
 - [x] Complexity analysis
 - [x] Maintainability index
 - [x] Code smell detection
@@ -476,11 +525,13 @@ LANGUAGE_ANALYZERS = {
 - [x] Project metrics
 
 ### **Phase 9: Theme System** ✅ COMPLETE
+
 - [x] Dark/Light/Auto themes
 - [x] Theme persistence
 - [x] System theme detection
 
 ### **Phase 10: Advanced Features** 📋 PLANNED
+
 - [ ] Layout customization
 - [ ] Collaborative editing
 - [ ] Plugin system
@@ -491,6 +542,7 @@ LANGUAGE_ANALYZERS = {
 ## 🤝 **Contributing**
 
 This is an active development project! Contributions welcome:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -507,6 +559,7 @@ MIT License - feel free to use this project for learning or commercial purposes.
 ## 🙏 **Acknowledgments**
 
 Built with:
+
 - **FastAPI** - Modern Python web framework
 - **React** - UI framework
 - **Monaco Editor** - VS Code's editor
@@ -540,5 +593,6 @@ Built with:
 ---
 
 **Happy Coding with Vybe! 🚀**
-#   v y b e - 2 . 0  
+#   v y b e - 2 . 0 
+ 
  

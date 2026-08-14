@@ -9,18 +9,32 @@ fastapi-socketio>=0.0.10  # Socket.IO support
 
 # Optional (for specific features)
 gitpython>=3.1.31  # Git integration
+
+# API Documentation
+griffe-typingdoc>=0.1.0
 httpx>=0.23.3
 isort>=5.12.0
 
 # Code Analysis
 jedi>=0.18.2
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0
+mkdocstrings[python]>=0.20.0
 mypy>=1.0.0
 
 # AI/ML
 openai>=0.27.0
 parso>=0.8.3
 passlib[bcrypt]>=1.7.4
+
+# Monitoring and Metrics
+prometheus-client>=0.16.0
+prometheus-fastapi-instrumentator>=6.3.0
+psutil>=5.9.0  # System metrics
 pydantic>=1.10.4
+
+# Request Validation
+pydantic-settings>=2.0.0
 pyflakes>=3.0.1
 pylint>=2.17.0
 
@@ -35,11 +49,15 @@ python-dateutil>=2.8.2
 python-dotenv>=1.0.0
 python-jose[cryptography]>=3.3.0
 python-jose[cryptography]>=3.3.0  # JWT authentication
+python-json-logger>=2.0.7
 python-multipart>=0.0.6
 python-slugify>=8.0.0
 pyyaml>=6.0
 requests>=2.28.1
 sentence-transformers>=2.2.2
+
+# Rate Limiting
+slowapi>=0.1.8
 
 # Database
 sqlalchemy>=2.0.0
@@ -48,21 +66,3 @@ tqdm>=4.65.0
 transformers>=4.28.0
 uvicorn>=0.21.0
 websockets>=11.0.0  # WebSocket support
-
-# Monitoring and Metrics
-prometheus-client>=0.16.0
-prometheus-fastapi-instrumentator>=6.3.0
-psutil>=5.9.0  # System metrics
-
-# Rate Limiting
-slowapi>=0.1.8
-python-json-logger>=2.0.7
-
-# API Documentation
-griffe-typingdoc>=0.1.0
-mkdocs>=1.4.0
-mkdocs-material>=9.0.0
-mkdocstrings[python]>=0.20.0
-
-# Request Validation
-pydantic-settings>=2.0.0

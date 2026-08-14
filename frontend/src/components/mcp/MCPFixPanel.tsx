@@ -39,14 +39,22 @@ import { CodeIssue, IssueSeverity } from "../../types/mcp";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 type FixStatus = "suggested" | "applied" | "rejected";
-type IssueCategory = "syntax" | "type" | "security" | "style" | "performance" | "bug" | "complexity" | "import";
+type IssueCategory =
+  | "syntax"
+  | "type"
+  | "security"
+  | "style"
+  | "performance"
+  | "bug"
+  | "complexity"
+  | "import";
 
 interface FixPanelProps {
   selectedFile?: string;
   className?: string;
 }
 
-interface CodeFix extends Omit<CodeIssue, 'id' | 'category'> {
+interface CodeFix extends Omit<CodeIssue, "id" | "category"> {
   id: string;
   status: FixStatus;
   category: IssueCategory;
@@ -64,11 +72,17 @@ interface CodeFix extends Omit<CodeIssue, 'id' | 'category'> {
 // Helper function to safely get a category
 const getSafeCategory = (category?: string): IssueCategory => {
   const validCategories: IssueCategory[] = [
-    "syntax", "type", "security", "style", 
-    "performance", "bug", "complexity", "import"
+    "syntax",
+    "type",
+    "security",
+    "style",
+    "performance",
+    "bug",
+    "complexity",
+    "import",
   ];
-  return validCategories.includes(category as IssueCategory) 
-    ? category as IssueCategory 
+  return validCategories.includes(category as IssueCategory)
+    ? (category as IssueCategory)
     : "style";
 };
 
@@ -97,57 +111,64 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
   const theme = useTheme();
   // Use the available methods and state from MCP context
   const { issues, fixIssues, scanProject } = useMCP();
-  
+
   // Local state for UI
   const [isApplyingFix, setIsApplyingFix] = useState(false);
   const [isFetchingFixes, setIsFetchingFixes] = useState(false);
-  
+
   // Map CodeIssue[] to CodeFix[] with required properties
   const fixes = React.useMemo<CodeFix[]>(() => {
-    return issues.map(issue => ({
+    return issues.map((issue) => ({
       ...issue,
       id: `${issue.filePath}:${issue.lineNumber}:${issue.column || 0}`,
-      status: 'suggested' as const,
+      status: "suggested" as const,
       category: getSafeCategory(issue.category as string),
       explanation: issue.message,
-      changes: [{
-        range: {
-          start: { line: issue.lineNumber, character: issue.column || 0 },
-          end: { line: issue.lineNumber, character: (issue.column || 0) + 10 },
+      changes: [
+        {
+          range: {
+            start: { line: issue.lineNumber, character: issue.column || 0 },
+            end: {
+              line: issue.lineNumber,
+              character: (issue.column || 0) + 10,
+            },
+          },
+          newText: "", // This would be populated with the actual fix
+          explanation: issue.message,
         },
-        newText: '', // This would be populated with the actual fix
-        explanation: issue.message,
-      }],
+      ],
     }));
   }, [issues]);
-  
+
   // Implementation of applyFix
   const handlePreviewFix = useCallback((fix: CodeFix) => {
     // Implementation for previewing a fix
-    console.log('Previewing fix:', fix);
+    console.log("Previewing fix:", fix);
   }, []);
 
   const handleApplyAllFixes = async () => {
     try {
       setIsApplyingFix(true);
-      const fixesToApply = fixes.filter(fix => fix.status === 'suggested');
+      const fixesToApply = fixes.filter((fix) => fix.status === "suggested");
       for (const fix of fixesToApply) {
         await fixIssues({
           filePath: fix.filePath,
-          issues: [{
-            filePath: fix.filePath,
-            message: fix.message,
-            severity: fix.severity,
-            ruleId: fix.ruleId || '',
-            lineNumber: fix.lineNumber,
-            column: fix.column || 0,
-            category: fix.category,
-            analyzer: fix.analyzer || 'typescript',
-            fix: {
-              range: [fix.column || 0, (fix.column || 0) + 10],
-              text: ''
-            }
-          }],
+          issues: [
+            {
+              filePath: fix.filePath,
+              message: fix.message,
+              severity: fix.severity,
+              ruleId: fix.ruleId || "",
+              lineNumber: fix.lineNumber,
+              column: fix.column || 0,
+              category: fix.category,
+              analyzer: fix.analyzer || "typescript",
+              fix: {
+                range: [fix.column || 0, (fix.column || 0) + 10],
+                text: "",
+              },
+            },
+          ],
           autoApply: true,
           dryRun: false,
         });
@@ -161,15 +182,17 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
     try {
       setIsApplyingFix(true);
       await fixIssues({
-        issues: [{
-          filePath: fix.filePath,
-          message: fix.message,
-          severity: fix.severity,
-          ruleId: fix.ruleId,
-          lineNumber: fix.lineNumber,
-          category: fix.category || 'style',
-          analyzer: 'mcp',
-        }],
+        issues: [
+          {
+            filePath: fix.filePath,
+            message: fix.message,
+            severity: fix.severity,
+            ruleId: fix.ruleId,
+            lineNumber: fix.lineNumber,
+            category: fix.category || "style",
+            analyzer: "mcp",
+          },
+        ],
         autoApply: true,
         dryRun: false,
       });
@@ -177,7 +200,7 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
       setIsApplyingFix(false);
     }
   };
-  
+
   // Helper to get file name from path
   const getFileName = (filePath: string) => {
     const parts = filePath.split(/[\\/]/);
@@ -187,7 +210,7 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
   const getFixesForFile = async (filePath: string) => {
     try {
       setIsFetchingFixes(true);
-      await scanProject({ filePath, scanType: 'on-save' });
+      await scanProject({ filePath, scanType: "on-save" });
     } finally {
       setIsFetchingFixes(false);
     }
@@ -325,19 +348,19 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
             </Box>
 
             {change.explanation && (
-              <Box sx={{ 
-                p: 2, 
-                bgcolor: 'info.light', 
-                color: 'info.contrastText',
-                borderRadius: 1,
-                mb: 2
-              }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: "info.light",
+                  color: "info.contrastText",
+                  borderRadius: 1,
+                  mb: 2,
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
                   Why this fix?
                 </Typography>
-                <Typography variant="body2">
-                  {change.explanation}
-                </Typography>
+                <Typography variant="body2">{change.explanation}</Typography>
               </Box>
             )}
           </Box>
@@ -414,18 +437,18 @@ const FixPanel: React.FC<FixPanelProps> = ({ selectedFile, className }) => {
                 label={fix.status}
                 size="small"
                 color={
-                  fix.status === 'applied' 
-                    ? 'success' as const
-                    : fix.status === 'rejected' 
-                      ? 'error' as const
-                      : 'default' as const
+                  fix.status === "applied"
+                    ? ("success" as const)
+                    : fix.status === "rejected"
+                      ? ("error" as const)
+                      : ("default" as const)
                 }
                 variant="outlined"
-                sx={{ 
-                  ml: 1, 
-                  textTransform: 'capitalize',
+                sx={{
+                  ml: 1,
+                  textTransform: "capitalize",
                   color: getSeverityColor(fix.severity),
-                  borderColor: getSeverityColor(fix.severity)
+                  borderColor: getSeverityColor(fix.severity),
                 }}
               />
             )}

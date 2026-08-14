@@ -2,12 +2,13 @@
 Security scanner for detecting vulnerabilities and security issues in code.
 """
 import ast
-import re
 import json
-import aiohttp
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
 import logging
+import re
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import aiohttp
 
 logger = logging.getLogger(__name__)
 

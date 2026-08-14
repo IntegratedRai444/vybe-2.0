@@ -27,7 +27,9 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(
 export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isConnected, setIsConnected] = useState(webSocketClient.isConnectedMethod());
+  const [isConnected, setIsConnected] = useState(
+    webSocketClient.isConnectedMethod(),
+  );
   const [error, setError] = useState<Error | null>(null);
 
   // Handle connection status changes
@@ -35,7 +37,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
     const handleConnect = () => {
       setIsConnected(true);
     };
-    
+
     const handleDisconnect = () => {
       setIsConnected(false);
     };
@@ -58,7 +60,10 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
 
     // Set up event listeners
     const unsubscribeConnect = webSocketClient.on("connected", handleConnect);
-    const unsubscribeDisconnect = webSocketClient.on("disconnected", handleDisconnect);
+    const unsubscribeDisconnect = webSocketClient.on(
+      "disconnected",
+      handleDisconnect,
+    );
 
     return () => {
       unsubscribeConnect();
@@ -85,7 +90,10 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
       setIsConnected(connected);
       return connected;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error("Failed to connect to WebSocket");
+      const error =
+        err instanceof Error
+          ? err
+          : new Error("Failed to connect to WebSocket");
       setError(error);
       throw error;
     }
@@ -100,7 +108,10 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
     try {
       await webSocketClient.subscribe(channel);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error(`Failed to subscribe to ${channel}`);
+      const error =
+        err instanceof Error
+          ? err
+          : new Error(`Failed to subscribe to ${channel}`);
       setError(error);
       throw error;
     }
@@ -108,19 +119,22 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
 
   const unsubscribe = useCallback((channel: string) => {
     webSocketClient.unsubscribe(channel).catch((err) => {
-      const error = err instanceof Error ? err : new Error(`Failed to unsubscribe from ${channel}`);
+      const error =
+        err instanceof Error
+          ? err
+          : new Error(`Failed to unsubscribe from ${channel}`);
       setError(error);
       console.error(error);
     });
   }, []);
 
-  const on = useCallback(<T extends string>(
-    eventType: T,
-    handler: (event: any) => void,
-  ) => {
-    // @ts-ignore - We're using a simplified type here
-    return webSocketClient.on(eventType, handler);
-  }, []);
+  const on = useCallback(
+    <T extends string>(eventType: T, handler: (event: any) => void) => {
+      // @ts-ignore - We're using a simplified type here
+      return webSocketClient.on(eventType, handler);
+    },
+    [],
+  );
 
   const value: WebSocketContextType = {
     isConnected,
@@ -137,7 +151,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
       {error && (
         <div className="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg">
           WebSocket Error: {error.message}
-          <button 
+          <button
             onClick={() => setError(null)}
             className="ml-4 px-2 py-1 bg-red-600 rounded hover:bg-red-700"
           >

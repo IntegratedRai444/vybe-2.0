@@ -1,8 +1,8 @@
 import os
 import re
-from pathlib import Path
 from collections import defaultdict
-from typing import Dict, Set, List
+from pathlib import Path
+from typing import Dict, List, Set
 
 
 class ImportAnalyzer:

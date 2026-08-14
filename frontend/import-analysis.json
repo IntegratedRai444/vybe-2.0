@@ -244,9 +244,5 @@
       "importedBy": []
     }
   ],
-  "entryPoints": [
-    "App.tsx",
-    "main.tsx",
-    "index.tsx"
-  ]
+  "entryPoints": ["App.tsx", "main.tsx", "index.tsx"]
 }

@@ -1,4 +1,4 @@
 // Auto-generated file - DO NOT EDIT
 
-export * from './ChatPanel';
-export * from './ExplorerPanel';
+export * from "./ChatPanel";
+export * from "./ExplorerPanel";

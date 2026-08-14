@@ -2,7 +2,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { store } from "../../store";
 import { logoutUser } from "../../store/slices/authSlice";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 class ApiClient {
   private client: AxiosInstance;
@@ -40,7 +41,7 @@ class ApiClient {
         if (error.response?.status === 401) {
           // Token expired or invalid, log out the user
           await logoutUser();
-          window.location.href = '/login';
+          window.location.href = "/login";
         }
         return Promise.reject(error);
       },

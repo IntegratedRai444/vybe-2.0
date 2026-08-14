@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * A custom hook that debounces a value.
@@ -28,10 +28,10 @@ export default useDebounce;
 
 /**
  * Example usage:
- * 
+ *
  * const [searchTerm, setSearchTerm] = useState('');
  * const debouncedSearchTerm = useDebounce(searchTerm, 300);
- * 
+ *
  * // This effect will only run when debouncedSearchTerm changes
  * // (i.e., when the user stops typing for 300ms)
  * useEffect(() => {

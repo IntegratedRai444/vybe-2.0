@@ -1,12 +1,12 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { SplitPane } from './SplitPane';
-import { CodeEditor } from './CodeEditor';
-import { DebugMonacoEditor } from './DebugMonacoEditor';
-import { EditorTabs } from './EditorTabs';
-import { EditorToolbar } from './EditorToolbar';
-import { EditorSettings } from './EditorSettings';
-import { FormatSettings } from './FormatSettings';
-import { InlineCompletion } from './InlineCompletion';
+import React, { useState, useRef, useCallback } from "react";
+import { SplitPane } from "./SplitPane";
+import { CodeEditor } from "./CodeEditor";
+import { DebugMonacoEditor } from "./DebugMonacoEditor";
+import { EditorTabs } from "./EditorTabs";
+import { EditorToolbar } from "./EditorToolbar";
+import { EditorSettings } from "./EditorSettings";
+import { FormatSettings } from "./FormatSettings";
+import { InlineCompletion } from "./InlineCompletion";
 
 type EditorSettingsType = {
   fontSize?: number;
@@ -18,7 +18,7 @@ type EditorSettingsType = {
   formatOnSave?: boolean;
   tabSize?: number;
   insertSpaces?: boolean;
-  lineNumbers?: 'on' | 'off' | 'relative';
+  lineNumbers?: "on" | "off" | "relative";
 };
 
 // Define types for our editor tabs
@@ -41,25 +41,25 @@ export interface EditorLayoutProps {
 
 export const EditorLayout: React.FC<EditorLayoutProps> = ({
   initialFiles = [
-    { 
-      id: 'file1', 
-      name: 'App.tsx', 
-      content: '// Start coding...\n', 
-      language: 'typescript',
-      isDirty: false
+    {
+      id: "file1",
+      name: "App.tsx",
+      content: "// Start coding...\n",
+      language: "typescript",
+      isDirty: false,
     },
-    { 
-      id: 'file2', 
-      name: 'styles.css', 
-      content: '/* Your styles here */', 
-      language: 'css',
-      isDirty: false
+    {
+      id: "file2",
+      name: "styles.css",
+      content: "/* Your styles here */",
+      language: "css",
+      isDirty: false,
     },
   ],
-  initialActiveFileId = 'file1',
+  initialActiveFileId = "file1",
   onSave,
   onFileChange,
-  className = ''
+  className = "",
 }) => {
   const [files, setFiles] = useState<EditorTab[]>(initialFiles);
   const [activeFileId, setActiveFileId] = useState<string>(initialActiveFileId);
@@ -67,7 +67,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
   const [isDebugMode, setIsDebugMode] = useState<boolean>(false);
   const [settings, setSettings] = useState<EditorSettingsType>({
     fontSize: 14,
-    theme: 'vs-dark',
+    theme: "vs-dark",
     wordWrap: true,
     minimap: true,
     autoSave: false,
@@ -75,29 +75,32 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
     formatOnSave: true,
     tabSize: 2,
     insertSpaces: true,
-    lineNumbers: 'on'
+    lineNumbers: "on",
   });
-  
+
   const editorRef = useRef<any>(null);
 
   // Get active file data
-  const activeFile = files.find(file => file.id === activeFileId) || files[0];
-  
+  const activeFile = files.find((file) => file.id === activeFileId) || files[0];
+
   // Handle code changes
-  const handleCodeChange = useCallback((value: string = '') => {
-    const updatedFiles = files.map(file => 
-      file.id === activeFileId 
-        ? { ...file, content: value, isDirty: true } 
-        : file
-    );
-    
-    setFiles(updatedFiles);
-    
-    const currentFile = updatedFiles.find(f => f.id === activeFileId);
-    if (currentFile && onFileChange) {
-      onFileChange(currentFile);
-    }
-  }, [activeFileId, files, onFileChange]);
+  const handleCodeChange = useCallback(
+    (value: string = "") => {
+      const updatedFiles = files.map((file) =>
+        file.id === activeFileId
+          ? { ...file, content: value, isDirty: true }
+          : file,
+      );
+
+      setFiles(updatedFiles);
+
+      const currentFile = updatedFiles.find((f) => f.id === activeFileId);
+      if (currentFile && onFileChange) {
+        onFileChange(currentFile);
+      }
+    },
+    [activeFileId, files, onFileChange],
+  );
 
   // Handle tab changes
   const handleTabChange = useCallback((fileId: string) => {
@@ -105,37 +108,40 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
   }, []);
 
   // Handle tab close
-  const handleTabClose = useCallback((fileId: string) => {
-    if (files.length <= 1) return; // Don't close the last tab
-    
-    const newFiles = files.filter(file => file.id !== fileId);
-    setFiles(newFiles);
-    
-    // If we're closing the active tab, switch to another one
-    if (fileId === activeFileId && newFiles.length > 0) {
-      const newActiveFileId = newFiles[0].id;
-      setActiveFileId(newActiveFileId);
-    }
-  }, [activeFileId, files]);
+  const handleTabClose = useCallback(
+    (fileId: string) => {
+      if (files.length <= 1) return; // Don't close the last tab
+
+      const newFiles = files.filter((file) => file.id !== fileId);
+      setFiles(newFiles);
+
+      // If we're closing the active tab, switch to another one
+      if (fileId === activeFileId && newFiles.length > 0) {
+        const newActiveFileId = newFiles[0].id;
+        setActiveFileId(newActiveFileId);
+      }
+    },
+    [activeFileId, files],
+  );
 
   // Format code
   const formatCode = useCallback(() => {
     if (editorRef.current) {
-      editorRef.current.trigger('editor', 'editor.action.formatDocument');
+      editorRef.current.trigger("editor", "editor.action.formatDocument");
     }
   }, []);
 
   // Save current file
   const handleSave = useCallback(() => {
-    const fileToSave = files.find(f => f.id === activeFileId);
+    const fileToSave = files.find((f) => f.id === activeFileId);
     if (fileToSave) {
       const updatedFile = { ...fileToSave, isDirty: false };
-      const updatedFiles = files.map(f => 
-        f.id === activeFileId ? updatedFile : f
+      const updatedFiles = files.map((f) =>
+        f.id === activeFileId ? updatedFile : f,
       );
-      
+
       setFiles(updatedFiles);
-      
+
       if (onSave) {
         onSave(updatedFile);
       }
@@ -144,29 +150,36 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
 
   // Toggle debug mode
   const toggleDebugMode = useCallback(() => {
-    setIsDebugMode(prev => !prev);
+    setIsDebugMode((prev) => !prev);
   }, []);
 
   // Handle settings change
-  const handleSettingsChange = useCallback((newSettings: Partial<EditorSettingsType>) => {
-    setSettings(prev => ({
-      ...prev,
-      ...newSettings
-    }));
-  }, []);
+  const handleSettingsChange = useCallback(
+    (newSettings: Partial<EditorSettingsType>) => {
+      setSettings((prev) => ({
+        ...prev,
+        ...newSettings,
+      }));
+    },
+    [],
+  );
 
   if (!activeFile) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-900">
-        <p className="text-gray-500 dark:text-gray-400">No file is currently open</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          No file is currently open
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={`flex flex-col h-full bg-gray-100 dark:bg-gray-900 ${className}`}>
+    <div
+      className={`flex flex-col h-full bg-gray-100 dark:bg-gray-900 ${className}`}
+    >
       {/* Toolbar */}
-      <EditorToolbar 
+      <EditorToolbar
         onSave={handleSave}
         onFormat={formatCode}
         onToggleSettings={() => setShowSettings(!showSettings)}
@@ -176,7 +189,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
       />
 
       {/* Editor Tabs */}
-      <EditorTabs 
+      <EditorTabs
         files={files}
         activeFile={activeFileId}
         onTabChange={handleTabChange}
@@ -209,9 +222,9 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
                   }}
                 />
               )}
-              
+
               {/* Inline Code Completion */}
-              <InlineCompletion 
+              <InlineCompletion
                 value={activeFile.content}
                 onComplete={(suggestion) => {
                   // Handle code completion
@@ -226,7 +239,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
                 {activeFile.name} Preview
               </h3>
               <div className="prose dark:prose-invert max-w-none">
-                {activeFile.language === 'markdown' ? (
+                {activeFile.language === "markdown" ? (
                   // Render markdown preview
                   <p className="text-gray-700 dark:text-gray-300">
                     Markdown preview would be rendered here
@@ -252,28 +265,39 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Editor Settings
               </h2>
-              <button 
+              <button
                 onClick={() => setShowSettings(false)}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
                 aria-label="Close settings"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
-            <EditorSettings 
+            <EditorSettings
               isOpen={showSettings}
               settings={settings}
               onSettingsChange={handleSettingsChange}
               onClose={() => setShowSettings(false)}
             />
-            
+
             <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                 Formatting Options
               </h3>
-              <FormatSettings 
+              <FormatSettings
                 settings={{
                   tabSize: settings.tabSize || 2,
                   insertSpaces: settings.insertSpaces !== false,
@@ -286,7 +310,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({
                 }}
               />
             </div>
-            
+
             <div className="mt-6 pt-4 flex justify-end space-x-3">
               <button
                 type="button"

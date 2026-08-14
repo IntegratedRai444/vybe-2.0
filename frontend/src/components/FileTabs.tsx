@@ -13,7 +13,12 @@ type Props = {
   onTabClose: (path: string) => void;
 };
 
-export const FileTabs: React.FC<Props> = ({ tabs, activeTab, onTabClick, onTabClose }) => {
+export const FileTabs: React.FC<Props> = ({
+  tabs,
+  activeTab,
+  onTabClick,
+  onTabClose,
+}) => {
   if (tabs.length === 0) return null;
 
   return (
@@ -22,8 +27,8 @@ export const FileTabs: React.FC<Props> = ({ tabs, activeTab, onTabClick, onTabCl
         <div
           key={tab.path}
           className={`flex items-center px-3 py-2 border-r border-gray-700 cursor-pointer min-w-0 ${
-            activeTab === tab.path 
-              ? "bg-gray-700 text-white" 
+            activeTab === tab.path
+              ? "bg-gray-700 text-white"
               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
           }`}
           onClick={() => onTabClick(tab.path)}

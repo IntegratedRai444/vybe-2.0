@@ -1,15 +1,15 @@
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add the parent directory to the path so we can import our models
 sys.path.append(str(Path(__file__).parent.parent))
 
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
 from core.security import get_password_hash
-from models.user import User, UserRole
 from db.session import get_db
+from models.user import User, UserRole
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
 # Get database URL from environment or use default
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")

@@ -21,7 +21,7 @@ Write-Host "This may take a while for large projects...`n" -ForegroundColor Yell
 $files = Get-ChildItem -Path $projectRoot -File -Recurse -Force -ErrorAction SilentlyContinue |
     Where-Object {
         $file = $_
-        $excludeDirs | ForEach-Object { 
+        $excludeDirs | ForEach-Object {
             if ($file.FullName -like "$projectRoot\$_") { return $false }
         }
         return $true
@@ -32,35 +32,35 @@ $totalCount = $files.Count
 $totalSize = ($files | Measure-Object -Property Length -Sum).Sum
 
 # Group by extension
-$extGroups = $files | Group-Object -Property Extension | 
+$extGroups = $files | Group-Object -Property Extension |
     Sort-Object -Property Count -Descending |
     Select-Object @{Name="Extension";Expression={if($_.Name -eq '') {'.noext'} else {$_.Name}}},
                   @{Name="Count";Expression={$_.Count}},
                   @{Name="Size (MB)";Expression={[math]::Round(($_.Group | Measure-Object -Property Length -Sum).Sum / 1MB, 2)}}
 
 # Get largest files
-$largestFiles = $files | 
-    Sort-Object -Property Length -Descending | 
-    Select-Object -First 10 | 
+$largestFiles = $files |
+    Sort-Object -Property Length -Descending |
+    Select-Object -First 10 |
     Select-Object @{Name="Size (MB)";Expression={[math]::Round($_.Length / 1MB, 2)}}, Name, FullName
 
 # Get largest directories
 $dirs = Get-ChildItem -Path $projectRoot -Directory -Recurse -Force -ErrorAction SilentlyContinue |
     Where-Object {
         $dir = $_
-        $excludeDirs | ForEach-Object { 
+        $excludeDirs | ForEach-Object {
             if ($dir.FullName -like "$projectRoot\$_") { return $false }
         }
         return $true
     } |
     Select-Object @{Name="Path";Expression={$_.FullName}},
                   @{Name="FileCount";Expression={
-                      (Get-ChildItem -Path $_.FullName -File -Recurse -Force -ErrorAction SilentlyContinue | 
+                      (Get-ChildItem -Path $_.FullName -File -Recurse -Force -ErrorAction SilentlyContinue |
                        Where-Object { $_.FullName -notlike "*\node_modules\*" }).Count
                   }},
                   @{Name="Size (MB)";Expression={
-                      [math]::Round((Get-ChildItem -Path $_.FullName -File -Recurse -Force -ErrorAction SilentlyContinue | 
-                                    Where-Object { $_.FullName -notlike "*\node_modules\*" } | 
+                      [math]::Round((Get-ChildItem -Path $_.FullName -File -Recurse -Force -ErrorAction SilentlyContinue |
+                                    Where-Object { $_.FullName -notlike "*\node_modules\*" } |
                                     Measure-Object -Property Length -Sum).Sum / 1MB, 2)
                   }}
 

@@ -78,9 +78,11 @@ export const useGitBranch = () => useGitStore((state) => state.branch);
 export const useGitBranches = () => useGitStore((state) => state.branches);
 export const useGitStatus = () => useGitStore((state) => state.status);
 export const useStagedFiles = () => useGitStore((state) => state.stagedFiles);
-export const useUnstagedFiles = () => useGitStore((state) => state.unstagedFiles);
+export const useUnstagedFiles = () =>
+  useGitStore((state) => state.unstagedFiles);
 export const useGitCommits = () => useGitStore((state) => state.commits);
-export const useCurrentCommit = () => useGitStore((state) => state.currentCommit);
+export const useCurrentCommit = () =>
+  useGitStore((state) => state.currentCommit);
 export const useGitConnection = () => useGitStore((state) => state.isConnected);
 export const useGitLoading = () => useGitStore((state) => state.isLoading);
 export const useGitError = () => useGitStore((state) => state.error);

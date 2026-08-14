@@ -16,7 +16,7 @@ $excludeDirs = @(
 # Function to check if a path should be excluded
 function Should-ExcludePath {
     param([string]$path)
-    
+
     foreach ($pattern in $excludeDirs) {
         if ($path -like "$projectRoot\$pattern") {
             return $true
@@ -30,16 +30,16 @@ Write-Host "`n=== FINDING EMPTY FILES AND FOLDERS ===`n" -ForegroundColor Yellow
 
 # Find empty files
 $emptyFiles = Get-ChildItem -Path $projectRoot -File -Recurse -Force -ErrorAction SilentlyContinue |
-    Where-Object { 
+    Where-Object {
         $_.Length -eq 0 -and -not (Should-ExcludePath $_.FullName)
-    } | 
+    } |
     Select-Object @{Name="Type";Expression={"File"}}, FullName, Length
 
 # Find empty directories
 $emptyDirs = Get-ChildItem -Path $projectRoot -Directory -Recurse -Force -ErrorAction SilentlyContinue |
-    Where-Object { 
+    Where-Object {
         $dir = $_
-        -not (Should-ExcludePath $dir.FullName) -and 
+        -not (Should-ExcludePath $dir.FullName) -and
         -not (Get-ChildItem -Path $dir.FullName -Recurse -Force -ErrorAction SilentlyContinue | Select-Object -First 1)
     } |
     Select-Object @{Name="Type";Expression={"Directory"}}, FullName, @{Name="Length";Expression={"0"}}
@@ -93,7 +93,7 @@ if ($duplicateGroups.Count -gt 0) {
 Write-Host "`n=== FINDING POTENTIALLY UNUSED FILES ===`n" -ForegroundColor Yellow
 
 $unusedPatterns = @(
-    "*.tmp", "*.temp", "*.bak", "*.swp", "*.swo", "*.swn", "*~", 
+    "*.tmp", "*.temp", "*.bak", "*.swp", "*.swo", "*.swn", "*~",
     "*.log", "*.dmp", "Thumbs.db", ".DS_Store", "desktop.ini"
 )
 

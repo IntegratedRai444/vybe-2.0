@@ -2,19 +2,19 @@ import logging
 import time
 import uuid
 from datetime import datetime
-from typing import Awaitable, Callable, Dict, Any, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 from fastapi import HTTPException, Request, Response
 from fastapi.responses import JSONResponse
+from prometheus_client import Counter, Histogram
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
-from prometheus_client import Counter, Histogram
 
 from .config import settings
-from .security import rate_limit_key_builder
 from .monitoring_config import config
+from .security import rate_limit_key_builder
 
 # Configure logging
 logger = logging.getLogger(__name__)

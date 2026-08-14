@@ -1,4 +1,4 @@
-export type FileType = 'file' | 'directory';
+export type FileType = "file" | "directory";
 
 export interface FileSystemItem {
   id: string;
@@ -55,14 +55,14 @@ export interface GitContextType {
 
 export interface AIMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: number;
 }
 
 export interface TerminalMessage {
   id: string;
-  type: 'command' | 'output' | 'error';
+  type: "command" | "output" | "error";
   content: string;
   timestamp: number;
 }
@@ -88,7 +88,7 @@ export interface EditorSettingsType {
   wordWrap: boolean;
   minimap: boolean;
   theme: string;
-  lineNumbers: 'on' | 'off' | 'relative';
+  lineNumbers: "on" | "off" | "relative";
 }
 
 export interface PanelProps {
@@ -212,7 +212,7 @@ export interface AppState {
   branchToMerge: string;
   commitToCherryPick: string;
   commitToRevert: string;
-  resetMode: 'soft' | 'mixed' | 'hard';
+  resetMode: "soft" | "mixed" | "hard";
   commitToReset: string;
   filesToStage: string[];
   filesToUnstage: string[];
@@ -244,7 +244,7 @@ export interface AppState {
   renamePath: string | null;
   renameValue: string;
   newFileName: string;
-  newFileType: 'file' | 'folder';
+  newFileType: "file" | "folder";
   deletePath: string | null;
   uploadProgress: number;
   uploadFiles: File[];
@@ -282,7 +282,7 @@ export interface AppState {
 }
 
 export interface PanelGroupProps {
-  direction: 'horizontal' | 'vertical';
+  direction: "horizontal" | "vertical";
   children: React.ReactNode;
   className?: string;
 }
@@ -301,7 +301,7 @@ declare global {
 }
 
 export interface TerminalMessage {
-  type: 'input' | 'output' | 'error';
+  type: "input" | "output" | "error";
   content: string;
 }
 

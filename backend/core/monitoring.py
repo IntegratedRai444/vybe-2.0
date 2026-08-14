@@ -2,13 +2,14 @@
 Monitoring and metrics module for Vybe 2.0 API.
 Handles Prometheus metrics, health checks, and system monitoring.
 """
-import time
-import psutil
 import logging
-from typing import Dict, Any, Optional
+import time
+from typing import Any, Dict, Optional
+
+import psutil
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from .monitoring_config import config
 

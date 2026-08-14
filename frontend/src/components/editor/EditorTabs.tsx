@@ -22,16 +22,20 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
   activeFile,
   onTabChange,
   onTabClose,
-  className = '',
+  className = "",
 }) => {
   if (files.length === 0) {
     return (
-      <div className={`h-10 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 ${className}`} />
+      <div
+        className={`h-10 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 ${className}`}
+      />
     );
   }
 
   return (
-    <div className={`flex items-center bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 overflow-x-auto ${className}`}>
+    <div
+      className={`flex items-center bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 overflow-x-auto ${className}`}
+    >
       {files.map((file) => (
         <div
           key={file.id}
@@ -64,116 +68,116 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
 };
 
 function getFileIcon(filename: string, language?: string): string {
-  const extension = filename.split('.').pop()?.toLowerCase() || '';
-  
+  const extension = filename.split(".").pop()?.toLowerCase() || "";
+
   // Language-specific icons (takes precedence over file extension)
   const languageIcons: Record<string, string> = {
-    javascript: '\uec68',
-    typescript: '\ue628',
-    python: '\ue73c',
-    java: '\ue738',
-    c: '\ue61e',
-    cpp: '\ue61d',
-    csharp: '\uf81a',
-    go: '\ue65e',
-    php: '\ue73d',
-    ruby: '\ue739',
-    rust: '\ue7a8',
-    swift: '\ue755',
-    kotlin: '\ue634',
-    dart: '\ue798',
-    html: '\ue736',
-    css: '\ue749',
-    scss: '\ue74b',
-    less: '\ue758',
-    json: '\ue60b',
-    yaml: '\uf19a',
-    markdown: '\ue73e',
-    dockerfile: '\uf308',
-    bash: '\uf489',
-    shell: '\uf489',
-    sql: '\ue0fe',
-    graphql: '\ue33b',
-    vue: '\ue7ba',
-    svelte: '\ue697',
+    javascript: "\uec68",
+    typescript: "\ue628",
+    python: "\ue73c",
+    java: "\ue738",
+    c: "\ue61e",
+    cpp: "\ue61d",
+    csharp: "\uf81a",
+    go: "\ue65e",
+    php: "\ue73d",
+    ruby: "\ue739",
+    rust: "\ue7a8",
+    swift: "\ue755",
+    kotlin: "\ue634",
+    dart: "\ue798",
+    html: "\ue736",
+    css: "\ue749",
+    scss: "\ue74b",
+    less: "\ue758",
+    json: "\ue60b",
+    yaml: "\uf19a",
+    markdown: "\ue73e",
+    dockerfile: "\uf308",
+    bash: "\uf489",
+    shell: "\uf489",
+    sql: "\ue0fe",
+    graphql: "\ue33b",
+    vue: "\ue7ba",
+    svelte: "\ue697",
   };
 
   // File extension fallbacks
   const extensionIcons: Record<string, string> = {
     // Code files
-    js: '\uec68',
-    jsx: '\ue7ba',
-    ts: '\ue628',
-    tsx: '\ue7ba',
-    py: '\ue73c',
-    java: '\ue738',
-    c: '\ue61e',
-    h: '\ue61e',
-    cpp: '\ue61d',
-    hpp: '\ue61d',
-    cs: '\uf81a',
-    go: '\ue65e',
-    php: '\ue73d',
-    rb: '\ue739',
-    rs: '\ue7a8',
-    swift: '\ue755',
-    kt: '\ue634',
-    dart: '\ue798',
+    js: "\uec68",
+    jsx: "\ue7ba",
+    ts: "\ue628",
+    tsx: "\ue7ba",
+    py: "\ue73c",
+    java: "\ue738",
+    c: "\ue61e",
+    h: "\ue61e",
+    cpp: "\ue61d",
+    hpp: "\ue61d",
+    cs: "\uf81a",
+    go: "\ue65e",
+    php: "\ue73d",
+    rb: "\ue739",
+    rs: "\ue7a8",
+    swift: "\ue755",
+    kt: "\ue634",
+    dart: "\ue798",
 
     // Web
-    html: '\ue736',
-    htm: '\ue736',
-    css: '\ue749',
-    scss: '\ue74b',
-    sass: '\ue74b',
-    less: '\ue758',
-    json: '\ue60b',
+    html: "\ue736",
+    htm: "\ue736",
+    css: "\ue749",
+    scss: "\ue74b",
+    sass: "\ue74b",
+    less: "\ue758",
+    json: "\ue60b",
 
     // Config
-    yaml: '\uf19a',
-    yml: '\uf19a',
-    toml: '\ue615',
-    ini: '\ue615',
-    env: '\uf462',
-    gitignore: '\uf1d3',
-    gitmodules: '\uf1d3',
+    yaml: "\uf19a",
+    yml: "\uf19a",
+    toml: "\ue615",
+    ini: "\ue615",
+    env: "\uf462",
+    gitignore: "\uf1d3",
+    gitmodules: "\uf1d3",
 
     // Documents
-    md: '\ue73e',
-    markdown: '\ue73e',
-    txt: '\uf15c',
-    pdf: '\uf1c1',
-    doc: '\uf1c2',
-    docx: '\uf1c2',
-    xls: '\uf1c3',
-    xlsx: '\uf1c3',
-    ppt: '\uf1c4',
-    pptx: '\uf1c4',
+    md: "\ue73e",
+    markdown: "\ue73e",
+    txt: "\uf15c",
+    pdf: "\uf1c1",
+    doc: "\uf1c2",
+    docx: "\uf1c2",
+    xls: "\uf1c3",
+    xlsx: "\uf1c3",
+    ppt: "\uf1c4",
+    pptx: "\uf1c4",
 
     // Images
-    png: '\uf1c5',
-    jpg: '\uf1c5',
-    jpeg: '\uf1c5',
-    gif: '\uf1c5',
-    svg: '\uf1c5',
-    ico: '\uf1c5',
-    webp: '\uf1c5',
+    png: "\uf1c5",
+    jpg: "\uf1c5",
+    jpeg: "\uf1c5",
+    gif: "\uf1c5",
+    svg: "\uf1c5",
+    ico: "\uf1c5",
+    webp: "\uf1c5",
 
     // Archives
-    zip: '\uf1c6',
-    rar: '\uf1c6',
-    '7z': '\uf1c6',
-    tar: '\uf1c6',
-    gz: '\uf1c6',
-    bz2: '\uf1c6',
-    xz: '\uf1c6',
+    zip: "\uf1c6",
+    rar: "\uf1c6",
+    "7z": "\uf1c6",
+    tar: "\uf1c6",
+    gz: "\uf1c6",
+    bz2: "\uf1c6",
+    xz: "\uf1c6",
   };
 
   // Check for language-specific icon first, then file extension, then default
   return (
     (language && languageIcons[language.toLowerCase()]) ||
     extensionIcons[extension] ||
-    '\uf15b' // Default document icon
+    "\uf15b" // Default document icon
   );
 }
 

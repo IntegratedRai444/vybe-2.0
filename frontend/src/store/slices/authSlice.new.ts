@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { apiClient } from '../../../services/apiClient';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { apiClient } from "../../../services/apiClient";
 
 // Types
 interface User {
@@ -47,39 +47,50 @@ const initialState: AuthState = {
 };
 
 // Async thunks
-export const login = createAsyncThunk<AuthResponse, LoginCredentials, { rejectValue: string }>(
-  'auth/login',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post('/auth/login', credentials);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
-    }
+export const login = createAsyncThunk<
+  AuthResponse,
+  LoginCredentials,
+  { rejectValue: string }
+>("auth/login", async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await apiClient.post("/auth/login", credentials);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || "Login failed");
   }
-);
+});
 
-export const refreshToken = createAsyncThunk<AuthResponse, void, { rejectValue: string }>(
-  'auth/refreshToken',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as { auth: AuthState };
-      const response = await apiClient.post('/auth/refresh-token', {
-        refreshToken: state.auth.refreshToken,
-      });
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to refresh token');
-    }
+export const refreshToken = createAsyncThunk<
+  AuthResponse,
+  void,
+  { rejectValue: string }
+>("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
+  try {
+    const state = getState() as { auth: AuthState };
+    const response = await apiClient.post("/auth/refresh-token", {
+      refreshToken: state.auth.refreshToken,
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Failed to refresh token",
+    );
   }
-);
+});
 
 // Create the auth slice
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ token: string; refreshToken: string; user: User }>) => {
+    setCredentials: (
+      state,
+      action: PayloadAction<{
+        token: string;
+        refreshToken: string;
+        user: User;
+      }>,
+    ) => {
       const { token, refreshToken, user } = action.payload;
       state.token = token;
       state.refreshToken = refreshToken;
@@ -115,19 +126,22 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        const { token, refreshToken, user } = action.payload;
-        state.token = token;
-        state.refreshToken = refreshToken;
-        state.user = user;
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.lastActive = new Date().toISOString();
-        
-        // Store tokens in localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken);
-      })
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          const { token, refreshToken, user } = action.payload;
+          state.token = token;
+          state.refreshToken = refreshToken;
+          state.user = user;
+          state.isAuthenticated = true;
+          state.loading = false;
+          state.lastActive = new Date().toISOString();
+
+          // Store tokens in localStorage
+          localStorage.setItem("token", token);
+          localStorage.setItem("refreshToken", refreshToken);
+        },
+      )
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -138,15 +152,18 @@ const authSlice = createSlice({
       .addCase(refreshToken.pending, (state) => {
         state.isTokenRefreshing = true;
       })
-      .addCase(refreshToken.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        const { token, refreshToken, user } = action.payload;
-        state.token = token;
-        state.refreshToken = refreshToken;
-        state.user = user;
-        state.isAuthenticated = true;
-        state.isTokenRefreshing = false;
-        state.lastActive = new Date().toISOString();
-      })
+      .addCase(
+        refreshToken.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          const { token, refreshToken, user } = action.payload;
+          state.token = token;
+          state.refreshToken = refreshToken;
+          state.user = user;
+          state.isAuthenticated = true;
+          state.isTokenRefreshing = false;
+          state.lastActive = new Date().toISOString();
+        },
+      )
       .addCase(refreshToken.rejected, (state, action) => {
         state.isTokenRefreshing = false;
         state.error = action.payload as string;
@@ -155,22 +172,27 @@ const authSlice = createSlice({
 });
 
 // Export actions
-export const { 
-  setCredentials, 
-  clearAuthState, 
-  updateUser, 
-  setLastActive, 
-  clearError 
+export const {
+  setCredentials,
+  clearAuthState,
+  updateUser,
+  setLastActive,
+  clearError,
 } = authSlice.actions;
 
 // Selectors
-export const selectCurrentUser = (state: { auth: AuthState }): User | null => state.auth.user;
-export const selectIsAuthenticated = (state: { auth: AuthState }): boolean => state.auth.isAuthenticated;
-export const selectAuthLoading = (state: { auth: AuthState }): boolean => state.auth.loading;
-export const selectAuthError = (state: { auth: AuthState }): string | null => state.auth.error;
+export const selectCurrentUser = (state: { auth: AuthState }): User | null =>
+  state.auth.user;
+export const selectIsAuthenticated = (state: { auth: AuthState }): boolean =>
+  state.auth.isAuthenticated;
+export const selectAuthLoading = (state: { auth: AuthState }): boolean =>
+  state.auth.loading;
+export const selectAuthError = (state: { auth: AuthState }): string | null =>
+  state.auth.error;
 
 // Reset auth state
 export const resetAuthState = () => (dispatch: any) => {
-  dispatch(clearAuthState());};
+  dispatch(clearAuthState());
+};
 
 export default authSlice.reducer;

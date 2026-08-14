@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 type MessageHandler = (data: any) => void;
 
@@ -15,10 +15,7 @@ interface WebSocketOptions {
   reconnectInterval?: number;
 }
 
-const useWebSocket = (
-  url: string,
-  options: WebSocketOptions = {}
-) => {
+const useWebSocket = (url: string, options: WebSocketOptions = {}) => {
   const {
     onOpen,
     onClose,
@@ -43,7 +40,7 @@ const useWebSocket = (
     ws.current = socket;
 
     socket.onopen = (event) => {
-      console.log('WebSocket connected');
+      console.log("WebSocket connected");
       setIsConnected(true);
       reconnectCount.current = 0;
       onOpen?.();
@@ -57,30 +54,32 @@ const useWebSocket = (
           handler(data);
         }
       } catch (err) {
-        console.error('Error parsing WebSocket message:', err);
+        console.error("Error parsing WebSocket message:", err);
       }
     };
 
     socket.onclose = (event) => {
-      console.log('WebSocket disconnected');
+      console.log("WebSocket disconnected");
       setIsConnected(false);
       onClose?.();
 
       // Attempt to reconnect
       if (reconnectCount.current < reconnectAttempts) {
         reconnectCount.current += 1;
-        console.log(`Reconnecting in ${reconnectInterval}ms... (${reconnectCount.current}/${reconnectAttempts})`);
-        
+        console.log(
+          `Reconnecting in ${reconnectInterval}ms... (${reconnectCount.current}/${reconnectAttempts})`,
+        );
+
         reconnectTimeout.current = window.setTimeout(() => {
           connect();
         }, reconnectInterval);
       } else {
-        console.error('Max reconnection attempts reached');
+        console.error("Max reconnection attempts reached");
       }
     };
 
     socket.onerror = (event) => {
-      console.error('WebSocket error:', event);
+      console.error("WebSocket error:", event);
       setError(event);
       onError?.(event);
     };
@@ -112,13 +111,13 @@ const useWebSocket = (
       ws.current.send(JSON.stringify({ type, data }));
       return true;
     }
-    console.error('WebSocket is not connected');
+    console.error("WebSocket is not connected");
     return false;
   }, []);
 
   const subscribe = useCallback((type: string, handler: MessageHandler) => {
     messageHandlers.current.set(type, handler);
-    
+
     // Return cleanup function
     return () => {
       messageHandlers.current.delete(type);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SplitPaneProps {
   left?: React.ReactNode;
@@ -9,7 +9,7 @@ interface SplitPaneProps {
 export const SplitPane: React.FC<SplitPaneProps> = ({
   left,
   right,
-  className = '',
+  className = "",
 }) => {
   return (
     <div className={`flex flex-row h-full ${className}`}>

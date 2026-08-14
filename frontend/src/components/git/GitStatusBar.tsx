@@ -21,7 +21,9 @@ export const GitStatusBar: React.FC = () => {
         <span className="font-medium">{branch}</span>
       </div>
       {status && <SyncStatus status={status} />}
-      {!isConnected && <span className="text-xs text-red-400">Disconnected</span>}
+      {!isConnected && (
+        <span className="text-xs text-red-400">Disconnected</span>
+      )}
     </div>
   );
 };

@@ -1,10 +1,11 @@
 """
 Pydantic models for deployment API
 """
-from typing import List, Optional, Dict, Any, Union
-from enum import Enum
 from datetime import datetime
-from pydantic import BaseModel, Field, validator, HttpUrl
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, Field, HttpUrl, validator
 
 
 class DeploymentStatus(str, Enum):

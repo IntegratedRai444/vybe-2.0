@@ -121,8 +121,8 @@ const mockMCPState: MCPState = {
   fileTree: [],
   config: {
     autoFix: false,
-    excludePatterns: ['**/node_modules/**', '**/.git/**'],
-    includePatterns: ['**/*.{js,jsx,ts,tsx}'],
+    excludePatterns: ["**/node_modules/**", "**/.git/**"],
+    includePatterns: ["**/*.{js,jsx,ts,tsx}"],
   },
   isInitialized: true,
 };
@@ -144,7 +144,8 @@ export const MCPProvider: React.FC<{ children: React.ReactNode }> = ({
         timestamp: new Date().toISOString(),
       }),
       fixIssues: async () => {},
-      explainIssue: async () => "Mock explanation: This is a development build with WebSockets disabled.",
+      explainIssue: async () =>
+        "Mock explanation: This is a development build with WebSockets disabled.",
       updateConfig: async () => {},
       refreshIssues: () => {},
       selectFile: () => {},

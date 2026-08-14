@@ -3,17 +3,18 @@ Enhanced AI Service with advanced features for code analysis, debugging, and sec
 """
 import ast
 import asyncio
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Any, AsyncGenerator
-import aiohttp
 import json
 import logging
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, AsyncGenerator, Dict, List, Optional, Tuple
 
+import aiohttp
+
+from ..models import AIResponse, CodeSnippet, DebugSession, SecurityIssue
 from .code_analysis import CodeAnalyzer
-from .security_scanner import SecurityScanner
 from .debugger import Debugger
-from ..models import AIResponse, CodeSnippet, SecurityIssue, DebugSession
+from .security_scanner import SecurityScanner
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +138,7 @@ class EnhancedAIService:
     ) -> str:
         """Build a system prompt with context."""
         prompt = """
-        You are an expert AI coding assistant. Your task is to help with programming 
+        You are an expert AI coding assistant. Your task is to help with programming
         tasks, including code generation, debugging, and explanation.
         """
 

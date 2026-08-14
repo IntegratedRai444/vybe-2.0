@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 interface DebugState {
   isDebugging: boolean;
@@ -16,25 +16,28 @@ export const useDebugger = () => {
     variables: {},
   });
 
-  const toggleBreakpoint = useCallback((filePath: string, lineNumber: number) => {
-    const breakpointKey = `${filePath}:${lineNumber}`;
-    setState(prev => {
-      const newBreakpoints = new Set(prev.breakpoints);
-      if (newBreakpoints.has(breakpointKey)) {
-        newBreakpoints.delete(breakpointKey);
-      } else {
-        newBreakpoints.add(breakpointKey);
-      }
-      return { ...prev, breakpoints: newBreakpoints };
-    });
-  }, []);
+  const toggleBreakpoint = useCallback(
+    (filePath: string, lineNumber: number) => {
+      const breakpointKey = `${filePath}:${lineNumber}`;
+      setState((prev) => {
+        const newBreakpoints = new Set(prev.breakpoints);
+        if (newBreakpoints.has(breakpointKey)) {
+          newBreakpoints.delete(breakpointKey);
+        } else {
+          newBreakpoints.add(breakpointKey);
+        }
+        return { ...prev, breakpoints: newBreakpoints };
+      });
+    },
+    [],
+  );
 
   const startDebugging = useCallback(() => {
-    setState(prev => ({ ...prev, isDebugging: true }));
+    setState((prev) => ({ ...prev, isDebugging: true }));
   }, []);
 
   const stopDebugging = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isDebugging: false,
       currentLine: undefined,
@@ -44,17 +47,17 @@ export const useDebugger = () => {
 
   const stepOver = useCallback(() => {
     // Implementation for step over
-    console.log('Step over');
+    console.log("Step over");
   }, []);
 
   const stepInto = useCallback(() => {
     // Implementation for step into
-    console.log('Step into');
+    console.log("Step into");
   }, []);
 
   const stepOut = useCallback(() => {
     // Implementation for step out
-    console.log('Step out');
+    console.log("Step out");
   }, []);
 
   return {

@@ -14,12 +14,7 @@ All endpoints return standardized JSON responses with appropriate HTTP status co
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, EmailStr, Field
-from sqlalchemy.orm import Session
-
+import crud
 from core.auth import (
     Token,
     User,
@@ -31,8 +26,12 @@ from core.auth import (
 )
 from core.config import settings
 from db.session import get_db
-import crud
-from models.user import UserCreate, UserResponse, UserUpdate, UserRole
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
+from models.user import UserCreate, UserResponse, UserRole, UserUpdate
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/auth",
@@ -406,6 +405,7 @@ async def log_login_attempt(
 def get_password_reset_token(email: str) -> str:
     """Generate a password reset token."""
     from datetime import datetime, timedelta
+
     from jose import jwt
 
     expires_delta = timedelta(hours=1)

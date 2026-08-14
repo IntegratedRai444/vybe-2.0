@@ -4,20 +4,19 @@ Simple authentication routes for personal use.
 from datetime import timedelta
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
-
+from core.config import settings
 from core.simple_auth import (
     Token,
     create_access_token,
-    get_password_hash,
-    verify_password,
-    get_password_reset_token,
-    verify_password_reset_token,
     get_current_user,
+    get_password_hash,
+    get_password_reset_token,
+    verify_password,
+    verify_password_reset_token,
 )
-from core.config import settings
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 router = APIRouter(tags=["authentication"])
 

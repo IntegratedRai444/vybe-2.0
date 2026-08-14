@@ -20,7 +20,15 @@ export interface CallFrame {
 
 export interface Scope {
   name: string;
-  type: 'local' | 'closure' | 'script' | 'global' | 'with' | 'catch' | 'block' | 'script';
+  type:
+    | "local"
+    | "closure"
+    | "script"
+    | "global"
+    | "with"
+    | "catch"
+    | "block"
+    | "script";
   object: any;
 }
 
@@ -41,7 +49,7 @@ export interface WatchExpression {
 }
 
 export interface ConsoleMessage {
-  type: 'log' | 'info' | 'warn' | 'error' | 'debug' | 'clear';
+  type: "log" | "info" | "warn" | "error" | "debug" | "clear";
   message: string;
   timestamp: number;
   data?: any[];
@@ -65,7 +73,11 @@ export interface DebuggerActions {
   stepOver: () => void;
   stepInto: () => void;
   stepOut: () => void;
-  toggleBreakpoint: (filePath: string, lineNumber: number, condition?: string) => void;
+  toggleBreakpoint: (
+    filePath: string,
+    lineNumber: number,
+    condition?: string,
+  ) => void;
   evaluateExpression: (expression: string) => Promise<any>;
   setVariableValue: (name: string, value: any) => void;
   addWatchExpression: (expression: string) => void;
@@ -75,12 +87,16 @@ export interface DebuggerActions {
 }
 
 export type DebuggerEvent =
-  | { type: 'breakpointHit'; breakpointId: string; callFrames: CallFrame[] }
-  | { type: 'paused'; callFrames: CallFrame[]; reason: 'step' | 'breakpoint' | 'exception' | 'pause' }
-  | { type: 'resumed' }
-  | { type: 'stopped' }
-  | { type: 'console'; message: ConsoleMessage }
-  | { type: 'exception'; error: Error; stackTrace?: string };
+  | { type: "breakpointHit"; breakpointId: string; callFrames: CallFrame[] }
+  | {
+      type: "paused";
+      callFrames: CallFrame[];
+      reason: "step" | "breakpoint" | "exception" | "pause";
+    }
+  | { type: "resumed" }
+  | { type: "stopped" }
+  | { type: "console"; message: ConsoleMessage }
+  | { type: "exception"; error: Error; stackTrace?: string };
 
 export interface DebuggerProviderProps {
   children: React.ReactNode;

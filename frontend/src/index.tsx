@@ -1,20 +1,23 @@
-import React, { Suspense } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { WebSocketProvider } from './contexts/WebSocketContext';
-import { ProjectProvider } from './contexts/ProjectContext';
-import { DebuggerProvider } from './contexts/DebuggerContext';
-import { GitProvider } from './contexts/GitContext';
-import { MCPProvider } from './contexts/MCPContext';
-import { AIProvider } from './components/ai/AIProvider';
-import { store } from './store/store';
-import App from './App';
-import './index.css';
+import React, { Suspense } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
+import { Provider } from "react-redux";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { WebSocketProvider } from "./contexts/WebSocketContext";
+import { ProjectProvider } from "./contexts/ProjectContext";
+import { DebuggerProvider } from "./contexts/DebuggerContext";
+import { GitProvider } from "./contexts/GitContext";
+import { MCPProvider } from "./contexts/MCPContext";
+import { AIProvider } from "./components/ai/AIProvider";
+import { store } from "./store/store";
+import App from "./App";
+import "./index.css";
 
 // Error Boundary Component
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
@@ -25,7 +28,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error("Uncaught error:", error, errorInfo);
   }
 
   render() {
@@ -51,7 +54,7 @@ const LoadingFallback = () => (
 );
 
 // Main application entry point
-const root = createRoot(document.getElementById('root')!);
+const root = createRoot(document.getElementById("root")!);
 
 root.render(
   <React.StrictMode>
@@ -78,5 +81,5 @@ root.render(
         </ThemeProvider>
       </Provider>
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

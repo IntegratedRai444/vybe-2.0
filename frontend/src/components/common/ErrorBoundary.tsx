@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -21,18 +21,20 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error("Uncaught error:", error, errorInfo);
   }
 
   public render() {
     if (this.state.hasError) {
-      return this.props.fallback || (
-        <div className="p-4 text-red-500">
-          <h3>Something went wrong</h3>
-          <pre className="text-xs mt-2 overflow-auto">
-            {this.state.error?.toString()}
-          </pre>
-        </div>
+      return (
+        this.props.fallback || (
+          <div className="p-4 text-red-500">
+            <h3>Something went wrong</h3>
+            <pre className="text-xs mt-2 overflow-auto">
+              {this.state.error?.toString()}
+            </pre>
+          </div>
+        )
       );
     }
 

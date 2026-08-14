@@ -325,7 +325,5 @@
     "tsconfig.node.json",
     "vite.config.ts"
   ],
-  "potentially_unused": [
-    "src\\components\\Toast\\__tests__\\..\\Toast.tsx"
-  ]
+  "potentially_unused": ["src\\components\\Toast\\__tests__\\..\\Toast.tsx"]
 }

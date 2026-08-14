@@ -20,42 +20,42 @@ const Settings: React.FC<SettingsProps> = () => {
   const [localProvider, setLocalProvider] = useState<ProviderType>(provider);
   const [localModel, setLocalModel] = useState(model);
   const [apiKey, setLocalApiKey] = useState('');
-  
+
   // UI State
   const [theme, setTheme] = useState('dark');
   const [fontSize, setFontSize] = useState(14);
   const [autoSave, setAutoSave] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<{
-    type: 'success' | 'error'; 
-    message: string 
+    type: 'success' | 'error';
+    message: string
   } | null>(null);
 
   // Save settings handler
   const handleSaveSettings = async (): Promise<boolean> => {
     try {
       setIsSaving(true);
-      
+
       // Save AI settings if they exist
       if (apiKey) {
         setApiKey(apiKey);
       }
       setProvider(localProvider);
       setModel(localModel);
-      
+
       // Simulate API call or any async operation
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setSaveStatus({ 
-        type: 'success', 
-        message: 'Settings saved successfully!' 
+
+      setSaveStatus({
+        type: 'success',
+        message: 'Settings saved successfully!'
       });
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save settings';
-      setSaveStatus({ 
-        type: 'error', 
-        message: errorMessage 
+      setSaveStatus({
+        type: 'error',
+        message: errorMessage
       });
       console.error('Error saving settings:', error);
       return false;
@@ -77,11 +77,11 @@ const Settings: React.FC<SettingsProps> = () => {
   // Status message component
   const StatusMessage = () => {
     if (!saveStatus) return null;
-    
+
     const Icon = saveStatus.type === 'success' ? FiCheckCircle : FiAlertCircle;
     const bgColor = saveStatus.type === 'success' ? 'bg-green-100' : 'bg-red-100';
     const textColor = saveStatus.type === 'success' ? 'text-green-800' : 'text-red-800';
-    
+
     return (
       <div className={`p-3 rounded-md ${bgColor} ${textColor} flex items-center mb-4`}>
         <Icon className="mr-2" />
@@ -95,17 +95,17 @@ const Settings: React.FC<SettingsProps> = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Settings</h1>
         <div className="flex items-center space-x-4">
-          <AnalysisButton 
-            projectRoot="/" 
-            currentFile="" 
+          <AnalysisButton
+            projectRoot="/"
+            currentFile=""
           />
           <ConnectionStatus />
           <SecurityButton />
         </div>
       </div>
-      
+
       <StatusMessage />
-      
+
       <div className="space-y-6">
         <Panel title="Application Settings" collapsible defaultExpanded>
           <div className="space-y-6 p-4">
@@ -114,7 +114,7 @@ const Settings: React.FC<SettingsProps> = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Theme</label>
-                  <select 
+                  <select
                     className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded p-2"
                     value={theme}
                     onChange={(e) => setTheme(e.target.value)}
@@ -124,7 +124,7 @@ const Settings: React.FC<SettingsProps> = () => {
                     <option value="system">System</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Font Size: {fontSize}px</label>
                   <input
@@ -136,7 +136,7 @@ const Settings: React.FC<SettingsProps> = () => {
                     className="w-full"
                   />
                 </div>
-                
+
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -150,7 +150,7 @@ const Settings: React.FC<SettingsProps> = () => {
                   </label>
                 </div>
               </div>
-            
+
             <div>
               <label className="block text-sm font-medium mb-1">Font Size: {fontSize}px</label>
               <input
@@ -171,9 +171,9 @@ const Settings: React.FC<SettingsProps> = () => {
             <div className="flex items-center justify-between">
               <span>Auto Save</span>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
                   checked={autoSave}
                   onChange={(e) => setAutoSave(e.target.checked)}
                 />
@@ -195,7 +195,7 @@ const Settings: React.FC<SettingsProps> = () => {
               </div>
             )}
           </div>
-          
+
           <div className="space-y-6">
             <AIProviderSelector
               value={localProvider}
@@ -207,7 +207,7 @@ const Settings: React.FC<SettingsProps> = () => {
               onSave={handleSaveSettings}
               isSaving={isSaving}
             />
-            
+
             <Panel title="AI Configuration" className="mt-6">
               <AISettings
                 onSave={handleSaveSettings}
@@ -222,13 +222,13 @@ const Settings: React.FC<SettingsProps> = () => {
         </div>
       </PanelContainer>
       <div className="mt-6 flex justify-end space-x-3 px-4 py-3 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => window.history.back()}
         >
           Cancel
         </Button>
-        <Button 
+        <Button
           onClick={handleSaveSettings}
           disabled={isSaving}
           className="flex items-center"

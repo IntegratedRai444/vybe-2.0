@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
-type ProviderType = 'openai' | 'ollama' | 'huggingface' | 'custom';
+type ProviderType = "openai" | "ollama" | "huggingface" | "custom";
 
 interface AIMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
 }
@@ -19,8 +19,8 @@ interface AIConfig {
 
 const useAI = (initialConfig: Partial<AIConfig> = {}) => {
   const [config, setConfig] = useState<AIConfig>({
-    provider: 'ollama',
-    model: 'llama2',
+    provider: "ollama",
+    model: "llama2",
     temperature: 0.7,
     maxTokens: 1000,
     ...initialConfig,
@@ -30,71 +30,83 @@ const useAI = (initialConfig: Partial<AIConfig> = {}) => {
   const [error, setError] = useState<Error | null>(null);
   const [conversation, setConversation] = useState<AIMessage[]>([]);
 
-  const updateConfig = useCallback((newConfig: Partial<AIConfig>) => {
-    setConfig(prev => ({
-      ...prev,
-      ...newConfig,
-    }));
-    
-    // Save to localStorage or your preferred storage
-    localStorage.setItem('aiConfig', JSON.stringify({
-      ...config,
-      ...newConfig,
-    }));
-  }, [config]);
+  const updateConfig = useCallback(
+    (newConfig: Partial<AIConfig>) => {
+      setConfig((prev) => ({
+        ...prev,
+        ...newConfig,
+      }));
 
-  const sendMessage = useCallback(async (message: string) => {
-    setIsLoading(true);
-    setError(null);
-    
-    const userMessage: AIMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: message,
-      timestamp: new Date(),
-    };
-
-    setConversation(prev => [...prev, userMessage]);
-
-    try {
-      // TODO: Implement actual API call based on the provider
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.apiKey}`,
-        },
-        body: JSON.stringify({
-          messages: [...conversation, userMessage],
-          model: config.model,
-          temperature: config.temperature,
-          max_tokens: config.maxTokens,
+      // Save to localStorage or your preferred storage
+      localStorage.setItem(
+        "aiConfig",
+        JSON.stringify({
+          ...config,
+          ...newConfig,
         }),
-      });
+      );
+    },
+    [config],
+  );
 
-      if (!response.ok) {
-        throw new Error('Failed to get AI response');
-      }
+  const sendMessage = useCallback(
+    async (message: string) => {
+      setIsLoading(true);
+      setError(null);
 
-      const data = await response.json();
-      
-      const aiMessage: AIMessage = {
+      const userMessage: AIMessage = {
         id: Date.now().toString(),
-        role: 'assistant',
-        content: data.choices[0].message.content,
+        role: "user",
+        content: message,
         timestamp: new Date(),
       };
 
-      setConversation(prev => [...prev, aiMessage]);
-      return aiMessage;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to process AI request');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [config, conversation]);
+      setConversation((prev) => [...prev, userMessage]);
+
+      try {
+        // TODO: Implement actual API call based on the provider
+        const response = await fetch("/api/ai/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${config.apiKey}`,
+          },
+          body: JSON.stringify({
+            messages: [...conversation, userMessage],
+            model: config.model,
+            temperature: config.temperature,
+            max_tokens: config.maxTokens,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to get AI response");
+        }
+
+        const data = await response.json();
+
+        const aiMessage: AIMessage = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: data.choices[0].message.content,
+          timestamp: new Date(),
+        };
+
+        setConversation((prev) => [...prev, aiMessage]);
+        return aiMessage;
+      } catch (err) {
+        const error =
+          err instanceof Error
+            ? err
+            : new Error("Failed to process AI request");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [config, conversation],
+  );
 
   const clearConversation = useCallback(() => {
     setConversation([]);
@@ -102,16 +114,16 @@ const useAI = (initialConfig: Partial<AIConfig> = {}) => {
 
   // Load saved config on mount
   useEffect(() => {
-    const savedConfig = localStorage.getItem('aiConfig');
+    const savedConfig = localStorage.getItem("aiConfig");
     if (savedConfig) {
       try {
         const parsed = JSON.parse(savedConfig);
-        setConfig(prev => ({
+        setConfig((prev) => ({
           ...prev,
           ...parsed,
         }));
       } catch (err) {
-        console.error('Failed to parse saved AI config', err);
+        console.error("Failed to parse saved AI config", err);
       }
     }
   }, []);
@@ -122,7 +134,7 @@ const useAI = (initialConfig: Partial<AIConfig> = {}) => {
     isLoading,
     error,
     conversation,
-    
+
     // Actions
     updateConfig,
     sendMessage,

@@ -1,5 +1,5 @@
+from sqlalchemy import Column, DateTime, Integer, func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, DateTime, func
 
 # Create a base class for all models
 Base = declarative_base()

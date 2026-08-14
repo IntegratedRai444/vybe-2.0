@@ -1,3 +1,3 @@
 // Auto-generated file - DO NOT EDIT
 
-export * from './ComponentIntegrations';
+export * from "./ComponentIntegrations";

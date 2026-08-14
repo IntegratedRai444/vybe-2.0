@@ -46,7 +46,7 @@ const getFileIcon = (fileName: string, isFolder = false): React.ReactNode => {
   }
 
   const extension = fileName.split('.').pop()?.toLowerCase() || '';
-  
+
   const iconMap: Record<string, React.ReactNode> = {
     // Code files
     'js': <FaFileCode className="text-yellow-300" />,
@@ -162,7 +162,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     type: 'copy' | 'cut';
     items: FileItem[];
   } | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -1215,7 +1215,7 @@ export default FileExplorer;
     const filtered = query
       ? files.filter((file) =>
           file.name.toLowerCase().includes(query.toLowerCase()) ||
-          (file.children && file.children.some((child) => 
+          (file.children && file.children.some((child) =>
             child.name.toLowerCase().includes(query.toLowerCase())
           ))
         )
@@ -1386,7 +1386,7 @@ export default FileExplorer;
         ) : (
           <div className="w-4 mr-1"></div>
         )}
-        
+
         <div className="flex items-center flex-1 min-w-0">
           <span className="mr-2">
             {getFileIcon(file.name, isFolder)}
@@ -1405,7 +1405,7 @@ export default FileExplorer;
               if (e.key === 'Enter') {
                 handleRename(file.id, e.currentTarget.value);
               } else if (e.key === 'Escape') {
-                setFiles(prev => 
+                setFiles(prev =>
                   prev.map(f => f.id === file.id ? { ...f, isRenaming: false } : f)
                 );
               }
@@ -1638,7 +1638,7 @@ export default FileExplorer;
     const filtered = query
       ? files.filter((file) =>
           file.name.toLowerCase().includes(query.toLowerCase()) ||
-          (file.children && file.children.some((child) => 
+          (file.children && file.children.some((child) =>
             child.name.toLowerCase().includes(query.toLowerCase())
           ))
         )
@@ -1809,7 +1809,7 @@ export default FileExplorer;
         ) : (
           <div className="w-4 mr-1"></div>
         )}
-        
+
         <div className="flex items-center flex-1 min-w-0">
           <span className="mr-2">
             {getFileIcon(file.name, isFolder)}

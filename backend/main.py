@@ -28,32 +28,32 @@ from typing import Any, Dict, List, Optional, Union
 # Load environment variables from .env file
 from dotenv import load_dotenv
 from fastapi import (
-    Body, 
-    Depends, 
-    FastAPI, 
-    File, 
-    HTTPException, 
-    Request, 
-    UploadFile, 
+    Body,
+    Depends,
+    FastAPI,
+    File,
+    HTTPException,
+    Request,
+    UploadFile,
     WebSocket,
-    status
+    status,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 
-# Import monitoring, middleware and authentication
-from .monitoring import setup_monitoring
-from .core.middleware import setup_middleware
 from .api.auth_routes import router as auth_router
 from .core.auth import get_current_active_user
+from .core.middleware import setup_middleware
+
+# Import monitoring, middleware and authentication
+from .monitoring import setup_monitoring
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -64,45 +64,48 @@ load_dotenv()
 CACHE_DIR = Path(".analysis_cache")
 CACHE_DIR.mkdir(exist_ok=True)
 
+
 class CacheMiddleware(BaseHTTPMiddleware):
     """Middleware for caching responses."""
+
     async def dispatch(self, request: Request, call_next):
         # Skip caching for non-GET requests
-        if request.method != 'GET':
+        if request.method != "GET":
             return await call_next(request)
-            
+
         # Generate cache key from request
         cache_key = hashlib.md5(
             f"{request.url.path}:{request.url.query}".encode()
         ).hexdigest()
         cache_file = CACHE_DIR / f"{cache_key}.json"
-        
+
         # Return cached response if exists and not expired (5 minutes)
         if cache_file.exists():
             cache_data = json.loads(cache_file.read_text())
-            if time.time() - cache_data['timestamp'] < 300:  # 5 minutes
-                return JSONResponse(**cache_data['response'])
-        
+            if time.time() - cache_data["timestamp"] < 300:  # 5 minutes
+                return JSONResponse(**cache_data["response"])
+
         # Process request
         response = await call_next(request)
-        
+
         # Cache successful responses
         if response.status_code == 200:
             try:
                 cache_data = {
-                    'timestamp': time.time(),
-                    'response': {
-                        'content': response.body,
-                        'status_code': response.status_code,
-                        'headers': dict(response.headers),
-                        'media_type': response.media_type
-                    }
+                    "timestamp": time.time(),
+                    "response": {
+                        "content": response.body,
+                        "status_code": response.status_code,
+                        "headers": dict(response.headers),
+                        "media_type": response.media_type,
+                    },
                 }
                 cache_file.write_text(json.dumps(cache_data, default=str))
             except Exception as e:
                 logger.warning(f"Failed to cache response: {e}")
-        
+
         return response
+
 
 import requests
 from ai_providers import get_ai_orchestrator
@@ -130,6 +133,7 @@ from git_utils import (
     repo_status,
     stage_files,
 )
+from indexer import index_project
 from linters import code_linter
 from lsp.lsp_manager import lsp_manager
 from mcp.config import MCPConfig
@@ -146,10 +150,7 @@ from sandbox.vulnerability_scanner import get_vulnerability_scanner
 from search.advanced_search import get_search_service
 from settings_service import settings_service
 
-from indexer import index_project
 from orchestrator import VECTOR_STORE, handle_request
-
-from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize FastAPI
 app = FastAPI(
@@ -171,6 +172,7 @@ app.add_middleware(
 
 # Include routers
 from api.simple_auth_routes import router as auth_router
+
 app.include_router(auth_router, prefix="/api/auth", tags=["authentication"])
 
 # Add middleware
@@ -188,35 +190,35 @@ app.include_router(debug_router.router)
     summary="Check API health status",
     description="""
     Check if the API is running and all required services are available.
-    
+
     Returns:
         dict: Health status and timestamp
     """,
     responses={
         200: {"description": "API is healthy"},
-        503: {"description": "One or more services are unavailable"}
-    }
+        503: {"description": "One or more services are unavailable"},
+    },
 )
 async def health_check():
     """
     Check the health of the API and its dependencies.
-    
+
     This endpoint verifies:
     - Database connectivity
     - AI service availability
     - File system access
     - Memory usage
-    
+
     Returns:
         dict: Health status and system information
     """
     try:
         # Check database connection
         db_status = await get_chat_db().ping()
-        
+
         # Check AI services
         ai_status = await check_ai_availability()
-        
+
         # Check file system
         try:
             test_file = CACHE_DIR / ".healthcheck"
@@ -226,13 +228,14 @@ async def health_check():
         except Exception as e:
             logger.error(f"Filesystem check failed: {e}")
             fs_status = False
-        
+
         # Check memory usage
         import psutil
+
         memory = psutil.virtual_memory()
-        
-        status_ok = all([db_status, ai_status.get('available', False), fs_status])
-        
+
+        status_ok = all([db_status, ai_status.get("available", False), fs_status])
+
         if not status_ok:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -241,36 +244,36 @@ async def health_check():
                     "services": {
                         "database": db_status,
                         "ai_services": ai_status,
-                        "filesystem": fs_status
+                        "filesystem": fs_status,
                     },
                     "memory": {
                         "total": f"{memory.total / (1024**3):.1f}GB",
                         "available": f"{memory.available / (1024**3):.1f}GB",
-                        "used_percent": f"{memory.percent}%"
+                        "used_percent": f"{memory.percent}%",
                     },
-                    "timestamp": datetime.utcnow().isoformat()
-                }
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
             )
-            
+
         return {
             "status": "ok",
             "services": {
                 "database": True,
                 "ai_services": ai_status,
-                "filesystem": True
+                "filesystem": True,
             },
             "system": {
                 "memory": {
                     "total": f"{memory.total / (1024**3):.1f}GB",
                     "available": f"{memory.available / (1024**3):.1f}GB",
-                    "used_percent": f"{memory.percent}%"
+                    "used_percent": f"{memory.percent}%",
                 },
                 "cpu_cores": psutil.cpu_count(logical=False),
-                "cpu_usage": f"{psutil.cpu_percent()}%"
+                "cpu_usage": f"{psutil.cpu_percent()}%",
             },
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
         }
-        
+
     except Exception as e:
         logger.error(f"Health check failed: {e}")
         raise HTTPException(
@@ -278,8 +281,8 @@ async def health_check():
             detail={
                 "status": "error",
                 "error": str(e),
-                "timestamp": datetime.utcnow().isoformat()
-            }
+                "timestamp": datetime.utcnow().isoformat(),
+            },
         )
 
 

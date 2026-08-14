@@ -14,9 +14,15 @@ interface Props {
   onContextMenu?: (filePath: string, x: number, y: number) => void;
 }
 
-export const EnhancedFileTree: React.FC<Props> = ({ root, onSelect, onContextMenu }) => {
+export const EnhancedFileTree: React.FC<Props> = ({
+  root,
+  onSelect,
+  onContextMenu,
+}) => {
   const [tree, setTree] = useState<FileItem[]>([]);
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set(),
+  );
   const [selectedFile, setSelectedFile] = useState<string>("");
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,7 +36,9 @@ export const EnhancedFileTree: React.FC<Props> = ({ root, onSelect, onContextMen
   const fetchFiles = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/files?root=${encodeURIComponent(root)}`);
+      const response = await fetch(
+        `http://127.0.0.1:8000/files?root=${encodeURIComponent(root)}`,
+      );
       const data = await response.json();
       setTree(data.children || []);
     } catch (error) {
@@ -75,7 +83,11 @@ export const EnhancedFileTree: React.FC<Props> = ({ root, onSelect, onContextMen
 
   const handleDrop = (e: React.DragEvent, targetItem: FileItem) => {
     e.preventDefault();
-    if (draggedItem && targetItem.type === "folder" && draggedItem !== targetItem.path) {
+    if (
+      draggedItem &&
+      targetItem.type === "folder" &&
+      draggedItem !== targetItem.path
+    ) {
       // TODO: Implement file move operation
       console.log("Move", draggedItem, "to", targetItem.path);
     }
@@ -106,21 +118,23 @@ export const EnhancedFileTree: React.FC<Props> = ({ root, onSelect, onContextMen
               {isExpanded ? "▼" : "▶"}
             </span>
           )}
-          
-          <FileIcon 
-            fileName={item.name} 
+
+          <FileIcon
+            fileName={item.name}
             isFolder={item.type === "folder"}
             isOpen={isExpanded}
             size="sm"
           />
-          
-          <span className={`truncate ${
-            item.type === "folder" ? "text-blue-300" : "text-gray-200"
-          }`}>
+
+          <span
+            className={`truncate ${
+              item.type === "folder" ? "text-blue-300" : "text-gray-200"
+            }`}
+          >
             {item.name}
           </span>
         </div>
-        
+
         {item.type === "folder" && isExpanded && item.children && (
           <div>
             {item.children

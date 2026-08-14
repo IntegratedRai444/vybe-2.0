@@ -112,7 +112,7 @@ class AuthService {
   getTokenPayload(): TokenPayload | null {
     const token = this.getAccessToken();
     if (!token) return null;
-    
+
     try {
       return jwtDecode<TokenPayload>(token);
     } catch (error) {

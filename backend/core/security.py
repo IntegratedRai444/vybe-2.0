@@ -5,23 +5,19 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional, Union
 
-from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Union
-
+import crud.user
+from core.config import settings
+from db.session import get_db
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import (
-    OAuth2PasswordBearer,
-    HTTPBearer,
     HTTPAuthorizationCredentials,
+    HTTPBearer,
+    OAuth2PasswordBearer,
 )
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
-from core.config import settings
-from db.session import get_db
-import crud.user
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -6,8 +6,8 @@ import compression from "compression";
 import morgan from "morgan";
 import { createServer } from "http";
 import dotenv from "dotenv";
-import { fileURLToPath } from 'url';
-import path from 'path';
+import { fileURLToPath } from "url";
+import path from "path";
 
 // Get current directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -23,7 +23,7 @@ import { setupCollaborationWebSocket } from "./websockets/collaboration.js";
 import { devAuth } from "./middleware/auth.js";
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 const server = createServer(app);
@@ -63,7 +63,7 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
     version: "1.0.0",
     uptime: process.uptime(),
-    user: req.user // Show the authenticated user
+    user: req.user, // Show the authenticated user
   });
 });
 
@@ -90,49 +90,49 @@ setupGitRoutes(app);
 setupLintRoutes(app);
 
 // WebSocket setup with CORS support
-const wss = new WebSocketServer({ 
+const wss = new WebSocketServer({
   server,
-  path: '/ws',
-  clientTracking: true
+  path: "/ws",
+  clientTracking: true,
 });
 
 // Handle WebSocket server errors
-wss.on('error', (error) => {
-  console.error('WebSocket server error:', error);
+wss.on("error", (error) => {
+  console.error("WebSocket server error:", error);
 });
 
 // Handle new WebSocket connections
-wss.on('connection', (ws, req) => {
+wss.on("connection", (ws, req) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const path = url.pathname;
-  
+
   // Route WebSocket connections based on path
-  if (path === '/ws/terminal') {
+  if (path === "/ws/terminal") {
     setupTerminalWebSocket(ws, req);
-  } else if (path === '/ws/collaboration') {
+  } else if (path === "/ws/collaboration") {
     setupCollaborationWebSocket(ws, req);
-  } else if (path === '/ws/git') {
+  } else if (path === "/ws/git") {
     // Handle git WebSocket if needed
-  } else if (path === '/ws/mcp') {
+  } else if (path === "/ws/mcp") {
     // Handle MCP WebSocket if needed
   } else {
-    console.warn('Unknown WebSocket path:', path);
-    ws.close(1003, 'Unknown WebSocket endpoint');
+    console.warn("Unknown WebSocket path:", path);
+    ws.close(1003, "Unknown WebSocket endpoint");
   }
-  
-  ws.on('error', (error) => {
-    console.error('WebSocket client error:', error);
+
+  ws.on("error", (error) => {
+    console.error("WebSocket client error:", error);
   });
 });
 
-console.log('🔌 WebSocket server is running on /ws');
+console.log("🔌 WebSocket server is running on /ws");
 
 // Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const frontendPath = path.join(process.cwd(), '../frontend/dist');
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(process.cwd(), "../frontend/dist");
   app.use(express.static(frontendPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 
@@ -157,14 +157,18 @@ app.use("*", (req, res) => {
 
 // Start server
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Vybe AI OS Backend Server running on http://localhost:${PORT}`);
+  console.log(
+    `🚀 Vybe AI OS Backend Server running on http://localhost:${PORT}`,
+  );
   console.log(`💡 WebSocket server ready for connections`);
   console.log(`🔧 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`👤 Development user: ${JSON.stringify({ 
-    id: 'dev-user', 
-    username: 'developer',
-    email: 'dev@example.com'
-  })}`);
+  console.log(
+    `👤 Development user: ${JSON.stringify({
+      id: "dev-user",
+      username: "developer",
+      email: "dev@example.com",
+    })}`,
+  );
   console.log(`💾 Process ID: ${process.pid}`);
 });
 

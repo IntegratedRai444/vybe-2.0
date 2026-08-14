@@ -123,7 +123,7 @@ export interface AIProviderState {
   getAvailableModels: () => AIModel[];
   saveSettings: () => void;
   isSaving: boolean;
-  
+
   // Suggestion handling
   addSuggestion: (text: string, range: any) => void;
   acceptSuggestion: (text: string, range: any) => void;
@@ -170,12 +170,14 @@ const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [suggestions, setSuggestions] = useState<Array<{
-    id: string;
-    text: string;
-    range: any;
-    timestamp: number;
-  }>>([]);
+  const [suggestions, setSuggestions] = useState<
+    Array<{
+      id: string;
+      text: string;
+      range: any;
+      timestamp: number;
+    }>
+  >([]);
 
   // Save settings to localStorage when they change
   useEffect(() => {
@@ -183,7 +185,9 @@ const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [messages]);
 
   // Check if AI is configured
-  const isAIConfigured = Boolean(provider && model && (provider === 'ollama' || apiKey));
+  const isAIConfigured = Boolean(
+    provider && model && (provider === "ollama" || apiKey),
+  );
 
   // Handle suggestion from AI
   const addSuggestion = useCallback((text: string, range: any) => {
@@ -193,31 +197,33 @@ const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       range,
       timestamp: Date.now(),
     };
-    setSuggestions(prev => [...prev, newSuggestion]);
-    
+    setSuggestions((prev) => [...prev, newSuggestion]);
+
     // Dispatch event for the CompletionBubble to pick up
-    window.dispatchEvent(new CustomEvent('ai-suggestion', {
-      detail: {
-        suggestion: newSuggestion,
-        rect: range.getBoundingClientRect(),
-      },
-    }));
+    window.dispatchEvent(
+      new CustomEvent("ai-suggestion", {
+        detail: {
+          suggestion: newSuggestion,
+          rect: range.getBoundingClientRect(),
+        },
+      }),
+    );
   }, []);
 
   // Accept a suggestion
   const acceptSuggestion = useCallback((text: string, range: any) => {
     // Here you would typically replace the text in the editor
     // For now, we'll just log it
-    console.log('Accepted suggestion:', { text, range });
-    
+    console.log("Accepted suggestion:", { text, range });
+
     // Clear the suggestion
-    setSuggestions(prev => prev.filter(s => s.text !== text));
+    setSuggestions((prev) => prev.filter((s) => s.text !== text));
   }, []);
 
   // Reject a suggestion
   const rejectSuggestion = useCallback(() => {
     // Just clear the most recent suggestion
-    setSuggestions(prev => prev.slice(0, -1));
+    setSuggestions((prev) => prev.slice(0, -1));
   }, []);
 
   // Clear all suggestions
@@ -401,7 +407,7 @@ const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     retryLastMessage,
     getAvailableModels,
     saveSettings,
-    
+
     // Suggestion handling
     addSuggestion,
     acceptSuggestion,

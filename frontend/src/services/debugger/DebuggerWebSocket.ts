@@ -41,7 +41,9 @@ export class DebuggerWebSocket {
     return new Promise((resolve) => {
       try {
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const host = import.meta.env.VITE_API_URL ? new URL(import.meta.env.VITE_API_URL).host : window.location.host;
+        const host = import.meta.env.VITE_API_URL
+          ? new URL(import.meta.env.VITE_API_URL).host
+          : window.location.host;
         const url = `${protocol}//${host}/api/debug/ws/${sessionId}`;
 
         this.socket = new WebSocket(url);

@@ -1,10 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { X, Moon, Sun, Palette, User, Cpu, Code, GitBranch, GitCommit, GitPullRequest, GitPush, Plus, RefreshCw, CheckCircle } from 'lucide-react';
-import { cn } from '../../lib/utils';
-import { useAISettings, useAISettingsActions } from '../../store/aiSettingsStore';
-import { useTheme } from '../../contexts/ThemeContext';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import GitSettings from '../git/GitSettings';
+import React, { useState, useEffect } from "react";
+import {
+  X,
+  Moon,
+  Sun,
+  Palette,
+  User,
+  Cpu,
+  Code,
+  GitBranch,
+  GitCommit,
+  GitPullRequest,
+  GitPush,
+  Plus,
+  RefreshCw,
+  CheckCircle,
+} from "lucide-react";
+import { cn } from "../../lib/utils";
+import {
+  useAISettings,
+  useAISettingsActions,
+} from "../../store/aiSettingsStore";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import GitSettings from "../git/GitSettings";
 
 interface SettingsTab {
   id: string;
@@ -21,9 +39,9 @@ interface SettingsModalProps {
 const ThemeSettings = () => {
   const { theme, setTheme } = useTheme();
   const themes = [
-    { id: 'light', label: 'Light' },
-    { id: 'dark', label: 'Dark' },
-    { id: 'system', label: 'System' },
+    { id: "light", label: "Light" },
+    { id: "dark", label: "Dark" },
+    { id: "system", label: "System" },
   ];
 
   return (
@@ -46,15 +64,15 @@ const ThemeSettings = () => {
                 key={t.id}
                 onClick={() => setTheme(t.id as any)}
                 className={cn(
-                  'flex flex-col items-center justify-center p-4 rounded-lg border transition-colors',
+                  "flex flex-col items-center justify-center p-4 rounded-lg border transition-colors",
                   theme === t.id
-                    ? 'border-blue-500 bg-blue-500/10'
-                    : 'border-gray-700 hover:bg-gray-800/50',
+                    ? "border-blue-500 bg-blue-500/10"
+                    : "border-gray-700 hover:bg-gray-800/50",
                 )}
               >
-                {t.id === 'light' ? (
+                {t.id === "light" ? (
                   <Sun className="w-5 h-5 mb-2 text-yellow-500" />
-                ) : t.id === 'dark' ? (
+                ) : t.id === "dark" ? (
                   <Moon className="w-5 h-5 mb-2 text-indigo-400" />
                 ) : (
                   <Palette className="w-5 h-5 mb-2 text-gray-400" />
@@ -78,7 +96,10 @@ const ThemeSettings = () => {
                 className="w-32 accent-blue-500"
                 onChange={(e) => {
                   // Update editor font size
-                  document.documentElement.style.setProperty('--editor-font-size', `${e.target.value}px`);
+                  document.documentElement.style.setProperty(
+                    "--editor-font-size",
+                    `${e.target.value}px`,
+                  );
                 }}
               />
             </label>
@@ -112,7 +133,7 @@ const UserPreferences = () => {
 
   useEffect(() => {
     // Load saved preferences
-    const saved = localStorage.getItem('user-preferences');
+    const saved = localStorage.getItem("user-preferences");
     if (saved) {
       setPreferences(JSON.parse(saved));
     }
@@ -121,19 +142,19 @@ const UserPreferences = () => {
   const handleToggle = (key: keyof typeof preferences) => {
     const newPrefs = { ...preferences, [key]: !preferences[key] };
     setPreferences(newPrefs);
-    localStorage.setItem('user-preferences', JSON.stringify(newPrefs));
+    localStorage.setItem("user-preferences", JSON.stringify(newPrefs));
   };
 
   const ToggleSetting = ({
     label,
     description,
     checked,
-    onChange
+    onChange,
   }: {
     label: string;
     description: string;
     checked: boolean;
-    onChange: () => void
+    onChange: () => void;
   }) => (
     <div className="flex items-start">
       <div className="flex items-center h-5">
@@ -155,9 +176,7 @@ const UserPreferences = () => {
     <div className="space-y-6">
       <div className="space-y-2">
         <h3 className="text-lg font-medium text-gray-200">Preferences</h3>
-        <p className="text-sm text-gray-400">
-          Customize your Vybe experience.
-        </p>
+        <p className="text-sm text-gray-400">Customize your Vybe experience.</p>
       </div>
 
       <div className="space-y-4">
@@ -165,25 +184,25 @@ const UserPreferences = () => {
           label="Auto Save"
           description="Automatically save changes to files"
           checked={preferences.autoSave}
-          onChange={() => handleToggle('autoSave')}
+          onChange={() => handleToggle("autoSave")}
         />
         <ToggleSetting
           label="Format on Save"
           description="Format code when saving files"
           checked={preferences.formatOnSave}
-          onChange={() => handleToggle('formatOnSave')}
+          onChange={() => handleToggle("formatOnSave")}
         />
         <ToggleSetting
           label="Auto Update"
           description="Automatically check for updates"
           checked={preferences.autoUpdate}
-          onChange={() => handleToggle('autoUpdate')}
+          onChange={() => handleToggle("autoUpdate")}
         />
         <ToggleSetting
           label="Show Line Numbers"
           checked={preferences.showLineNumbers}
           description="Display line numbers in the editor"
-          onChange={() => handleToggle('showLineNumbers')}
+          onChange={() => handleToggle("showLineNumbers")}
         />
       </div>
     </div>
@@ -191,19 +210,10 @@ const UserPreferences = () => {
 };
 
 const AISettingsTab = () => {
-  const {
-    provider,
-    model,
-    temperature,
-    providers,
-    providerModels,
-  } = useAISettings();
+  const { provider, model, temperature, providers, providerModels } =
+    useAISettings();
 
-  const {
-    setProvider,
-    setModel,
-    setTemperature,
-  } = useAISettingsActions();
+  const { setProvider, setModel, setTemperature } = useAISettingsActions();
 
   return (
     <div className="space-y-6">
@@ -255,7 +265,11 @@ const AISettingsTab = () => {
               Temperature: {temperature.toFixed(1)}
             </label>
             <span className="text-xs text-gray-400">
-              {temperature < 0.3 ? 'Precise' : temperature > 0.7 ? 'Creative' : 'Balanced'}
+              {temperature < 0.3
+                ? "Precise"
+                : temperature > 0.7
+                  ? "Creative"
+                  : "Balanced"}
             </span>
           </div>
           <input
@@ -273,31 +287,34 @@ const AISettingsTab = () => {
   );
 };
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+export const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const { theme } = useTheme();
 
   const settingsTabs: SettingsTab[] = [
     {
-      id: 'general',
-      label: 'General',
+      id: "general",
+      label: "General",
       icon: <User className="w-4 h-4" />,
       content: <UserPreferences />,
     },
     {
-      id: 'appearance',
-      label: 'Appearance',
+      id: "appearance",
+      label: "Appearance",
       icon: <Palette className="w-4 h-4" />,
       content: <ThemeSettings />,
     },
     {
-      id: 'ai',
-      label: 'AI',
+      id: "ai",
+      label: "AI",
       icon: <Cpu className="w-4 h-4" />,
       content: <AISettingsTab />,
     },
     {
-      id: 'git',
-      label: 'Version Control',
+      id: "git",
+      label: "Version Control",
       icon: <GitBranch className="w-4 h-4" />,
       content: <GitSettings />,
     },
@@ -306,7 +323,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <div
         className="relative w-full max-w-3xl bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-800 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -351,7 +371,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             </div>
           </Tabs>
         </div>
-        
+
         {/* Footer */}
         <div className="flex justify-end p-4 bg-gray-900/50 border-t border-gray-800">
           <button

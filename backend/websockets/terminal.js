@@ -24,7 +24,7 @@ class MockTerminal {
       'ls', 'dir', 'cd', 'pwd', 'echo', 'clear', 'help', 'date', 'whoami',
       'git', 'npm', 'node', 'python', 'python3', 'python2', 'java', 'javac'
     ];
-    
+
     // Initial welcome message
     this.write(`\x1b[1;32mWelcome to Mock Terminal (${this.id})\x1b[0m\r\n`);
     this.write(`\x1b[1;34mType 'help' for available commands\x1b[0m\r\n\r\n`);
@@ -152,10 +152,10 @@ class MockTerminal {
       default:
         // Simulate command execution
         this.write(`\x1b[33mExecuting: ${command}\x1b[0m\r\n`);
-        
+
         // Mock execution delay
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         if (Math.random() > 0.2) {
           this.write(`Command '${cmd}' completed successfully\r\n`);
         } else {
@@ -176,7 +176,7 @@ class MockTerminal {
 
   addClient(clientId, ws) {
     this.clients.add(clientId);
-    
+
     // Send initial data to the new client
     ws.send(JSON.stringify({
       type: 'init',
@@ -184,7 +184,7 @@ class MockTerminal {
       rows: this.rows,
       cols: this.cols
     }));
-    
+
     // Send existing buffer
     if (this.buffer) {
       ws.send(JSON.stringify({
@@ -214,47 +214,47 @@ export function setupTerminalWebSocket(ws, req) {
     const clientId = uuidv4();
     const url = new URL(req.url, `http://${req.headers.host}`);
     const terminalId = url.searchParams.get('id') || uuidv4();
-    
+
     console.log(`New terminal connection: clientId=${clientId}, terminalId=${terminalId}`);
-    
+
     // Initialize client
-    const client = { 
+    const client = {
       ws,
       terminalId,
       lastActivity: Date.now()
     };
-    
+
     clients.set(clientId, client);
-    
+
     // Handle WebSocket close
     const handleClose = () => {
       console.log(`Terminal client disconnected: ${clientId}`);
       clients.delete(clientId);
-      
+
       const terminal = terminals.get(terminalId);
       if (terminal) {
         terminal.removeClient(clientId);
       }
     };
-    
+
     // Handle WebSocket errors
     const handleError = (error) => {
       console.error(`Terminal WebSocket error for client ${clientId}:`, error);
       ws.close(1011, 'Internal server error');
     };
-    
+
     // Set up event handlers
     ws.on('error', handleError);
     ws.on('close', handleClose);
-    
+
     // Handle incoming messages
     ws.on('message', (data) => {
       try {
         client.lastActivity = Date.now();
         const message = JSON.parse(data);
-        
+
         let terminal = terminals.get(terminalId);
-        
+
         // Create new terminal if it doesn't exist
         if (!terminal && message.type === 'create') {
           terminal = new MockTerminal({
@@ -267,30 +267,30 @@ export function setupTerminalWebSocket(ws, req) {
           terminals.set(terminalId, terminal);
           console.log(`Created new terminal: ${terminalId}`);
         }
-        
+
         if (!terminal) {
           throw new Error('Terminal not initialized');
         }
-        
+
         // Add client to terminal
         if (!terminal.clients.has(clientId)) {
           terminal.addClient(clientId, ws);
         }
-        
+
         // Handle different message types
         switch (message.type) {
           case 'input':
             terminal.input(message.data);
             break;
-            
+
           case 'resize':
             terminal.resize(message.rows, message.cols);
             break;
-            
+
           case 'heartbeat':
             // Just update last activity
             break;
-            
+
           default:
             console.warn(`Unknown message type: ${message.type}`);
         }
@@ -302,14 +302,14 @@ export function setupTerminalWebSocket(ws, req) {
         }));
       }
     });
-    
+
     // Send initial connection confirmation
     ws.send(JSON.stringify({
       type: 'connected',
       terminalId,
       clientId
     }));
-    
+
   } catch (error) {
     console.error('Error in terminal WebSocket setup:', error);
     if (ws.readyState === ws.OPEN) {
@@ -317,12 +317,12 @@ export function setupTerminalWebSocket(ws, req) {
     }
   }
 }
-    
+
     // Add client to terminal
     terminal.addClient(clientId);
-    
+
     console.log(`🔌 Terminal client connected: ${clientId} to terminal: ${terminalId}`);
-    
+
     // Send welcome message
     ws.send(JSON.stringify({
       type: 'connected',
@@ -330,21 +330,21 @@ export function setupTerminalWebSocket(ws, req) {
       message: 'Terminal WebSocket connected',
       terminalId: terminal.id
     }));
-    
+
     // Handle messages from client
     ws.on('message', (data) => {
       try {
         const message = JSON.parse(data.toString());
-        
+
         switch (message.type) {
           case 'input':
             terminal.input(message.data);
             break;
-            
+
           case 'resize':
             terminal.resize(message.rows, message.cols);
             break;
-            
+
           case 'heartbeat':
             // Just acknowledge the heartbeat
             ws.send(JSON.stringify({ type: 'heartbeat' }));
@@ -358,20 +358,20 @@ export function setupTerminalWebSocket(ws, req) {
         }));
       }
     });
-    
+
     // Handle client disconnection
     ws.on('close', () => {
       console.log(`🔌 Terminal client disconnected: ${clientId}`);
-      
+
       // Remove client from terminal
       if (terminal) {
         terminal.removeClient(clientId);
       }
-      
+
       // Remove client
       clients.delete(clientId);
     });
-    
+
     // Handle errors
     ws.on('error', (error) => {
       console.error('Terminal WebSocket error:', error);

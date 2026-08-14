@@ -1,5 +1,11 @@
 import React from "react";
-import { FiGitBranch, FiCheck, FiX, FiRefreshCw, FiAlertCircle } from "react-icons/fi";
+import {
+  FiGitBranch,
+  FiCheck,
+  FiX,
+  FiRefreshCw,
+  FiAlertCircle,
+} from "react-icons/fi";
 
 type SyncStatusProps = {
   status: "clean" | "dirty" | "uncommitted" | "conflict";

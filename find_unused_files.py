@@ -1,8 +1,8 @@
-import os
 import json
-from pathlib import Path
-from typing import Set, Dict, List
+import os
 import re
+from pathlib import Path
+from typing import Dict, List, Set
 
 
 class UnusedFileFinder:

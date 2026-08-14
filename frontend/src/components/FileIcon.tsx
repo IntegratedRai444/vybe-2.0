@@ -7,19 +7,19 @@ type Props = {
   size?: "sm" | "md" | "lg";
 };
 
-export const FileIcon: React.FC<Props> = ({ 
-  fileName, 
-  isFolder = false, 
+export const FileIcon: React.FC<Props> = ({
+  fileName,
+  isFolder = false,
   isOpen = false,
-  size = "md" 
+  size = "md",
 }) => {
   const getIcon = () => {
     if (isFolder) {
       return isOpen ? "📂" : "📁";
     }
 
-    const ext = fileName.split('.').pop()?.toLowerCase() || "";
-    
+    const ext = fileName.split(".").pop()?.toLowerCase() || "";
+
     // Programming languages
     if (["js", "jsx"].includes(ext)) return "🟨";
     if (["ts", "tsx"].includes(ext)) return "🔷";
@@ -34,7 +34,7 @@ export const FileIcon: React.FC<Props> = ({
     if (ext === "rb") return "💎";
     if (ext === "swift") return "🦉";
     if (ext === "kt") return "🟣";
-    
+
     // Web technologies
     if (ext === "html") return "🌐";
     if (ext === "css") return "🎨";
@@ -42,28 +42,28 @@ export const FileIcon: React.FC<Props> = ({
     if (ext === "json") return "📋";
     if (["yml", "yaml"].includes(ext)) return "📄";
     if (ext === "xml") return "📰";
-    
+
     // Documentation
     if (ext === "md") return "📝";
     if (ext === "txt") return "📄";
     if (["doc", "docx"].includes(ext)) return "📘";
     if (["pdf"].includes(ext)) return "📕";
-    
+
     // Images
     if (["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(ext)) return "🖼️";
     if (["ico", "icon"].includes(ext)) return "🎯";
-    
+
     // Data & Config
     if (["sql", "db", "sqlite"].includes(ext)) return "🗄️";
     if (["env", "config", "conf", "cfg"].includes(ext)) return "⚙️";
     if (["log"].includes(ext)) return "📊";
-    
+
     // Archives
     if (["zip", "rar", "7z", "tar", "gz"].includes(ext)) return "📦";
-    
+
     // Executables
     if (["exe", "msi", "dmg", "deb", "rpm"].includes(ext)) return "⚡";
-    
+
     // Special files
     if (fileName === "package.json") return "📦";
     if (fileName === "tsconfig.json") return "🔷";
@@ -75,14 +75,14 @@ export const FileIcon: React.FC<Props> = ({
     if (fileName === "LICENSE") return "📜";
     if (fileName === "Dockerfile") return "🐳";
     if (fileName === "docker-compose.yml") return "🐳";
-    
+
     return "📄";
   };
 
   const sizeClass = {
     sm: "text-xs",
-    md: "text-sm", 
-    lg: "text-base"
+    md: "text-sm",
+    lg: "text-base",
   }[size];
 
   return (

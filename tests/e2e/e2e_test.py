@@ -1,7 +1,8 @@
-import requests
 import os
-import git
 import time
+
+import git
+import requests
 
 API_BASE_URL = "http://127.0.0.1:8000"
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))

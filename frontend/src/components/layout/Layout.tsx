@@ -34,7 +34,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const chatPanelRef = useRef<HTMLDivElement>(null);
   const { provider, model, apiKey, setModel } = useAI();
   const isAIConfigured = Boolean(provider && model && (provider === 'ollama' || apiKey));
-  
+
   const handleModelChange = (newModel: string | null) => {
     if (newModel) {
       setModel(newModel);
@@ -57,8 +57,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Suspense fallback={<LoadingSpinner />}>
             <div className="h-full flex flex-col">
               <div className="p-2 border-b border-gray-700">
-                <ModelSelector 
-                  value={model || 'llama3'} 
+                <ModelSelector
+                  value={model || 'llama3'}
                   onChange={handleModelChange}
                 />
               </div>
@@ -120,7 +120,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </Suspense>
                 </ErrorBoundary>
               </div>
-              
+
               {/* Panel Control Buttons */}
               <div className="absolute bottom-4 right-4 z-10 flex space-x-2">
                 <Button
@@ -182,7 +182,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   {isChatOpen ? <FiX size={20} /> : <FiMessageSquare size={20} />}
                 </Button>
               </div>
-              
+
               {/* Right Side Panel */}
               {isRightPanelOpen && (
                 <>
@@ -190,9 +190,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <Panel defaultSize={20} minSize={15} maxSize={30} className="bg-[#252526] flex flex-col">
                     <div className="flex justify-between items-center p-2 border-b border-[#454545]">
                       <h3 className="text-sm font-medium capitalize">{rightPanelContent}</h3>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-6 w-6"
                         onClick={() => setIsRightPanelOpen(false)}
                       >
@@ -211,7 +211,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               )}
               {/* AI Chat Panel */}
               {isAIConfigured && isChatOpen && (
-                <div 
+                <div
                   ref={chatPanelRef}
                   className="fixed bottom-4 right-4 w-96 max-w-full h-[600px] max-h-[80vh] bg-gray-800 rounded-lg shadow-2xl border border-gray-700 flex flex-col z-50"
                   style={{

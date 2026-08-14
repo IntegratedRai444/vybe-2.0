@@ -148,14 +148,14 @@ export const TerminalPane: React.FC<TerminalPaneProps> = ({
     }
 
     // Get WebSocket URL from environment or use default
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = import.meta.env.VITE_WS_URL 
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = import.meta.env.VITE_WS_URL
       ? new URL(import.meta.env.VITE_WS_URL).host
       : window.location.host;
     const wsUrl = `${protocol}//${host}/ws/terminal`;
-    
+
     console.log(`Connecting to terminal WebSocket at: ${wsUrl}`);
-    
+
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -171,7 +171,9 @@ export const TerminalPane: React.FC<TerminalPaneProps> = ({
       }
 
       // Initialize terminal session
-      const defaultShell = shell || (navigator.platform.startsWith("Win") ? "powershell.exe" : "/bin/bash");
+      const defaultShell =
+        shell ||
+        (navigator.platform.startsWith("Win") ? "powershell.exe" : "/bin/bash");
       ws.send(
         JSON.stringify({
           type: "create",
@@ -180,7 +182,7 @@ export const TerminalPane: React.FC<TerminalPaneProps> = ({
           name: `Terminal-${Date.now()}`,
           theme: "default-dark",
           ...(sessionId && { terminalId: sessionId }),
-        })
+        }),
       );
     };
 

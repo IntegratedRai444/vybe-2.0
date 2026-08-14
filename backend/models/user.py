@@ -6,7 +6,9 @@ from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
-from sqlalchemy import Boolean, Column, String, Enum as SQLEnum, DateTime
+from sqlalchemy import Boolean, Column, DateTime
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 
 from .base import Base, BaseModel

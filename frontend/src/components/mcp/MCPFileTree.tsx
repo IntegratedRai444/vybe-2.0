@@ -8,7 +8,7 @@ import {
   InputAdornment,
   IconButton,
   Tooltip,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import {
   Folder as FolderIcon,
@@ -23,27 +23,27 @@ import { useMCP } from "../../contexts/MCPContext";
 interface FileSystemItem {
   id: string;
   name: string;
-  type: 'file' | 'directory';
+  type: "file" | "directory";
   children?: FileSystemItem[];
   path: string;
 }
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
-  '& .MuiTreeItem-content': {
+  "& .MuiTreeItem-content": {
     padding: theme.spacing(0.5, 1),
     borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(0.25, 0),
-    '&:hover': {
+    "&:hover": {
       backgroundColor: alpha(theme.palette.action.hover, 0.1),
     },
-    '&.Mui-selected': {
+    "&.Mui-selected": {
       backgroundColor: alpha(theme.palette.primary.main, 0.1),
-      '&:hover': {
+      "&:hover": {
         backgroundColor: alpha(theme.palette.primary.main, 0.15),
       },
     },
   },
-  '& .MuiTreeItem-group': {
+  "& .MuiTreeItem-group": {
     marginLeft: theme.spacing(2),
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.1)}`,
     paddingLeft: theme.spacing(1),

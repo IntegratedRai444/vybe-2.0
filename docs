@@ -47,17 +47,17 @@ All notable changes to Vybe AI OS will be documented in this file.
   - Support for ReAct agents
   - Conversation memory
   - Custom tool creation
-  
+
 - ✅ **Tabby Integration** - Code completion server
   - `backend/tabby_client.py`
   - Inline completions
   - Multi-language support
-  
+
 - ✅ **LM Studio Integration** - Local model management
   - `backend/lmstudio_client.py`
   - Chat completions
   - Model listing
-  
+
 - ✅ **Transformers Integration** - HuggingFace models
   - `backend/transformers_client.py`
   - Local inference

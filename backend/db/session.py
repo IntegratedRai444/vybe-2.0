@@ -2,11 +2,11 @@
 Database session management.
 """
 from typing import Generator
+
+from core.config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
-
-from core.config import settings
 
 # Create database engine
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL

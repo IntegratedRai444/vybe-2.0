@@ -3,10 +3,10 @@ import { ITheme } from '@xterm/xterm';
 import { FiTerminal, FiPlus, FiX, FiRefreshCw, FiCopy } from 'react-icons/fi';
 
 // Simple TerminalPane component - replace with your actual implementation
-const TerminalPane: FC<{ cwd: string; onExit: () => void; onTitleChange: (title: string) => void }> = ({ 
-  cwd, 
-  onExit, 
-  onTitleChange 
+const TerminalPane: FC<{ cwd: string; onExit: () => void; onTitleChange: (title: string) => void }> = ({
+  cwd,
+  onExit,
+  onTitleChange
 }) => {
   return (
     <div className="terminal-pane">
@@ -130,7 +130,7 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
   const [showThemeSelector, setShowThemeSelector] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
-  
+
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
   const themeSelectorRef = useRef<HTMLDivElement>(null);
@@ -147,7 +147,7 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
         status: 'active',
         lastActivity: new Date(),
       };
-      
+
       setSessions([initialSession]);
       setActiveSessionId(initialSession.id);
     }
@@ -178,7 +178,7 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
     const newSession: TerminalSession = {
       id: `terminal-${Date.now()}`,
       title: `Terminal ${sessions.length + 1}`,
-      cwd: activeSessionId 
+      cwd: activeSessionId
         ? sessions.find(s => s.id === activeSessionId)?.cwd || initialCwd
         : initialCwd,
       shell: process.env.SHELL || (process.platform === 'win32' ? 'powershell.exe' : 'bash'),
@@ -268,27 +268,27 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
   const closeTerminal = useCallback((id: string) => {
     setSessions(prev => {
       const newSessions = prev.filter(session => session.id !== id);
-      
+
       // If we're closing the active session, select another one
       if (id === activeSessionId) {
         const remainingSessions = newSessions.filter(s => s.id !== id);
         setActiveSessionId(remainingSessions[0]?.id || null);
       }
-      
+
       return newSessions;
     });
   }, [activeSessionId]);
 
   // Restart a terminal
   const restartTerminal = useCallback((id: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
-          ? { 
-              ...session, 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
+          ? {
+              ...session,
               lastActivity: new Date(),
-              status: 'active' as const 
-            } 
+              status: 'active' as const
+            }
           : session
       )
     );
@@ -296,14 +296,14 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
 
   // Handle terminal exit
   const handleTerminalExit = useCallback((id: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
-          ? { 
-              ...session, 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
+          ? {
+              ...session,
               status: 'terminated' as const,
-              lastActivity: new Date() 
-            } 
+              lastActivity: new Date()
+            }
           : session
       )
     );
@@ -311,10 +311,10 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
 
   // Handle title change
   const handleTitleChange = useCallback((id: string, title: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
-          ? { ...session, title } 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
+          ? { ...session, title }
           : session
       )
     );
@@ -366,7 +366,7 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
             <FiPlus size={16} />
           </button>
         </div>
-        
+
         <div className="terminal-actions">
           <button
             className="action-btn"
@@ -560,11 +560,11 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
   };
 
   // Get active session and theme for rendering
-  const activeSession = sessions.length > 0 
+  const activeSession = sessions.length > 0
     ? sessions.find((s) => s.id === activeSessionId) || sessions[0]
     : null;
   const currentTheme = themes[themeName] || defaultTheme;
-  
+
   // Toggle search visibility
   const toggleSearch = useCallback(() => {
     setIsSearchVisible(prev => !prev);
@@ -572,7 +572,7 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
       setTimeout(() => searchInputRef.current?.focus(), 0);
     }
   }, [isSearchVisible]);
-  
+
   // Handle terminal actions
   const closeTerminal = useCallback((id: string) => {
     setSessions(prev => {
@@ -583,17 +583,17 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
       return newSessions;
     });
   }, [activeSessionId]);
-  
+
   const restartTerminal = useCallback((id: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
           ? { ...session, status: 'active', lastActivity: new Date() }
           : session
       )
     );
   }, []);
-  
+
   const duplicateTerminal = useCallback((session: TerminalSession) => {
     const newSession = {
       ...session,
@@ -604,32 +604,32 @@ const TerminalTabs: FC<TerminalTabsProps> = ({
     setSessions(prev => [...prev, newSession]);
     setActiveSessionId(newSession.id);
   }, []);
-  
+
   const handleTerminalExit = useCallback((id: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
           ? { ...session, status: 'terminated' }
           : session
       )
     );
   }, []);
-  
+
   const handleTitleChange = useCallback((id: string, title: string) => {
-    setSessions(prev => 
-      prev.map(session => 
-        session.id === id 
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id
           ? { ...session, title }
           : session
       )
     );
   }, []);
-  
+
   const handleThemeChange = useCallback((theme: string) => {
     setThemeName(theme);
     setShowThemeSelector(false);
   }, []);
-  
+
   const renderTabLabel = useCallback((session: TerminalSession) => (
     <div className="flex items-center">
       <FiTerminal className="mr-2" />

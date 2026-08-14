@@ -2,6 +2,7 @@
 Monitoring configuration for Vybe 2.0 API
 """
 from typing import Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 

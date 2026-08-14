@@ -1,5 +1,5 @@
-import React from 'react';
-import DashboardLayout from '@/templates/dashboard/DashboardLayout';
+import React from "react";
+import DashboardLayout from "@/templates/dashboard/DashboardLayout";
 
 const Dashboard: React.FC = () => {
   return (

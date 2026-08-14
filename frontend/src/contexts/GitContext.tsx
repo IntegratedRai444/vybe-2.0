@@ -9,8 +9,8 @@ import React, {
 
 // Check if WebSockets should be disabled in development
 const isDevelopment = import.meta.env.DEV;
-const shouldDisableWebSockets = isDevelopment && 
-  !(import.meta.env.VITE_ENABLE_WEBSOCKETS === 'true');
+const shouldDisableWebSockets =
+  isDevelopment && !(import.meta.env.VITE_ENABLE_WEBSOCKETS === "true");
 // Using a simple in-memory store for now
 // Replace with actual Tauri API calls when available
 const mockGitApi = {
@@ -118,7 +118,7 @@ const initialState: GitStatus = {
 
 // Mock Git status for development
 const mockGitStatus: GitStatus = {
-  branch: 'main',
+  branch: "main",
   ahead: 0,
   behind: 0,
   changes: {
@@ -134,31 +134,32 @@ export const GitProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   // In development, return a mock provider
   if (isDevelopment) {
-    const mockContext: GitContextType = useMemo(() => ({
-      status: {
-        ...initialState,
+    const mockContext: GitContextType = useMemo(
+      () => ({
+        status: {
+          ...initialState,
+          isInitialized: true,
+        },
+        isLoading: false,
+        error: null,
+        refreshStatus: async () => {},
+        stageFiles: async () => {},
+        unstageFiles: async () => {},
+        commit: async () => true,
+        pull: async () => true,
+        push: async () => true,
+        createBranch: async () => true,
+        checkoutBranch: async () => true,
+        fetchBranches: async () => ["main", "develop"],
+        currentBranch: "main",
+        branches: ["main", "develop"],
         isInitialized: true,
-      },
-      isLoading: false,
-      error: null,
-      refreshStatus: async () => {},
-      stageFiles: async () => {},
-      unstageFiles: async () => {},
-      commit: async () => true,
-      pull: async () => true,
-      push: async () => true,
-      createBranch: async () => true,
-      checkoutBranch: async () => true,
-      fetchBranches: async () => ["main", "develop"],
-      currentBranch: "main",
-      branches: ["main", "develop"],
-      isInitialized: true,
-    }), []);
+      }),
+      [],
+    );
 
     return (
-      <GitContext.Provider value={mockContext}>
-        {children}
-      </GitContext.Provider>
+      <GitContext.Provider value={mockContext}>{children}</GitContext.Provider>
     );
   }
   const [status, setStatus] = useState<GitStatus>(initialState);
