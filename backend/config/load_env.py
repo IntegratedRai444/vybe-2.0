@@ -51,9 +51,5 @@ def get_env_variable(key: str, default: str = None) -> str:
     return os.getenv(key, default)
 
 
-# Set the Groq API key if not already set
-if not os.getenv("GROQ_API_KEY"):
-    set_env_variable("GROQ_API_KEY", "gsk-PzdK28UxiuaSs30TmZLOvplhgwRj1bJQXG75EH4M")
-
 # Load all environment variables
 load_dotenv(ENV_FILE, override=True)
