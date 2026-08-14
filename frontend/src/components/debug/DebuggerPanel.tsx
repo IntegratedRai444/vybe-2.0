@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { DebuggerToolbar } from './DebuggerToolbar';
-import { Button } from '../ui/button';
-import { X, Maximize2, Minimize2, Eye, Bug, List, Code, Terminal, AlertTriangle } from 'lucide-react';
-import { useDebugger } from '../../contexts/DebuggerContext';
-import { WatchExpressions } from './WatchExpressions';
-import { ExceptionsPanel } from './ExceptionsPanel';
+import React, { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { DebuggerToolbar } from "./DebuggerToolbar";
+import { Button } from "../ui/button";
+import {
+  X,
+  Maximize2,
+  Minimize2,
+  Eye,
+  Bug,
+  List,
+  Code,
+  Terminal,
+  AlertTriangle,
+} from "lucide-react";
+import { useDebugger } from "../../contexts/DebuggerContext";
+import { WatchExpressions } from "./WatchExpressions";
+import { ExceptionsPanel } from "./ExceptionsPanel";
 
 interface DebuggerPanelProps {
   onClose?: () => void;
@@ -14,7 +24,7 @@ interface DebuggerPanelProps {
 
 export const DebuggerPanel: React.FC<DebuggerPanelProps> = ({
   onClose,
-  className = '',
+  className = "",
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { isDebugging, isPaused, callStack, variables, output } = useDebugger();
@@ -42,7 +52,7 @@ export const DebuggerPanel: React.FC<DebuggerPanelProps> = ({
   return (
     <div
       className={`fixed bottom-0 right-0 left-0 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg flex flex-col ${
-        isExpanded ? 'h-1/2' : 'h-12'
+        isExpanded ? "h-1/2" : "h-12"
       } ${className}`}
     >
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
@@ -76,27 +86,48 @@ export const DebuggerPanel: React.FC<DebuggerPanelProps> = ({
       {isExpanded && (
         <>
           <DebuggerToolbar />
-          
+
           <div className="flex-1 overflow-hidden">
-            <Tabs defaultValue="variables" className="flex-1 flex flex-col overflow-hidden">
+            <Tabs
+              defaultValue="variables"
+              className="flex-1 flex flex-col overflow-hidden"
+            >
               <div className="flex border-b">
                 <TabsList className="rounded-none bg-transparent p-0">
-                  <TabsTrigger value="variables" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="variables"
+                    className="flex items-center gap-2"
+                  >
                     <List className="h-4 w-4" /> Variables
                   </TabsTrigger>
-                  <TabsTrigger value="watch" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="watch"
+                    className="flex items-center gap-2"
+                  >
                     <Eye className="h-4 w-4" /> Watch
                   </TabsTrigger>
-                  <TabsTrigger value="exceptions" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="exceptions"
+                    className="flex items-center gap-2"
+                  >
                     <AlertTriangle className="h-4 w-4" /> Exceptions
                   </TabsTrigger>
-                  <TabsTrigger value="callstack" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="callstack"
+                    className="flex items-center gap-2"
+                  >
                     <Code className="h-4 w-4" /> Call Stack
                   </TabsTrigger>
-                  <TabsTrigger value="breakpoints" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="breakpoints"
+                    className="flex items-center gap-2"
+                  >
                     <Bug className="h-4 w-4" /> Breakpoints
                   </TabsTrigger>
-                  <TabsTrigger value="console" className="flex items-center gap-2">
+                  <TabsTrigger
+                    value="console"
+                    className="flex items-center gap-2"
+                  >
                     <Terminal className="h-4 w-4" /> Console
                   </TabsTrigger>
                 </TabsList>
@@ -106,23 +137,23 @@ export const DebuggerPanel: React.FC<DebuggerPanelProps> = ({
                 <TabsContent value="variables" className="m-0 h-full p-4">
                   <VariablesPanel variables={variables} />
                 </TabsContent>
-                
+
                 <TabsContent value="watch" className="m-0 h-full p-0">
                   <WatchExpressions />
                 </TabsContent>
-                
+
                 <TabsContent value="exceptions" className="m-0 h-full p-0">
                   <ExceptionsPanel />
                 </TabsContent>
-                
+
                 <TabsContent value="callstack" className="m-0 h-full p-4">
                   <CallStackPanel callStack={callStack} />
                 </TabsContent>
-                
+
                 <TabsContent value="breakpoints" className="m-0 h-full p-4">
                   <BreakpointsPanel />
                 </TabsContent>
-                
+
                 <TabsContent value="console" className="m-0 h-full">
                   <ConsolePanel output={output} />
                 </TabsContent>
@@ -140,7 +171,9 @@ const VariablesPanel: React.FC<{ variables: Record<string, any> }> = ({
   variables,
 }) => {
   if (!variables || Object.keys(variables).length === 0) {
-    return <div className="text-gray-500 text-sm p-2">No variables available</div>;
+    return (
+      <div className="text-gray-500 text-sm p-2">No variables available</div>
+    );
   }
 
   return (
@@ -149,7 +182,9 @@ const VariablesPanel: React.FC<{ variables: Record<string, any> }> = ({
         <div key={name} className="flex items-baseline py-1">
           <span className="text-blue-600 dark:text-blue-400 mr-2">{name}:</span>
           <span className="text-gray-800 dark:text-gray-200">
-            {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
+            {typeof value === "object"
+              ? JSON.stringify(value, null, 2)
+              : String(value)}
           </span>
         </div>
       ))}
@@ -157,9 +192,9 @@ const VariablesPanel: React.FC<{ variables: Record<string, any> }> = ({
   );
 };
 
-const CallStackPanel: React.FC<{ callStack: Array<{ name: string; file: string; line: number }> }> = ({
-  callStack,
-}) => {
+const CallStackPanel: React.FC<{
+  callStack: Array<{ name: string; file: string; line: number }>;
+}> = ({ callStack }) => {
   if (!callStack || callStack.length === 0) {
     return <div className="text-gray-500 text-sm p-2">Call stack is empty</div>;
   }
@@ -167,8 +202,11 @@ const CallStackPanel: React.FC<{ callStack: Array<{ name: string; file: string; 
   return (
     <div className="space-y-1">
       {callStack.map((frame, index) => (
-        <div key={index} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-          <div className="font-medium">{frame.name || '(anonymous)'}</div>
+        <div
+          key={index}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+        >
+          <div className="font-medium">{frame.name || "(anonymous)"}</div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             {frame.file}:{frame.line}
           </div>
@@ -202,3 +240,6 @@ const ConsolePanel: React.FC<{ output: string[] }> = ({ output = [] }) => {
     </div>
   );
 };
+
+// Exports
+export { DebuggerPanel };

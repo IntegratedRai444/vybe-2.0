@@ -22,7 +22,7 @@ scrape_configs:
     metrics_path: '/metrics'
     scrape_interval: 15s
     static_configs:
-      - targets: 
+      - targets:
         - 'vybe-backend:8001'  # Metrics endpoint
     relabel_configs:
       - source_labels: [__address__]

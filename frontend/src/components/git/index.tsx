@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
-import { GitBranch, GitCommit, GitPullRequest, GitMerge, GitFork, Plus, RefreshCw, Check, X, AlertCircle } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Badge } from '../ui/badge';
-import { ScrollArea } from '../ui/scroll-area';
-import { Input } from '../ui/input';
-import { Separator } from '../ui/separator';
-import { cn } from '../../lib/utils';
+import React, { useState } from "react";
+import {
+  GitBranch,
+  GitCommit,
+  GitPullRequest,
+  GitMerge,
+  GitFork,
+  Plus,
+  RefreshCw,
+  Check,
+  X,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
+import { Input } from "../ui/input";
+import { Separator } from "../ui/separator";
+import { cn } from "../../lib/utils";
 
 interface GitFile {
   path: string;
-  status: 'staged' | 'unstaged' | 'untracked' | 'conflicted';
+  status: "staged" | "unstaged" | "untracked" | "conflicted";
   changes: {
     added: number;
     deleted: number;
@@ -28,7 +39,7 @@ interface GitCommitInfo {
 interface GitOperationsProps {
   branch: string;
   branches: string[];
-  status: 'clean' | 'dirty' | 'uncommitted' | 'conflict';
+  status: "clean" | "dirty" | "uncommitted" | "conflict";
   stagedFiles: GitFile[];
   unstagedFiles: GitFile[];
   commits: GitCommitInfo[];
@@ -38,10 +49,17 @@ interface GitOperationsProps {
   onCommit: (message: string) => Promise<{ success: boolean; error?: string }>;
   onPush: () => Promise<{ success: boolean; error?: string }>;
   onPull: () => Promise<{ success: boolean; error?: string }>;
-  onCreateBranch: (name: string) => Promise<{ success: boolean; error?: string }>;
-  onSwitchBranch: (name: string) => Promise<{ success: boolean; error?: string }>;
+  onCreateBranch: (
+    name: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  onSwitchBranch: (
+    name: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   onMerge: (branch: string) => Promise<{ success: boolean; error?: string }>;
-  onResolveConflict: (filePath: string, content: string) => Promise<{ success: boolean; error?: string }>;
+  onResolveConflict: (
+    filePath: string,
+    content: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   onRefresh: () => void;
   className?: string;
 }
@@ -66,14 +84,14 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
   onRefresh,
   className,
 }) => {
-  const [commitMessage, setCommitMessage] = useState('');
-  const [newBranchName, setNewBranchName] = useState('');
+  const [commitMessage, setCommitMessage] = useState("");
+  const [newBranchName, setNewBranchName] = useState("");
   const [isCreatingBranch, setIsCreatingBranch] = useState(false);
-  const [activeTab, setActiveTab] = useState('changes');
+  const [activeTab, setActiveTab] = useState("changes");
   const [isPushing, setIsPushing] = useState(false);
   const [isPulling, setIsPulling] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mergeBranch, setMergeBranch] = useState('');
+  const [mergeBranch, setMergeBranch] = useState("");
   const [isMerging, setIsMerging] = useState(false);
 
   const handleStage = (filePath: string) => {
@@ -85,14 +103,14 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
   };
 
   const handleStageAll = () => {
-    const files = unstagedFiles.map(f => f.path);
+    const files = unstagedFiles.map((f) => f.path);
     if (files.length > 0) {
       onStage(files).catch(console.error);
     }
   };
 
   const handleUnstageAll = () => {
-    const files = stagedFiles.map(f => f.path);
+    const files = stagedFiles.map((f) => f.path);
     if (files.length > 0) {
       onUnstage(files).catch(console.error);
     }
@@ -100,13 +118,13 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
 
   const handleCommit = async () => {
     if (!commitMessage.trim()) return;
-    
+
     const { success, error } = await onCommit(commitMessage);
     if (success) {
-      setCommitMessage('');
+      setCommitMessage("");
       setError(null);
     } else {
-      setError(error || 'Failed to commit changes');
+      setError(error || "Failed to commit changes");
     }
   };
 
@@ -116,7 +134,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
       setError(null);
       const { success, error } = await onPush();
       if (!success) {
-        setError(error || 'Failed to push changes');
+        setError(error || "Failed to push changes");
       }
     } finally {
       setIsPushing(false);
@@ -129,7 +147,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
       setError(null);
       const { success, error } = await onPull();
       if (!success) {
-        setError(error || 'Failed to pull changes');
+        setError(error || "Failed to pull changes");
       }
     } finally {
       setIsPulling(false);
@@ -138,28 +156,28 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
 
   const handleCreateBranch = async () => {
     if (!newBranchName.trim()) return;
-    
+
     const { success, error } = await onCreateBranch(newBranchName);
     if (success) {
-      setNewBranchName('');
+      setNewBranchName("");
       setIsCreatingBranch(false);
       setError(null);
     } else {
-      setError(error || 'Failed to create branch');
+      setError(error || "Failed to create branch");
     }
   };
 
   const handleMerge = async () => {
     if (!mergeBranch) return;
-    
+
     try {
       setIsMerging(true);
       setError(null);
       const { success, error } = await onMerge(mergeBranch);
       if (!success) {
-        setError(error || 'Failed to merge branch');
+        setError(error || "Failed to merge branch");
       } else {
-        setMergeBranch('');
+        setMergeBranch("");
       }
     } finally {
       setIsMerging(false);
@@ -168,10 +186,10 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
 
   const renderFileStatus = (file: GitFile) => {
     const { added, deleted } = file.changes || { added: 0, deleted: 0 };
-    
+
     return (
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {file.status === 'conflicted' && (
+        {file.status === "conflicted" && (
           <span className="text-destructive">
             <AlertCircle className="inline w-3 h-3 mr-1" />
             Conflicts
@@ -191,13 +209,13 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
             <GitBranch className="w-5 h-5" />
             <h2 className="text-lg font-semibold">Git</h2>
             <div className="ml-2">
-              <Badge variant={status === 'clean' ? 'outline' : 'secondary'}>  
+              <Badge variant={status === "clean" ? "outline" : "secondary"}>
                 {branch}
-                {status !== 'clean' && (
+                {status !== "clean" && (
                   <span className="ml-2">
-                    {status === 'uncommitted' && 'Uncommitted changes'}
-                    {status === 'conflict' && 'Merge conflict'}
-                    {status === 'dirty' && 'Modified'}
+                    {status === "uncommitted" && "Uncommitted changes"}
+                    {status === "conflict" && "Merge conflict"}
+                    {status === "dirty" && "Modified"}
                   </span>
                 )}
               </Badge>
@@ -210,7 +228,12 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
               onClick={onRefresh}
               disabled={isPushing || isPulling}
             >
-              <RefreshCw className={cn("w-4 h-4 mr-2", (isPushing || isPulling) && 'animate-spin')} />
+              <RefreshCw
+                className={cn(
+                  "w-4 h-4 mr-2",
+                  (isPushing || isPulling) && "animate-spin",
+                )}
+              />
               Refresh
             </Button>
           </div>
@@ -242,12 +265,20 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                   </Button>
                 )}
               </div>
-              
-              <ScrollArea className={cn("border rounded-md", stagedFiles.length === 0 ? 'h-10' : 'h-32')}>
+
+              <ScrollArea
+                className={cn(
+                  "border rounded-md",
+                  stagedFiles.length === 0 ? "h-10" : "h-32",
+                )}
+              >
                 {stagedFiles.length > 0 ? (
                   <div className="divide-y">
                     {stagedFiles.map((file) => (
-                      <div key={file.path} className="px-3 py-2 text-sm flex justify-between items-center hover:bg-accent">
+                      <div
+                        key={file.path}
+                        className="px-3 py-2 text-sm flex justify-between items-center hover:bg-accent"
+                      >
                         <div className="flex-1 truncate">{file.path}</div>
                         <div className="flex items-center gap-2">
                           {renderFileStatus(file)}
@@ -285,12 +316,20 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                   </Button>
                 )}
               </div>
-              
-              <ScrollArea className={cn("border rounded-md", unstagedFiles.length === 0 ? 'h-10' : 'h-32')}>
+
+              <ScrollArea
+                className={cn(
+                  "border rounded-md",
+                  unstagedFiles.length === 0 ? "h-10" : "h-32",
+                )}
+              >
                 {unstagedFiles.length > 0 ? (
                   <div className="divide-y">
                     {unstagedFiles.map((file) => (
-                      <div key={file.path} className="px-3 py-2 text-sm flex justify-between items-center hover:bg-accent">
+                      <div
+                        key={file.path}
+                        className="px-3 py-2 text-sm flex justify-between items-center hover:bg-accent"
+                      >
                         <div className="flex-1 truncate">{file.path}</div>
                         <div className="flex items-center gap-2">
                           {renderFileStatus(file)}
@@ -320,7 +359,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                   placeholder="Commit message"
                   value={commitMessage}
                   onChange={(e) => setCommitMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCommit()}
+                  onKeyDown={(e) => e.key === "Enter" && handleCommit()}
                   disabled={stagedFiles.length === 0}
                 />
                 <div className="flex justify-between">
@@ -328,7 +367,9 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                     <Button
                       size="sm"
                       onClick={handleCommit}
-                      disabled={stagedFiles.length === 0 || !commitMessage.trim()}
+                      disabled={
+                        stagedFiles.length === 0 || !commitMessage.trim()
+                      }
                     >
                       <GitCommit className="w-4 h-4 mr-2" />
                       Commit
@@ -337,7 +378,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                       variant="outline"
                       size="sm"
                       onClick={handlePush}
-                      disabled={isPushing || status === 'clean'}
+                      disabled={isPushing || status === "clean"}
                     >
                       {isPushing ? (
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -361,7 +402,8 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                     </Button>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {stagedFiles.length} staged • {unstagedFiles.length} unstaged
+                    {stagedFiles.length} staged • {unstagedFiles.length}{" "}
+                    unstaged
                   </div>
                 </div>
               </div>
@@ -405,7 +447,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                       size="sm"
                       onClick={() => {
                         setIsCreatingBranch(false);
-                        setNewBranchName('');
+                        setNewBranchName("");
                       }}
                     >
                       Cancel
@@ -422,7 +464,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                         key={b}
                         className={cn(
                           "px-3 py-2 text-sm flex justify-between items-center cursor-pointer hover:bg-accent",
-                          b === branch && "bg-accent font-medium"
+                          b === branch && "bg-accent font-medium",
                         )}
                         onClick={() => b !== branch && onSwitchBranch(b)}
                       >
@@ -463,14 +505,12 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
               <div className="mt-4 p-4 border rounded-md bg-muted/50">
                 <h4 className="font-medium mb-2">Merge into {branch}</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Merge changes from <span className="font-mono">{mergeBranch}</span> into <span className="font-mono">{branch}</span>?
+                  Merge changes from{" "}
+                  <span className="font-mono">{mergeBranch}</span> into{" "}
+                  <span className="font-mono">{branch}</span>?
                 </p>
                 <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    onClick={handleMerge}
-                    disabled={isMerging}
-                  >
+                  <Button size="sm" onClick={handleMerge} disabled={isMerging}>
                     {isMerging ? (
                       <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                     ) : (
@@ -481,7 +521,7 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setMergeBranch('')}
+                    onClick={() => setMergeBranch("")}
                     disabled={isMerging}
                   >
                     Cancel
@@ -501,14 +541,15 @@ export const GitOperations: React.FC<GitOperationsProps> = ({
                     key={commit.hash}
                     className={cn(
                       "p-3 border rounded-md",
-                      commit.isHead && "border-primary/50 bg-primary/5"
+                      commit.isHead && "border-primary/50 bg-primary/5",
                     )}
                   >
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="font-medium">{commit.message}</div>
                         <div className="text-sm text-muted-foreground mt-1">
-                          {commit.author} • {new Date(commit.date).toLocaleString()}
+                          {commit.author} •{" "}
+                          {new Date(commit.date).toLocaleString()}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">

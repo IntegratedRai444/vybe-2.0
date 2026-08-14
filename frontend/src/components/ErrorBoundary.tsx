@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -25,12 +25,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
-    
+
     // Log error to error reporting service
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     } else {
-      console.error('Error caught by ErrorBoundary:', error, errorInfo);
+      console.error("Error caught by ErrorBoundary:", error, errorInfo);
     }
   }
 
@@ -39,10 +39,10 @@ export class ErrorBoundary extends Component<Props, State> {
     const { children, fallback } = this.props;
 
     if (hasError) {
-      if (typeof fallback === 'function') {
+      if (typeof fallback === "function") {
         return fallback(error);
       }
-      
+
       if (fallback) {
         return fallback;
       }
@@ -63,9 +63,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 )}
               </div>
             )}
-            <button 
+            <button
               className="error-boundary__retry"
-              onClick={() => this.setState({ hasError: false, error: null, errorInfo: null })}
+              onClick={() =>
+                this.setState({ hasError: false, error: null, errorInfo: null })
+              }
             >
               Try again
             </button>
@@ -81,7 +83,7 @@ export class ErrorBoundary extends Component<Props, State> {
 // Higher-Order Component for error boundaries
 export function withErrorBoundary<P>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<Props, 'children'>
+  errorBoundaryProps?: Omit<Props, "children">,
 ) {
   return function WithErrorBoundary(props: P) {
     return (
@@ -108,12 +110,16 @@ export const ErrorBoundaryContext = React.createContext<{
 export const useErrorBoundary = () => {
   const context = React.useContext(ErrorBoundaryContext);
   if (!context) {
-    throw new Error('useErrorBoundary must be used within an ErrorBoundaryProvider');
+    throw new Error(
+      "useErrorBoundary must be used within an ErrorBoundaryProvider",
+    );
   }
   return context;
 };
 
-export const ErrorBoundaryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ErrorBoundaryProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [errorState, setErrorState] = React.useState<{
     error: Error | null;
     errorInfo: ErrorInfo | null;
@@ -130,7 +136,7 @@ export const ErrorBoundaryProvider: React.FC<{ children: ReactNode }> = ({ child
       errorInfo: errorState.errorInfo,
       resetError,
     }),
-    [errorState, resetError]
+    [errorState, resetError],
   );
 
   if (errorState.error) {
@@ -156,3 +162,6 @@ export const ErrorBoundaryProvider: React.FC<{ children: ReactNode }> = ({ child
     </ErrorBoundary>
   );
 };
+
+// Exports
+export { ErrorBoundary };

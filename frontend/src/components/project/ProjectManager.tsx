@@ -1,30 +1,36 @@
-import React, { useState } from 'react';
-import { FiFolder, FiPlus, FiX, FiChevronRight, FiChevronDown } from 'react-icons/fi';
-import { ProjectTemplate } from '../../templates/projectTemplates';
-import { useProject } from '../../contexts/ProjectContext';
-import ProjectTemplatePicker from './ProjectTemplatePicker';
+import React, { useState } from "react";
+import {
+  FiFolder,
+  FiPlus,
+  FiX,
+  FiChevronRight,
+  FiChevronDown,
+} from "react-icons/fi";
+import { ProjectTemplate } from "../../templates/projectTemplates";
+import { useProject } from "../../contexts/ProjectContext";
+import ProjectTemplatePicker from "./ProjectTemplatePicker";
 
 const ProjectManager: React.FC = () => {
-  const { 
-    projects, 
-    currentProject, 
-    createProject, 
-    openProject, 
-    deleteProject 
+  const {
+    projects,
+    currentProject,
+    createProject,
+    openProject,
+    deleteProject,
   } = useProject();
-  
+
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [expanded, setExpanded] = useState(true);
 
   const handleCreateProject = async (template?: ProjectTemplate) => {
     try {
-      const projectName = prompt('Enter project name:');
+      const projectName = prompt("Enter project name:");
       if (projectName) {
         await createProject(projectName, template?.id);
       }
     } catch (error) {
-      console.error('Failed to create project:', error);
-      alert('Failed to create project. Please try again.');
+      console.error("Failed to create project:", error);
+      alert("Failed to create project. Please try again.");
     } finally {
       setShowTemplatePicker(false);
     }
@@ -36,7 +42,11 @@ const ProjectManager: React.FC = () => {
 
   const handleDeleteProject = (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this project? This action cannot be undone.",
+      )
+    ) {
       deleteProject(projectId);
     }
   };
@@ -56,9 +66,13 @@ const ProjectManager: React.FC = () => {
           <button
             onClick={() => setExpanded(!expanded)}
             className="p-1 text-gray-500 hover:text-blue-500 hover:bg-gray-100 rounded"
-            title={expanded ? 'Collapse' : 'Expand'}
+            title={expanded ? "Collapse" : "Expand"}
           >
-            {expanded ? <FiChevronDown size={18} /> : <FiChevronRight size={18} />}
+            {expanded ? (
+              <FiChevronDown size={18} />
+            ) : (
+              <FiChevronRight size={18} />
+            )}
           </button>
         </div>
       </div>
@@ -79,23 +93,23 @@ const ProjectManager: React.FC = () => {
               </div>
             ) : (
               <ul className="space-y-1">
-                {projects.map(project => (
-                  <li 
+                {projects.map((project) => (
+                  <li
                     key={project.id}
                     className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer ${
-                      currentProject?.id === project.id 
-                        ? 'bg-blue-50 text-blue-700' 
-                        : 'text-gray-700 hover:bg-gray-50'
+                      currentProject?.id === project.id
+                        ? "bg-blue-50 text-blue-700"
+                        : "text-gray-700 hover:bg-gray-50"
                     }`}
                     onClick={() => openProject(project.id)}
                   >
                     <div className="flex items-center">
-                      <FiFolder 
+                      <FiFolder
                         className={`mr-2 ${
-                          currentProject?.id === project.id 
-                            ? 'text-blue-500' 
-                            : 'text-gray-400'
-                        }`} 
+                          currentProject?.id === project.id
+                            ? "text-blue-500"
+                            : "text-gray-400"
+                        }`}
                       />
                       <span className="truncate">{project.name}</span>
                     </div>

@@ -1,97 +1,20 @@
-import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
-import { 
-  FiSend, 
-  FiCopy, 
-  FiEdit2, 
-  FiTrash2, 
-  FiMoreVertical, 
-  FiAlertCircle, 
-  FiClock, 
-  FiLoader,
-  FiX,
-  FiZap
-} from 'react-icons/fi';
+import * as React from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
+import { FiSend, FiCopy, FiAlertCircle, FiX } from 'react-icons/fi';
+import { cn } from '../../lib/utils/cn';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'prism-react-renderer';
-import { vsDark } from 'prism-react-renderer/themes';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import type { Components } from 'react-markdown';
 
-// Local imports
-import { cn } from '../../lib/utils';
-import { useTheme } from '../theme/ThemeProvider';
-
-// Mock theme since we can't find the original
-const useThemeMock = () => ({
-  theme: {
-    colors: {
-      border: '#e5e7eb',
-      surface: '#ffffff',
-      primary: '#3b82f6',
-      text: '#111827',
-      muted: '#6b7280'
-    }
-  }
-});
-
-// Use the mock theme if the original is not available
-const useThemeFallback = useTheme || useThemeMock;
-
-// Mock ReactMarkdown and SyntaxHighlighter to prevent errors
-const ReactMarkdownFallback = ({ children }: { children: string }) => (
-  <div className="prose dark:prose-invert max-w-none">{children}</div>
-);
-
-const SyntaxHighlighterFallback = ({
-  children,
-  language,
-  style,
-  ...props
-}: {
-  children: string;
-  language: string;
-  style: React.CSSProperties;
-  [key: string]: any;
-}) => (
-  <pre className={`language-${language} bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-auto`}>
-    <code>{children}</code>
-  </pre>
-);
-
-// Use the mock components if the original is not available
-const ReactMarkdownComponent = ReactMarkdown || ReactMarkdownFallback;
-const SyntaxHighlighterComponent = SyntaxHighlighter || SyntaxHighlighterFallback;
-
-// Simple ErrorBoundary component
-class ErrorBoundary extends React.Component<{ fallback: React.ReactNode }, { hasError: boolean }> {
-  constructor(props: { fallback: React.ReactNode; children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error in AIChatPanel:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-
-    return this.props.children;
-  }
+// Type for react-markdown components
+interface MarkdownComponents extends Components {
+  code?: React.ElementType;
+  pre?: React.ElementType;
+  // Add other component overrides as needed
 }
 
-// Type for code component props
-interface CodeBlockProps {
-  node?: any;
-  inline?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}
-
+// Types
 export interface AIMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -110,194 +33,169 @@ interface AIChatPanelProps {
   isLoading?: boolean;
   error?: string | null;
   className?: string;
+  theme?: {
+    colors?: {
+      background?: string;
+      border?: string;
+      text?: string;
+      surface?: string;
+    };
+  };
 }
 
-// Create a mock useAI hook since we can't find the original
-const useAIMock = () => ({
-  messages: [] as AIMessage[],
-  sendMessage: async (message: string) => { 
-    console.log('Sending message:', message);
-    return { success: true }; 
-  },
-  isLoading: false,
-  error: null,
-});
+// Error boundary component
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
 
-// Use the mock hook - replace with real hook when available
-const useAI = useAIMock;
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error in AIChatPanel:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <FiAlertCircle className="w-5 h-5" />
+            <span>Something went wrong. Please try again.</span>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const AIChatPanel: React.FC<AIChatPanelProps> = ({
   messages: externalMessages = [],
-  onSendMessage: externalOnSendMessage,
+  onSendMessage: externalSendMessage,
   isLoading: externalIsLoading = false,
   error: externalError = null,
   className = ''
 }) => {
-  // Use external state if provided, otherwise use internal state
-  const {
-    messages: aiMessages = [],
-    sendMessage: aiSendMessage,
-    isLoading: aiIsLoading = false,
-    error: aiError = null
-  } = useAI();
-
-  const messages = externalMessages.length ? externalMessages : aiMessages;
-  const isLoading = externalIsLoading || aiIsLoading;
-  const error = externalError || aiError;
-  
-  const handleSendMessage = useCallback(async (content: string) => {
-    if (externalOnSendMessage) {
-      return externalOnSendMessage(content);
-    }
-    return aiSendMessage(content);
-  }, [externalOnSendMessage, aiSendMessage]);
-  const { theme } = useTheme?.() || { theme: { colors: { border: '#e5e7eb', surface: '#ffffff' } } };
+  const [messages, setMessages] = useState<AIMessage[]>(externalMessages);
   const [input, setInput] = useState('');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [rateLimit] = useState({ isLimited: false });
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  
+  // Update messages when externalMessages changes
+  useEffect(() => {
+    setMessages(externalMessages);
+  }, [externalMessages]);
+  
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Handle sending a message
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const message = input.trim();
-    if (!message || isLoading) return;
-
+  
+  // Handle clicks outside to close any open menus
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        // Handle menu closing if needed
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  const handleSendMessage = useCallback(async (content: string) => {
+    if (!content.trim() || !externalSendMessage) return;
+    
+    const userMessage: AIMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: content.trim(),
+      timestamp: new Date(),
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
     setIsTyping(true);
+    
     try {
-      await handleSendMessage(message);
-      setInput('');
-    } catch (err) {
-      console.error('Failed to send message:', err);
+      await externalSendMessage(content.trim());
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, there was an error sending your message. Please try again.',
+        timestamp: new Date(),
+        isError: true
+      }]);
     } finally {
       setIsTyping(false);
     }
-  }, [input, isLoading, handleSendMessage]);
-
-  // Handle keyboard events
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  }, [externalSendMessage]);
+  
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      if (input.trim()) {
+        handleSendMessage(input);
+      }
     }
-  }, [handleSubmit]);
-
-  // Copy text to clipboard
-  const copyToClipboard = useCallback((text: string, messageId: string) => {
-    navigator.clipboard.writeText(text);
+  }, [input, handleSendMessage]);
+  
+  const handleCopyMessage = useCallback((content: string, messageId: string) => {
+    navigator.clipboard.writeText(content).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
     setCopiedId(messageId);
-    setTimeout(() => setCopiedId(null), 2000);
+    const timer = setTimeout(() => setCopiedId(null), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Render error state if there's an error
-  if (error) {
-    return (
-      <div className="p-4 text-red-500 bg-red-50 rounded-lg">
-        <div className="flex items-center">
-          <FiAlertCircle className="mr-2" />
-          <span>Error: {error}</span>
-        </div>
-        <button 
-          onClick={() => window.location.reload()}
-          className="mt-2 text-sm text-blue-500 hover:underline"
-        >
-          Reload Chat
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <ErrorBoundary 
-      fallback={
-        <div className="p-4 text-red-500 bg-red-50 rounded-lg">
-          <p>Something went wrong with the chat. Please try again.</p>
-        </div>
-      }
-    >
-      <div className={cn("flex flex-col h-full", className)}>
-      {/* Message list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollBehavior: 'smooth' }}>
-        {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <FiZap className="w-12 h-12 mb-4 opacity-30" />
-            <p className="text-lg font-medium">Start a conversation</p>
-            <p className="text-sm">Type a message to begin chatting with the AI</p>
-          </div>
-        ) : (
-          messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
+    <ErrorBoundary>
+      <div className={cn('flex flex-col h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden', className)}>
+        {/* Messages container */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message) => (
             <div
-              className={`max-w-[80%] rounded-lg p-3 relative group ${
-                message.role === 'user'
-                  ? 'bg-blue-500 text-white rounded-br-none'
-                  : 'bg-gray-100 dark:bg-gray-700 rounded-bl-none'
-              }`}
+              key={message.id}
+              className={cn(
+                'flex group',
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              )}
             >
-              {/* Message content with markdown rendering */}
-              {editingId === message.id ? (
-                <div className="space-y-2">
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    rows={4}
-                    autoFocus
-                  />
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={cancelEditing}
-                      className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={saveEdit}
-                      className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-              ) : (
+              <div
+                className={cn(
+                  'max-w-3xl rounded-lg px-4 py-2 relative',
+                  message.role === 'user'
+                    ? 'bg-blue-500 text-white rounded-br-none'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none'
+                )}
+              >
                 <div className="prose dark:prose-invert max-w-none">
                   <ReactMarkdown
                     components={{
-                      code({node, inline, className, children, ...props}: CodeBlockProps) {
+                      code({ node, inline, className, children, ...props }: {
+                        node?: any;
+                        inline?: boolean;
+                        className?: string;
+                        children?: React.ReactNode;
+                        [key: string]: any;
+                      }) {
                         const match = /language-(\w+)/.exec(className || '');
                         return !inline && match ? (
-                          <div className="relative">
-                            <div className="absolute right-2 top-2 flex space-x-1">
-                              <button
-                                onClick={() => {
-                                  navigator.clipboard.writeText(String(children).replace(/\n$/, ''));
-                                }}
-                                className="p-1 text-xs text-gray-400 hover:text-white bg-gray-800 rounded"
-                                title="Copy code"
-                              >
-                                <FiCopy size={14} />
-                              </button>
-                            </div>
-                            <SyntaxHighlighter
-                              style={vsDark}
-                              language={match[1]}
-                              PreTag="div"
-                              {...props}
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          </div>
+                          <CodeBlock className={className}>
+                            {String(children).replace(/\n$/, '')}
+                          </CodeBlock>
                         ) : (
-                          <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm">
+                          <code className={className} {...props}>
                             {children}
                           </code>
                         );
@@ -307,172 +205,161 @@ const AIChatPanel: React.FC<AIChatPanelProps> = ({
                     {message.content}
                   </ReactMarkdown>
                 </div>
-              )}
-
-              {/* Message metadata and actions */}
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center space-x-1">
-                  {message.isEdited && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      (edited)
-                    </span>
-                  )}
+                
+                {/* Message metadata */}
+                <div className="flex items-center justify-end mt-1 space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                  {message.isEdited && <span>(edited)</span>}
                   {message.provider && message.model && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {message.provider} • {message.model}
-                    </span>
+                    <span>{message.provider} • {message.model}</span>
                   )}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs opacity-70">
-                    {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <div className="relative" ref={message.role === 'user' ? menuRef : null}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowMenuId(showMenuId === message.id ? null : message.id);
-                      }}
-                      className="opacity-0 group-hover:opacity-70 hover:opacity-100 transition-opacity p-1"
-                    >
-                      <FiMoreVertical size={14} />
-                    </button>
-                    
-                    {showMenuId === message.id && (
-                      <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 border border-gray-200 dark:border-gray-700">
-                        <button
-                          onClick={() => copyToClipboard(message.content, message.id)}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                        >
-                          <FiCopy size={14} />
-                          <span>{copiedId === message.id ? 'Copied!' : 'Copy'}</span>
-                        </button>
-                        {message.role === 'user' && (
-                          <>
-                            <button
-                              onClick={() => startEditing(message)}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                            >
-                              <FiEdit2 size={14} />
-                              <span>Edit</span>
-                            </button>
-                            <button
-                              onClick={() => deleteMessage(message.id)}
-                              className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                            >
-                              <FiTrash2 size={14} />
-                              <span>Delete</span>
-                            </button>
-                          </>
-                        )}
-                      </div>
+                  <button
+                    onClick={() => handleCopyMessage(message.content, message.id)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Copy message"
+                  >
+                    <FiCopy className="w-3.5 h-3.5" />
+                    {copiedId === message.id && (
+                      <span className="absolute -top-6 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded">
+                        Copied!
+                      </span>
                     )}
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Error message */}
+        {externalError && (
+          <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mx-4 mb-4 rounded">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <FiAlertCircle className="h-5 w-5 text-red-500" aria-hidden="true" />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700 dark:text-red-300">{externalError}</p>
+              </div>
+            </div>
           </div>
-        ))}
+        )}
+
+        {/* Input area */}
+        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (input.trim()) {
+                handleSendMessage(input);
+              }
+            }}
+          >
+            <div className="flex items-end space-x-2">
+              <div className="flex-1 relative">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a message..."
+                  className="w-full p-3 pr-10 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  style={{
+                    backgroundColor: 'white',
+                    borderColor: 'gray',
+                    color: 'black',
+                    minHeight: '44px',
+                    maxHeight: '200px',
+                  }}
+                  rows={1}
+                  disabled={externalIsLoading || rateLimit.isLimited}
+                />
+                {input && (
+                  <button
+                    onClick={() => setInput('')}
+                    className="absolute right-12 top-3 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                  >
+                    <FiX size={18} />
+                  </button>
+                )}
+              </div>
+              <button
+                type="submit"
+                disabled={externalIsLoading || !input.trim() || rateLimit.isLimited}
+                className={cn(
+                  'p-2 rounded-md transition-colors',
+                  externalIsLoading || !input.trim() || rateLimit.isLimited
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                )}
+                aria-label="Send message"
+              >
+                {externalIsLoading || isTyping ? (
+                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <FiSend className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
 
         {/* Typing indicator */}
-        {(isLoading || isTyping) && (
-          <div className="flex items-center space-x-2 p-3 rounded-lg bg-gray-100 dark:bg-gray-700 w-fit">
+        {(externalIsLoading || isTyping) && (
+          <div className="flex items-center space-x-2 p-3 rounded-lg bg-gray-100 dark:bg-gray-700 w-fit m-4">
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '150ms' }} />
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '300ms' }} />
             <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-              {isTyping ? 'AI is typing...' : 'Sending...'}
+              {isTyping ? 'AI is thinking...' : 'Sending...'}
             </span>
           </div>
         )}
-
-        {/* Rate limit warning */}
-        {rateLimit.isLimited && (
-          <div className="p-3 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-            Sending messages too quickly. Please wait a moment before sending another message.
-          </div>
-        )}
-
-        {/* Error message */}
-        {error && (
-          <div className="p-3 text-red-500 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
       </div>
-
-      {/* Message input */}
-      <div 
-        className="p-3 border-t transition-colors" 
-        style={{ 
-          borderColor: theme?.colors?.border || '#e5e7eb', 
-          backgroundColor: theme?.colors?.surface || '#ffffff',
-          opacity: isLoading ? 0.7 : 1,
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}
-      >
-        <div className="flex items-end space-x-2">
-          <div className="flex-1 relative">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder={rateLimit.isLimited ? 
-                'Please wait before sending another message...' : 
-                'Ask me anything about your code...'}
-              className={`w-full p-3 pr-10 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
-                rateLimit.isLimited ? 'cursor-not-allowed' : ''
-              }`}
-              style={{
-                backgroundColor: theme.colors.background,
-                borderColor: theme.colors.border,
-                color: theme.colors.text,
-                minHeight: '44px',
-                maxHeight: '200px',
-                opacity: rateLimit.isLimited ? 0.7 : 1,
-              }}
-              rows={1}
-              disabled={isLoading || rateLimit.isLimited}
-            />
-            {input && (
-              <button
-                onClick={() => setInput('')}
-                className="absolute right-12 top-3 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-              >
-                <FiX size={18} />
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            className={cn(
-              "p-2 rounded-md transition-colors flex items-center justify-center",
-              !input.trim() || isLoading
-                ? "text-gray-400 cursor-not-allowed"
-                : "text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-            )}
-            onClick={handleSubmit}
-            disabled={isLoading || !input.trim()}
-            aria-label="Send message"
-          >
-            {isLoading ? (
-              <FiLoader className="w-5 h-5 animate-spin" />
-            ) : (
-              <FiSend className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-        <p className="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">
-          Press Enter to send, Shift+Enter for new line
-        </p>
-      </div>
-    </div>
+    </ErrorBoundary>
   );
 };
+
+const CodeBlock: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
+  const match = /language-(\w+)/.exec(className);
+  
+  return match ? (
+    <div className="my-2 rounded-md overflow-hidden">
+      <SyntaxHighlighter
+        style={vscDarkPlus}
+        language={match[1]}
+        PreTag="div"
+        customStyle={{
+          margin: 0,
+          borderRadius: '0.375rem',
+          fontSize: '0.875rem',
+          lineHeight: '1.5'
+        }}
+        codeTagProps={{
+          style: {
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          },
+        }}
+      >
+        {String(children).replace(/\n$/, '')}
+      </SyntaxHighlighter>
+    </div>
+  ) : (
+    <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono">
+      {children}
+    </code>
+  );
+};
+
+// This is the correct export with error boundary
+const AIChatPanelWithErrorBoundary: React.FC<AIChatPanelProps> = (props) => (
+  <ErrorBoundary>
+    <AIChatPanel {...props} />
+  </ErrorBoundary>
+);
+
+// Default export for backward compatibility
+export const AIChatPanel = AIChatPanelWithErrorBoundary;
+
+// Named exports
+export { AIChatPanel };
+export default AIChatPanel;

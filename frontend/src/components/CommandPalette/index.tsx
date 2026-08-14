@@ -1,83 +1,94 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Command } from 'cmdk';
-import { FiSearch, FiX, FiTerminal, FiSettings, FiFile, FiFolder, FiGitBranch } from 'react-icons/fi';
-import { useStore } from '../../store/useStore';
-import { Command as CommandType } from '../../types';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Command } from "cmdk";
+import {
+  FiSearch,
+  FiX,
+  FiTerminal,
+  FiSettings,
+  FiFile,
+  FiFolder,
+  FiGitBranch,
+} from "react-icons/fi";
+import { useStore } from "../../store/useStore";
+import { Command as CommandType } from "../../types";
 
 const CommandPalette: React.FC = () => {
   const { isCommandPaletteOpen, setCommandPaletteOpen } = useStore();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const commandRef = useRef<HTMLDivElement>(null);
 
   // Close command palette on escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setCommandPaletteOpen(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [setCommandPaletteOpen]);
 
   // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (commandRef.current && !commandRef.current.contains(e.target as Node)) {
+      if (
+        commandRef.current &&
+        !commandRef.current.contains(e.target as Node)
+      ) {
         setCommandPaletteOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setCommandPaletteOpen]);
 
   // Commands list
   const commands: CommandType[] = [
     {
-      id: 'new-file',
-      name: 'New File',
-      description: 'Create a new file',
+      id: "new-file",
+      name: "New File",
+      description: "Create a new file",
       icon: <FiFile className="w-4 h-4" />,
-      category: 'File',
-      shortcut: ['⌘', 'N'],
-      action: () => console.log('New file')
+      category: "File",
+      shortcut: ["⌘", "N"],
+      action: () => console.log("New file"),
     },
     {
-      id: 'open-folder',
-      name: 'Open Folder',
-      description: 'Open a folder in the workspace',
+      id: "open-folder",
+      name: "Open Folder",
+      description: "Open a folder in the workspace",
       icon: <FiFolder className="w-4 h-4" />,
-      category: 'File',
-      shortcut: ['⌘', 'O'],
-      action: () => console.log('Open folder')
+      category: "File",
+      shortcut: ["⌘", "O"],
+      action: () => console.log("Open folder"),
     },
     {
-      id: 'open-terminal',
-      name: 'Toggle Terminal',
-      description: 'Show/hide the integrated terminal',
+      id: "open-terminal",
+      name: "Toggle Terminal",
+      description: "Show/hide the integrated terminal",
       icon: <FiTerminal className="w-4 h-4" />,
-      category: 'View',
-      shortcut: ['⌘', '`'],
-      action: () => useStore.getState().togglePanel('terminal')
+      category: "View",
+      shortcut: ["⌘", "`"],
+      action: () => useStore.getState().togglePanel("terminal"),
     },
     {
-      id: 'open-settings',
-      name: 'Open Settings',
-      description: 'Open settings',
+      id: "open-settings",
+      name: "Open Settings",
+      description: "Open settings",
       icon: <FiSettings className="w-4 h-4" />,
-      category: 'Preferences',
-      shortcut: ['⌘', ','],
-      action: () => console.log('Open settings')
+      category: "Preferences",
+      shortcut: ["⌘", ","],
+      action: () => console.log("Open settings"),
     },
     {
-      id: 'git-commit',
-      name: 'Git: Commit',
-      description: 'Commit changes to git',
+      id: "git-commit",
+      name: "Git: Commit",
+      description: "Commit changes to git",
       icon: <FiGitBranch className="w-4 h-4" />,
-      category: 'Git',
-      action: () => console.log('Git commit')
+      category: "Git",
+      action: () => console.log("Git commit"),
     },
   ];
 
@@ -86,31 +97,30 @@ const CommandPalette: React.FC = () => {
     (cmd) =>
       cmd.name.toLowerCase().includes(search.toLowerCase()) ||
       cmd.description.toLowerCase().includes(search.toLowerCase()) ||
-      cmd.category?.toLowerCase().includes(search.toLowerCase())
+      cmd.category?.toLowerCase().includes(search.toLowerCase()),
   );
 
   // Group commands by category
-  const commandsByCategory = filteredCommands.reduce<Record<string, CommandType[]>>(
-    (acc, cmd) => {
-      const category = cmd.category || 'Other';
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(cmd);
-      return acc;
-    },
-    {}
-  );
+  const commandsByCategory = filteredCommands.reduce<
+    Record<string, CommandType[]>
+  >((acc, cmd) => {
+    const category = cmd.category || "Other";
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(cmd);
+    return acc;
+  }, {});
 
   if (!isCommandPaletteOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-start justify-center pt-20 z-50">
-      <div 
+      <div
         ref={commandRef}
         className="w-full max-w-2xl bg-gray-900 rounded-lg shadow-2xl overflow-hidden border border-gray-700"
       >
-        <Command 
+        <Command
           label="Command Palette"
           className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-gray-400 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 [&_[cmdk-item]_svg]:text-gray-400"
         >
@@ -130,7 +140,7 @@ const CommandPalette: React.FC = () => {
               <FiX className="h-5 w-5" />
             </button>
           </div>
-          
+
           <Command.List className="max-h-[400px] overflow-y-auto p-2">
             {Object.entries(commandsByCategory).map(([category, cmds]) => (
               <Command.Group key={category} heading={category}>
@@ -166,14 +176,14 @@ const CommandPalette: React.FC = () => {
                 ))}
               </Command.Group>
             ))}
-            
+
             {filteredCommands.length === 0 && (
               <div className="py-6 text-center text-sm text-gray-500">
                 No commands found
               </div>
             )}
           </Command.List>
-          
+
           <div className="flex items-center justify-between px-4 py-2 text-xs text-gray-500 border-t border-gray-800">
             <div className="flex items-center space-x-2">
               <span className="px-2 py-1 bg-gray-800 rounded">↑↓</span>

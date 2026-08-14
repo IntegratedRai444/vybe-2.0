@@ -1,9 +1,9 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 interface GitFile {
   path: string;
-  status: 'staged' | 'unstaged' | 'untracked' | 'conflicted';
+  status: "staged" | "unstaged" | "untracked" | "conflicted";
   changes: {
     added: number;
     deleted: number;
@@ -21,7 +21,7 @@ interface GitCommit {
 interface GitState {
   branch: string;
   branches: string[];
-  status: 'clean' | 'dirty' | 'uncommitted' | 'conflict';
+  status: "clean" | "dirty" | "uncommitted" | "conflict";
   stagedFiles: GitFile[];
   unstagedFiles: GitFile[];
   commits: GitCommit[];
@@ -32,7 +32,7 @@ interface GitState {
   actions: {
     setBranch: (branch: string) => void;
     setBranches: (branches: string[]) => void;
-    setStatus: (status: 'clean' | 'dirty' | 'uncommitted' | 'conflict') => void;
+    setStatus: (status: "clean" | "dirty" | "uncommitted" | "conflict") => void;
     setStagedFiles: (files: GitFile[]) => void;
     setUnstagedFiles: (files: GitFile[]) => void;
     setCommits: (commits: GitCommit[]) => void;
@@ -46,9 +46,9 @@ interface GitState {
 const useGitStore = create<GitState>()(
   devtools(
     (set) => ({
-      branch: 'main',
+      branch: "main",
       branches: [],
-      status: 'clean',
+      status: "clean",
       stagedFiles: [],
       unstagedFiles: [],
       commits: [],
@@ -69,10 +69,11 @@ const useGitStore = create<GitState>()(
         setError: (error) => set({ error }),
       },
     }),
-    { name: 'git-store' }
-  )
+    { name: "git-store" },
+  ),
 );
 
+// Selectors
 export const useGitBranch = () => useGitStore((state) => state.branch);
 export const useGitBranches = () => useGitStore((state) => state.branches);
 export const useGitStatus = () => useGitStore((state) => state.status);

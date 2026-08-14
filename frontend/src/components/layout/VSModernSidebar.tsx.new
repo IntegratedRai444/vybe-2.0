@@ -80,7 +80,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
       // const response = await fetch('/api/files?path=' + encodeURIComponent(path));
       // const data = await response.json();
       // setFiles(processFileStructure(data));
-      
+
       // Mock data for demonstration
       setFiles([
         {
@@ -90,23 +90,23 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
           type: 'folder',
           isOpen: true,
           children: [
-            { 
-              id: 'app', 
-              name: 'app', 
+            {
+              id: 'app',
+              name: 'app',
               path: '/vybe-2.0/app',
               type: 'folder',
               children: []
             },
-            { 
-              id: 'components', 
-              name: 'components', 
+            {
+              id: 'components',
+              name: 'components',
               path: '/vybe-2.0/components',
               type: 'folder',
               children: []
             },
-            { 
-              id: 'package.json', 
-              name: 'package.json', 
+            {
+              id: 'package.json',
+              name: 'package.json',
               path: '/vybe-2.0/package.json',
               type: 'file',
               extension: 'json'
@@ -135,7 +135,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   const handleCreateFile = async (parentPath: string) => {
     const fileName = prompt('Enter file name:');
     if (!fileName) return;
-    
+
     try {
       const filePath = `${parentPath}/${fileName}`;
       // In a real app, this would be an API call
@@ -152,7 +152,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   const handleCreateFolder = async (parentPath: string) => {
     const folderName = prompt('Enter folder name:');
     if (!folderName) return;
-    
+
     try {
       const folderPath = `${parentPath}/${folderName}`;
       // In a real app, this would be an API call
@@ -168,7 +168,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
 
   const handleDeleteItem = async (item: FileItem) => {
     if (!confirm(`Are you sure you want to delete ${item.name}?`)) return;
-    
+
     try {
       // In a real app, this would be an API call
       // await deleteFileOrFolder(item.path);
@@ -185,7 +185,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
+
     try {
       setIsSearching(true);
       // In a real app, this would be an API call
@@ -193,7 +193,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
       //   query: searchQuery,
       //   path: '/'
       // });
-      
+
       // Mock search results
       const mockResults: SearchResult[] = [
         {
@@ -203,7 +203,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
           matches: [{ line: 10, content: '  "name": "vybe-2.0",' }]
         }
       ];
-      
+
       setSearchResults(mockResults);
     } catch (error) {
       console.error('Search error:', error);
@@ -232,11 +232,11 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   // Render file/folder icon based on type and extension
   const renderFileIcon = (item: FileItem) => {
     if (item.type === 'folder') {
-      return item.isOpen ? 
-        <FiFolder className="text-blue-400 mr-2" size={16} /> : 
+      return item.isOpen ?
+        <FiFolder className="text-blue-400 mr-2" size={16} /> :
         <FiFolderClosed className="text-blue-400 mr-2" size={16} />;
     }
-    
+
     // File icons based on extension
     const extension = item.name.split('.').pop()?.toLowerCase();
     switch (extension) {
@@ -275,7 +275,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   const renderFileTree = (items: FileItem[], depth = 0) => {
     return items.map(item => (
       <div key={item.id} className="w-full">
-        <div 
+        <div
           className={`flex items-center py-1 px-2 hover:bg-[#2A2D2E] cursor-pointer ${depth > 0 ? 'pl-4' : ''}`}
           onContextMenu={(e) => {
             e.preventDefault();
@@ -307,7 +307,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
           )}
           <span className="text-sm text-gray-200 truncate">{item.name}</span>
         </div>
-        
+
         {item.type === 'folder' && item.isOpen && item.children && (
           <div>
             {renderFileTree(item.children, depth + 1)}
@@ -328,8 +328,8 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
         </div>
         <div className="max-h-64 overflow-y-auto">
           {searchResults.map((result, idx) => (
-            <div 
-              key={`${result.file}-${idx}`} 
+            <div
+              key={`${result.file}-${idx}`}
               className="px-4 py-1 hover:bg-[#2A2D2E] cursor-pointer text-xs"
               onClick={() => {
                 // Find the file in the tree and select it
@@ -391,10 +391,10 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
           ) : (
             <div className="file-tree">
               {files.map(item => renderFileTree([item]))}
-              
+
               {/* Context Menu */}
               {contextMenu && (
-                <div 
+                <div
                   className="fixed bg-[#252526] border border-[#454545] shadow-lg rounded z-50"
                   style={{
                     left: `${contextMenu.x}px`,
@@ -405,7 +405,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                 >
                   {contextMenu.type === 'folder' && (
                     <>
-                      <div 
+                      <div
                         className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
                         onClick={() => {
                           handleCreateFile(contextMenu.item?.path || '');
@@ -415,7 +415,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                         <FiFilePlus className="mr-2" size={14} />
                         <span>New File</span>
                       </div>
-                      <div 
+                      <div
                         className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
                         onClick={() => {
                           handleCreateFolder(contextMenu.item?.path || '');
@@ -428,10 +428,10 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                       <div className="border-t border-[#454545] my-1"></div>
                     </>
                   )}
-                  
+
                   {contextMenu.item && (
                     <>
-                      <div 
+                      <div
                         className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center"
                         onClick={() => {
                           // Implement rename functionality
@@ -448,7 +448,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                         <FiEdit2 className="mr-2" size={14} />
                         <span>Rename</span>
                       </div>
-                      <div 
+                      <div
                         className="px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer flex items-center text-red-400"
                         onClick={() => {
                           if (contextMenu.item) {
@@ -498,7 +498,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
               )}
             </div>
           </form>
-          
+
           {isSearching ? (
             <div className="text-center py-4 text-gray-400">Searching...</div>
           ) : searchResults.length > 0 ? (
@@ -528,7 +528,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
   ];
 
   return (
-    <div 
+    <div
       className="h-full flex bg-[#252526] text-[#E8E8E8] w-64 select-none flex-col"
       onClick={() => setContextMenu(null)}
     >
@@ -536,7 +536,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
       <div className="flex-1 overflow-y-auto">
         {sections.map((section) => (
           <div key={section.id} className="mb-1">
-            <div 
+            <div
               className="flex items-center justify-between px-4 py-2 hover:bg-[#2A2D2E] cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
@@ -553,7 +553,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
               </div>
               {section.id === 'explorer' && (
                 <div className="flex items-center space-x-1">
-                  <button 
+                  <button
                     className="text-[#858585] hover:text-[#E8E8E8] p-1 rounded hover:bg-[#3C3C3C]"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -563,7 +563,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                   >
                     <FiFilePlus size={14} />
                   </button>
-                  <button 
+                  <button
                     className="text-[#858585] hover:text-[#E8E8E8] p-1 rounded hover:bg-[#3C3C3C]"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -576,15 +576,15 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
                 </div>
               )}
             </div>
-            
+
             {section.expanded && section.content}
           </div>
         ))}
       </div>
-      
+
       {/* Bottom Bar */}
       <div className="border-t border-[#454545] p-2 flex justify-between items-center bg-[#252526]">
-        <button 
+        <button
           className="p-1 text-[#858585] hover:text-[#E8E8E8] hover:bg-[#3C3C3C] rounded"
           title="Refresh"
           onClick={() => loadFileStructure()}
@@ -592,7 +592,7 @@ const VSModernSidebar: React.FC<VSModernSidebarProps> = ({
           <FiRefreshCw size={16} />
         </button>
         <div className="flex-1"></div>
-        <button 
+        <button
           className="p-1 text-[#858585] hover:text-[#E8E8E8] hover:bg-[#3C3C3C] rounded"
           title="Settings"
           onClick={() => onSectionSelect('settings')}

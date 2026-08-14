@@ -1,35 +1,42 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Tabs, Tab, Typography, IconButton, Tooltip, CircularProgress } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { Refresh, BugReport, Code, Build, Settings } from '@mui/icons-material';
-import MCPIssuesList from './mcp/MCPIssuesList';
-import MCPFileTree from './mcp/MCPFileTree';
-import MCPFixPanel from './mcp/MCPFixPanel';
-import MCPSettings from './mcp/MCPSettings';
-import { useMCP } from '../../hooks/useMCP';
+import React, { useState, useCallback } from "react";
+import {
+  Box,
+  Tabs,
+  Tab,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Refresh, BugReport, Code, Build, Settings } from "@mui/icons-material";
+import MCPIssuesList from "../mcp/MCPIssuesList";
+import MCPFileTree from "../mcp/MCPFileTree";
+import MCPFixPanel from "../mcp/MCPFixPanel";
+import MCPSettings from "../mcp/MCPSettings";
+import { useMCP } from "../../hooks/useMCP";
 
 const PanelContainer = styled(Box)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
   backgroundColor: theme.palette.background.paper,
   borderLeft: `1px solid ${theme.palette.divider}`,
-  overflow: 'hidden',
+  overflow: "hidden",
 }));
 
 const PanelHeader = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1, 2),
   borderBottom: `1px solid ${theme.palette.divider}`,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   backgroundColor: theme.palette.background.default,
 }));
 
 const PanelContent = styled(Box)({
   flex: 1,
-  overflow: 'auto',
-  padding: '8px',
+  overflow: "auto",
+  padding: "8px",
 });
 
 const TabPanel = (props: {
@@ -45,14 +52,10 @@ const TabPanel = (props: {
       hidden={value !== index}
       id={`mc-panel-${index}`}
       aria-labelledby={`mc-tab-${index}`}
-      style={{ height: '100%' }}
+      style={{ height: "100%" }}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 1, height: '100%' }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 1, height: "100%" }}>{children}</Box>}
     </div>
   );
 };
@@ -60,9 +63,9 @@ const TabPanel = (props: {
 const MCPPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
-  const { scanProject, issues, refreshIssues } = useMCP();
+  const { scanProject, issues } = useMCP();
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
@@ -71,7 +74,7 @@ const MCPPanel: React.FC = () => {
       setIsScanning(true);
       await scanProject();
     } catch (error) {
-      console.error('Scan failed:', error);
+      console.error("Scan failed:", error);
     } finally {
       setIsScanning(false);
     }
@@ -84,37 +87,37 @@ const MCPPanel: React.FC = () => {
           value={activeTab}
           onChange={handleTabChange}
           aria-label="MCP tabs"
-          sx={{ minHeight: '40px' }}
+          sx={{ minHeight: "40px" }}
         >
-          <Tab 
-            icon={<BugReport fontSize="small" />} 
-            label="Issues" 
-            id="mc-tab-0" 
-            aria-controls="mc-panel-0" 
+          <Tab
+            icon={<BugReport fontSize="small" />}
+            label="Issues"
+            id="mc-tab-0"
+            aria-controls="mc-panel-0"
           />
-          <Tab 
-            icon={<Code fontSize="small" />} 
-            label="Files" 
-            id="mc-tab-1" 
-            aria-controls="mc-panel-1" 
+          <Tab
+            icon={<Code fontSize="small" />}
+            label="Files"
+            id="mc-tab-1"
+            aria-controls="mc-panel-1"
           />
-          <Tab 
-            icon={<Build fontSize="small" />} 
-            label="Fixes" 
-            id="mc-tab-2" 
-            aria-controls="mc-panel-2" 
+          <Tab
+            icon={<Build fontSize="small" />}
+            label="Fixes"
+            id="mc-tab-2"
+            aria-controls="mc-panel-2"
           />
-          <Tab 
-            icon={<Settings fontSize="small" />} 
-            aria-label="Settings" 
-            id="mc-tab-3" 
-            aria-controls="mc-panel-3" 
+          <Tab
+            icon={<Settings fontSize="small" />}
+            aria-label="Settings"
+            id="mc-tab-3"
+            aria-controls="mc-panel-3"
           />
         </Tabs>
         <Box>
           <Tooltip title="Rescan project">
-            <IconButton 
-              size="small" 
+            <IconButton
+              size="small"
               onClick={handleScanClick}
               disabled={isScanning}
             >

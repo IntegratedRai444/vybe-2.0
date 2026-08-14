@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 import { useAISettings, useAISettingsActions } from '../../store/aiSettingsStore';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { GitSettings } from '../git/GitSettings';
+import GitSettings from '../git/GitSettings';
 
 interface SettingsTab {
   id: string;
@@ -34,7 +34,7 @@ const ThemeSettings = () => {
           Customize how Vybe looks on your device.
         </p>
       </div>
-      
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -64,7 +64,7 @@ const ThemeSettings = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="pt-4 border-t border-gray-800">
           <h4 className="text-sm font-medium text-gray-300 mb-3">Editor</h4>
           <div className="space-y-3">
@@ -124,16 +124,16 @@ const UserPreferences = () => {
     localStorage.setItem('user-preferences', JSON.stringify(newPrefs));
   };
 
-  const ToggleSetting = ({ 
-    label, 
-    description, 
-    checked, 
-    onChange 
-  }: { 
-    label: string; 
-    description: string; 
-    checked: boolean; 
-    onChange: () => void 
+  const ToggleSetting = ({
+    label,
+    description,
+    checked,
+    onChange
+  }: {
+    label: string;
+    description: string;
+    checked: boolean;
+    onChange: () => void
   }) => (
     <div className="flex items-start">
       <div className="flex items-center h-5">
@@ -159,7 +159,7 @@ const UserPreferences = () => {
           Customize your Vybe experience.
         </p>
       </div>
-      
+
       <div className="space-y-4">
         <ToggleSetting
           label="Auto Save"
@@ -198,7 +198,7 @@ const AISettingsTab = () => {
     providers,
     providerModels,
   } = useAISettings();
-  
+
   const {
     setProvider,
     setModel,
@@ -213,7 +213,7 @@ const AISettingsTab = () => {
           Configure your AI provider and model settings.
         </p>
       </div>
-      
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -275,7 +275,7 @@ const AISettingsTab = () => {
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { theme } = useTheme();
-  
+
   const settingsTabs: SettingsTab[] = [
     {
       id: 'general',
@@ -307,7 +307,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div 
+      <div
         className="relative w-full max-w-3xl bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-800 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -325,8 +325,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
         {/* Content */}
         <div className="h-[70vh] flex flex-col">
-          <Tabs 
-            defaultValue={settingsTabs[0].id} 
+          <Tabs
+            defaultValue={settingsTabs[0].id}
             className="flex-1 flex flex-col overflow-hidden"
           >
             <TabsList className="w-full justify-start rounded-none border-b border-gray-800 bg-transparent p-0">
@@ -341,7 +341,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 </TabsTrigger>
               ))}
             </TabsList>
-            
+
             <div className="flex-1 overflow-y-auto p-6">
               {settingsTabs.map((tab) => (
                 <TabsContent key={tab.id} value={tab.id} className="m-0">
@@ -351,77 +351,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             </div>
           </Tabs>
         </div>
-                <button
-                  key={p.id}
-                  onClick={() => setProvider(p.id)}
-                  disabled={!p.isAvailable}
-                  className={cn(
-                    'p-3 rounded-lg border transition-colors text-center',
-                    p.id === provider
-                      ? 'border-blue-500 bg-blue-500/10 text-white'
-                      : 'border-gray-700 hover:border-gray-600 text-gray-300',
-                    !p.isAvailable && 'opacity-50 cursor-not-allowed',
-                    p.isAvailable && 'hover:bg-gray-800/50'
-                  )}
-                >
-                  <div className="text-sm font-medium">{p.name}</div>
-                  {!p.isAvailable && (
-                    <div className="text-xs text-gray-500 mt-1">Not configured</div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Model Selection */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-300">Model</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {providerModels.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => setModel(m.id)}
-                  className={cn(
-                    'p-3 rounded-lg border transition-colors text-left',
-                    model === m.id
-                      ? 'border-blue-500 bg-blue-500/10 text-white'
-                      : 'border-gray-700 hover:border-gray-600 text-gray-300 hover:bg-gray-800/50'
-                  )}
-                >
-                  <div className="text-sm font-medium">{m.name}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{m.id}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Temperature */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-300">
-                Temperature: {temperature.toFixed(1)}
-              </label>
-              <span className="text-xs text-gray-400">
-                {temperature < 0.3 ? 'Precise' : temperature < 0.7 ? 'Balanced' : 'Creative'}
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={temperature}
-              onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-            />
-            <div className="flex justify-between text-xs text-gray-400">
-              <span>Precise</span>
-              <span>Balanced</span>
-              <span>Creative</span>
-            </div>
-          </div>
-        </div>
-
+        
         {/* Footer */}
         <div className="flex justify-end p-4 bg-gray-900/50 border-t border-gray-800">
           <button
@@ -436,4 +366,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   );
 };
 
+// Default export for backward compatibility
+export const SettingsModal = SettingsModal;
+
+// Named exports
+export { SettingsModal };
 export default SettingsModal;

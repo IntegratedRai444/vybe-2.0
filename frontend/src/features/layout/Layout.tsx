@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { Sidebar } from '../../components/sidebar/Sidebar';
-import { TopBar } from '../../features/topbar/TopBar';
-import { AIPanel } from '../../components/ai/AIPanel';
-import { AIProvider } from '../../components/ai/AIProvider';
-import { ModelSelector } from '../../components/ai/ModelSelector';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "../../components/sidebar/Sidebar";
+import { TopBar } from "../../features/topbar/TopBar";
+import { AIPanel } from "../../components/ai/AIPanel";
+import { AIProvider } from "../../components/ai/AIProvider";
+import { ModelSelector } from "../../components/ai/ModelSelector";
 
 export const Layout: React.FC = () => {
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false);
@@ -14,13 +14,17 @@ export const Layout: React.FC = () => {
       <div className="flex h-screen bg-gray-100">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <TopBar 
+          <TopBar
             rightContent={
               <div className="flex items-center space-x-4">
                 <ModelSelector className="w-48" />
                 <button
                   onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
-                  className={`p-2 rounded-full ${isAIPanelOpen ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-200'}`}
+                  className={`p-2 rounded-full ${
+                    isAIPanelOpen
+                      ? "bg-blue-100 text-blue-600"
+                      : "hover:bg-gray-200"
+                  }`}
                   aria-label="Toggle AI Panel"
                 >
                   <svg
@@ -40,15 +44,19 @@ export const Layout: React.FC = () => {
             }
           />
           <div className="flex-1 flex overflow-hidden">
-            <main className={`${isAIPanelOpen ? 'w-2/3' : 'w-full'} overflow-x-hidden overflow-y-auto bg-gray-50 p-4 transition-all duration-300`}>
+            <main
+              className={`${
+                isAIPanelOpen ? "w-2/3" : "w-full"
+              } overflow-x-hidden overflow-y-auto bg-gray-50 p-4 transition-all duration-300`}
+            >
               <div className="container mx-auto px-4 py-4">
                 <Outlet />
               </div>
             </main>
-            
+
             {isAIPanelOpen && (
               <div className="w-1/3 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto">
-                <AIPanel 
+                <AIPanel
                   initialView="chat"
                   onClose={() => setIsAIPanelOpen(false)}
                 />

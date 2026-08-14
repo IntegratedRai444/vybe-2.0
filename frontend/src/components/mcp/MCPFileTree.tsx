@@ -1,44 +1,35 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { 
-  TreeView, 
-  TreeItem, 
-  TreeItemProps,
-  treeItemClasses,
-  TreeItemContentProps,
-  useTreeItem,
-  TreeItemContent
-} from '@mui/lab';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  InputAdornment, 
-  IconButton, 
-  Tooltip, 
-  styled,
-  alpha,
-  Collapse,
-  ListItemIcon,
-  ListItemText,
-  ListItemButton
-} from '@mui/material';
-import { 
-  Folder as FolderIcon, 
-  FolderOpen as FolderOpenIcon, 
+import React, { useState, useCallback, useEffect } from "react";
+import { TreeView, TreeItem } from "@mui/lab";
+import { styled, alpha } from "@mui/material/styles";
+import {
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Tooltip,
+  CircularProgress
+} from "@mui/material";
+import {
+  Folder as FolderIcon,
+  FolderOpen as FolderOpenIcon,
   InsertDriveFileOutlined as FileIcon,
   Refresh as RefreshIcon,
   Search as SearchIcon,
   ExpandMore as ExpandMoreIcon,
   ChevronRight as ChevronRightIcon,
-  MoreVert as MoreVertIcon
-} from '@mui/icons-material';
-import { useMCP } from '../../../contexts/MCPContext';
-import { FileSystemItem } from '../../../types';
+} from "@mui/icons-material";
+import { useMCP } from "../../contexts/MCPContext";
+interface FileSystemItem {
+  id: string;
+  name: string;
+  type: 'file' | 'directory';
+  children?: FileSystemItem[];
+  path: string;
+}
 
-const StyledTreeItem = styled((props: TreeItemProps) => (
-  <TreeItem {...props} />
-))(({ theme }) => ({
-  [`& .${treeItemClasses.content}`]: {
+const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
+  '& .MuiTreeItem-content': {
     padding: theme.spacing(0.5, 1),
     borderRadius: theme.shape.borderRadius,
     margin: theme.spacing(0.25, 0),
@@ -52,28 +43,34 @@ const StyledTreeItem = styled((props: TreeItemProps) => (
       },
     },
   },
-  [`& .${treeItemClasses.group}`]: {
+  '& .MuiTreeItem-group': {
     marginLeft: theme.spacing(2),
     borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.1)}`,
     paddingLeft: theme.spacing(1),
   },
 }));
 
-const FileTreeItem = (props: any) => {
-  const { nodeId, label, isFile, isOpen, onToggle, onSelect, ...other } = props;
-  const { children, ...contentProps } = useTreeItem(nodeId);
-  
-  const handleClick = (event: React.MouseEvent) => {
+interface FileTreeItemProps {
+  nodeId: string;
+  label: string;
+  isFile: boolean;
+  isOpen: boolean;
+  onSelect: (nodeId: string, isFile: boolean) => void;
+  children?: React.ReactNode;
+}
+
+const FileTreeItem = (props: FileTreeItemProps) => {
+  const { nodeId, label, isFile, isOpen, onSelect, children } = props;
+
+  const handleClick = () => {
     onSelect(nodeId, isFile);
-    contentProps.onClick(event);
   };
 
   return (
     <TreeItem
-      {...other}
       nodeId={nodeId}
       label={
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           {isFile ? (
             <FileIcon color="action" fontSize="small" sx={{ mr: 1 }} />
           ) : isOpen ? (
@@ -87,11 +84,6 @@ const FileTreeItem = (props: any) => {
         </Box>
       }
       onClick={handleClick}
-      ContentComponent={TreeItemContent}
-      ContentProps={{
-        ...contentProps,
-        onClick: handleClick,
-      } as TreeItemContentProps}
     >
       {children}
     </TreeItem>
@@ -103,13 +95,16 @@ interface MCPFileTreeProps {
   className?: string;
 }
 
-const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) => {
+const MCPFileTree: React.FC<MCPFileTreeProps> = ({
+  onFileSelect,
+  className,
+}) => {
   const [expanded, setExpanded] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selected, setSelected] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [fileTree, setFileTree] = useState<FileSystemItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { scanProject } = useMCP();
 
   // Fetch file tree data
@@ -120,50 +115,62 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
       // const response = await fetch('/api/files/tree');
       // const data = await response.json();
       // setFileTree(data);
-      
+
       // Mock data for now
       setFileTree([
         {
-          name: 'src',
-          path: '/src',
-          type: 'directory',
+          name: "src",
+          path: "/src",
+          type: "directory",
           children: [
             {
-              name: 'components',
-              path: '/src/components',
-              type: 'directory',
+              name: "components",
+              path: "/src/components",
+              type: "directory",
               children: [
-                { name: 'App.tsx', path: '/src/components/App.tsx', type: 'file' },
-                { name: 'Header.tsx', path: '/src/components/Header.tsx', type: 'file' },
+                {
+                  name: "App.tsx",
+                  path: "/src/components/App.tsx",
+                  type: "file",
+                },
+                {
+                  name: "Header.tsx",
+                  path: "/src/components/Header.tsx",
+                  type: "file",
+                },
               ],
             },
             {
-              name: 'pages',
-              path: '/src/pages',
-              type: 'directory',
+              name: "pages",
+              path: "/src/pages",
+              type: "directory",
               children: [
-                { name: 'Home.tsx', path: '/src/pages/Home.tsx', type: 'file' },
-                { name: 'About.tsx', path: '/src/pages/About.tsx', type: 'file' },
+                { name: "Home.tsx", path: "/src/pages/Home.tsx", type: "file" },
+                {
+                  name: "About.tsx",
+                  path: "/src/pages/About.tsx",
+                  type: "file",
+                },
               ],
             },
-            { name: 'index.tsx', path: '/src/index.tsx', type: 'file' },
-            { name: 'App.css', path: '/src/App.css', type: 'file' },
+            { name: "index.tsx", path: "/src/index.tsx", type: "file" },
+            { name: "App.css", path: "/src/App.css", type: "file" },
           ],
         },
         {
-          name: 'public',
-          path: '/public',
-          type: 'directory',
+          name: "public",
+          path: "/public",
+          type: "directory",
           children: [
-            { name: 'index.html', path: '/public/index.html', type: 'file' },
-            { name: 'favicon.ico', path: '/public/favicon.ico', type: 'file' },
+            { name: "index.html", path: "/public/index.html", type: "file" },
+            { name: "favicon.ico", path: "/public/favicon.ico", type: "file" },
           ],
         },
-        { name: 'package.json', path: '/package.json', type: 'file' },
-        { name: 'tsconfig.json', path: '/tsconfig.json', type: 'file' },
+        { name: "package.json", path: "/package.json", type: "file" },
+        { name: "tsconfig.json", path: "/tsconfig.json", type: "file" },
       ]);
     } catch (error) {
-      console.error('Error fetching file tree:', error);
+      console.error("Error fetching file tree:", error);
     } finally {
       setIsLoading(false);
     }
@@ -195,10 +202,10 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
 
   const renderTree = (nodes: FileSystemItem[]) => {
     return nodes.map((node) => {
-      const isFile = node.type === 'file';
-      const isDir = node.type === 'directory';
+      const isFile = node.type === "file";
+      const isDir = node.type === "directory";
       const isExpanded = expanded.includes(node.path);
-      
+
       // Filter children if search query exists
       let children = null;
       if (isDir && node.children) {
@@ -206,9 +213,11 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
       }
 
       // Skip this node and its children if it doesn't match search (unless a child does)
-      if (searchQuery && 
-          !node.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-          (!children || children.length === 0)) {
+      if (
+        searchQuery &&
+        !node.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (!children || children.length === 0)
+      ) {
         return null;
       }
 
@@ -229,16 +238,16 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        height: '100%',
-        overflow: 'hidden',
-        ...(className ? { className } : {})
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+        ...(className ? { className } : {}),
       }}
     >
-      <Box sx={{ p: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
+      <Box sx={{ p: 1, borderBottom: "1px solid", borderColor: "divider" }}>
         <TextField
           fullWidth
           size="small"
@@ -254,8 +263,8 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
             endAdornment: (
               <InputAdornment position="end">
                 <Tooltip title="Refresh file tree">
-                  <IconButton 
-                    size="small" 
+                  <IconButton
+                    size="small"
                     onClick={handleRefresh}
                     disabled={isLoading}
                   >
@@ -267,14 +276,14 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
           }}
         />
       </Box>
-      
-      <Box sx={{ flex: 1, overflow: 'auto', p: 1 }}>
+
+      <Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
             <CircularProgress size={24} />
           </Box>
         ) : fileTree.length === 0 ? (
-          <Box sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
+          <Box sx={{ p: 2, textAlign: "center", color: "text.secondary" }}>
             <Typography variant="body2">No files found</Typography>
           </Box>
         ) : (
@@ -286,10 +295,10 @@ const MCPFileTree: React.FC<MCPFileTreeProps> = ({ onFileSelect, className }) =>
             selected={selected}
             onNodeToggle={handleToggle}
             sx={{
-              height: '100%',
+              height: "100%",
               flexGrow: 1,
-              maxWidth: '100%',
-              overflowY: 'auto',
+              maxWidth: "100%",
+              overflowY: "auto",
             }}
           >
             {renderTree(fileTree)}

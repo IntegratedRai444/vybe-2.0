@@ -38,9 +38,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 class ApiClient {
   private client: AxiosInstance;
-  private refreshPromise: Promise<string> | null = null;
-  // Track if a token refresh is in progress
-  private isRefreshing = false;
+  private refreshPromise: Promise<string | null> | null = null;
+  // Remove unused isRefreshing since we're using refreshPromise for tracking refresh state
+  // private isRefreshing = false;
   // Queue for requests waiting for token refresh
   private pendingRequests: Array<() => void> = [];
 
@@ -64,13 +64,13 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
-        
+
         // Add request timestamp
         config.headers['X-Request-Timestamp'] = new Date().toISOString();
-        
+
         // Add request ID for tracking
         config.headers['X-Request-ID'] = Math.random().toString(36).substr(2, 9);
-        
+
         return config;
       },
       (error) => {
@@ -88,13 +88,13 @@ class ApiClient {
       (response: AxiosResponse) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config as any;
-        
+
         // Create a standardized error object
         const apiError: ApiError = {
           name: 'ApiError',
           message: error.message,
           stack: error.stack,
-          config: error.config,
+          config: error.config || {},
           code: error.code,
           status: error.response?.status,
           response: error.response ? {
@@ -103,8 +103,8 @@ class ApiClient {
             headers: error.response.headers,
           } : undefined,
           isApiError: true,
-        };
-        
+        } as ApiError;
+
         // Handle 401 Unauthorized errors
         if (error.response?.status === 401) {
           if (originalRequest.url?.includes('/auth/refresh')) {
@@ -150,38 +150,55 @@ class ApiClient {
 
     try {
       this.refreshPromise = (async () => {
-      const token = await this.refreshPromise;
+        // Call your backend refresh token endpoint here
+        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          refresh_token: refreshToken
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.data.access_token) {
+          authService.setAuthTokens(
+            response.data.access_token,
+            response.data.refresh_token || refreshToken
+          );
+          // Process any queued requests
+          this.processQueue();
+          return response.data.access_token;
+        }
+        
+        throw new Error('No access token in response');
+      })();
       
-      // Process any queued requests
-      this.processQueue(null);
-      
-      return token;
+      return this.refreshPromise;
     } catch (error) {
-      // Process any queued requests with the error
-      this.processQueue(error as Error);
-      
-      console.error('Failed to refresh token:', error);
+      const errorObj = error as Error;
+      // Process any queued requests
+      this.processQueue();
+
+      console.error('Failed to refresh token:', errorObj);
       authService.clearAuth();
-      throw error;
+      throw errorObj;
     } finally {
       this.refreshPromise = null;
-      this.isRefreshing = false;
     }
   }
-  
+
   /**
    * Process queued requests after token refresh
    */
-  private processQueue(error: Error | null): void {
-    const queue = [...this.pendingRequests];
+  private processQueue(): void {
+    this.pendingRequests.forEach(cb => {
+      try {
+        // Call the callback without any arguments
+        cb();
+      } catch (err) {
+        console.error('Error in request callback:', err);
+      }
+    });
     this.pendingRequests = [];
-    
-    if (error) {
-      queue.forEach(callback => callback());
-      return;
-    }
-    
-    queue.forEach(callback => callback());
   }
 
   /**
@@ -196,24 +213,23 @@ class ApiClient {
     const {
       retries = DEFAULT_RETRIES,
       retryDelay = DEFAULT_RETRY_DELAY,
+      timeout = DEFAULT_TIMEOUT,
       throwOnError = true,
-      ...config
+      ...axiosConfig
     } = options;
 
-    let lastError: ApiError | null = null;
+    let lastError: any;
+    let attempt = 0;
 
-    for (let attempt = 0; attempt <= retries; attempt++) {
+    while (attempt <= retries) {
       try {
         const response = await this.client.request<T>({
           method,
           url,
-          data: method !== 'get' ? data : undefined,
-          params: method === 'get' ? data : undefined,
-          'axios-retry': {
-            retries: 0, // We handle retries manually
-          },
-          ...config,
-        });
+          data,
+          timeout,
+          ...axiosConfig,
+        } as AxiosRequestConfig);
 
         return {
           data: response.data,
@@ -225,21 +241,27 @@ class ApiClient {
       } catch (error: any) {
         lastError = this.normalizeError(error);
         
-        // Don't retry on certain status codes
-        if (this.shouldNotRetry(error)) {
-          break;
+        if (this.shouldNotRetry(error) || attempt >= retries) {
+          if (throwOnError) {
+            throw lastError;
+          }
+          return {
+            data: null as any,
+            status: error.response?.status || 500,
+            statusText: error.response?.statusText || 'Internal Server Error',
+            headers: error.response?.headers || {},
+            config: error.config || {},
+          };
         }
-        
+
         // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        attempt++;
       }
     }
-    
-    if (throwOnError && lastError) {
-      throw lastError;
-    }
-    
-    return null;
+
+    // This should never be reached, but TypeScript needs it
+    throw lastError || new Error('Request failed');
   }
 
   /**
@@ -250,7 +272,7 @@ class ApiClient {
     if (!error.response) {
       return true;
     }
-    
+
     // Don't retry on these status codes
     const nonRetryableStatuses = [400, 401, 403, 404, 422];
     return nonRetryableStatuses.includes(error.response.status);
@@ -266,7 +288,7 @@ class ApiClient {
       name: error.name || 'ApiError',
       message: error.message || 'An unknown error occurred',
       stack: error.stack,
-      config: error.config,
+      config: error.config || {},
       code: error.code,
       status: error.response?.status,
       response: error.response ? {
@@ -275,7 +297,7 @@ class ApiClient {
         headers: error.response.headers,
       } : undefined,
       isApiError: true,
-    };
+    } as ApiError;
   }
 
   /**
@@ -324,7 +346,7 @@ class ApiClient {
     const response = await this.request<T>('patch', url, data, config);
     return response.data;
   }
-  
+
   /**
    * Add a request interceptor
    */
@@ -334,7 +356,7 @@ class ApiClient {
   ): number {
     return this.client.interceptors.request.use(onFulfilled, onRejected);
   }
-  
+
   /**
    * Add a response interceptor
    */
@@ -344,7 +366,7 @@ class ApiClient {
   ): number {
     return this.client.interceptors.response.use(onFulfilled, onRejected);
   }
-  
+
   /**
    * Remove an interceptor
    */

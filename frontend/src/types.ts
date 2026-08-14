@@ -1,5 +1,5 @@
 // File system item types
-export type FileType = 'file' | 'directory' | 'symlink' | 'unknown';
+export type FileType = "file" | "directory" | "symlink" | "unknown";
 
 export interface BaseFileItem {
   id: string;
@@ -28,7 +28,7 @@ export interface FileTab extends BaseFileItem {
 
 // Directory structure
 export interface Directory extends BaseFileItem {
-  type: 'directory';
+  type: "directory";
   children: string[];
   isOpen: boolean;
 }
@@ -45,7 +45,7 @@ export interface PanelConfig {
   height?: number;
   width?: number;
   isActive?: boolean;
-  position?: 'left' | 'right' | 'bottom';
+  position?: "left" | "right" | "bottom";
 }
 
 // Store state interface
@@ -55,13 +55,13 @@ export interface StoreState {
   directories: Record<string, Directory>;
   activeFile: string | null;
   workspacePath: string | null;
-  
+
   // UI state
   isCommandPaletteOpen: boolean;
-  connectionStatus: 'connected' | 'disconnected' | 'checking' | 'connecting';
+  connectionStatus: "connected" | "disconnected" | "checking" | "connecting";
   cursorPosition: CursorPosition;
   searchQuery: string;
-  
+
   // Layout state
   layout: {
     sidebar: {
@@ -76,33 +76,38 @@ export interface StoreState {
       splitView: boolean;
     };
   };
-  
+
   // Actions
   setFiles: (files: Record<string, FileTab>) => void;
   setActiveFile: (fileId: string | null) => void;
   setWorkspacePath: (path: string | null) => void;
   setCursorPosition: (position: CursorPosition) => void;
   setCommandPaletteOpen: (isOpen: boolean) => void;
-  setConnectionStatus: (status: 'connected' | 'disconnected' | 'checking' | 'connecting') => void;
+  setConnectionStatus: (
+    status: "connected" | "disconnected" | "checking" | "connecting",
+  ) => void;
   setSearchQuery: (query: string) => void;
-  
+
   // File operations
   updateFileContent: (fileId: string, content: string) => void;
-  addFile: (file: Omit<FileTab, 'id' | 'isDirty' | 'content' | 'language'>, content?: string) => void;
+  addFile: (
+    file: Omit<FileTab, "id" | "isDirty" | "content" | "language">,
+    content?: string,
+  ) => void;
   removeFile: (fileId: string) => void;
   getActiveFile: () => FileTab | null;
-  
+
   // Layout operations
   togglePanel: (panel: string) => void;
   toggleSidebar: () => void;
-  
+
   // Workspace operations
   loadWorkspace: (path: string) => Promise<void>;
   saveWorkspace: () => Promise<void>;
 }
 
 // Notification types
-export type NotificationType = 'info' | 'warning' | 'error' | 'success';
+export type NotificationType = "info" | "warning" | "error" | "success";
 
 export interface Notification {
   id: string;
@@ -120,9 +125,13 @@ export interface NotificationAction {
 }
 
 // AI Provider types
-export type ProviderType = 'ollama' | 'openai' | 'anthropic' | 'groq';
+export type ProviderType = "ollama" | "openai" | "anthropic" | "groq";
 
-export type ConnectionStatus = 'connected' | 'disconnected' | 'checking' | 'connecting';
+export type ConnectionStatus =
+  | "connected"
+  | "disconnected"
+  | "checking"
+  | "connecting";
 
 export type FileReference = string | FileTab;
 

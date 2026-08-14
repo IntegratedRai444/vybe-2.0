@@ -12,7 +12,12 @@ type Props = {
   onSelect: (path: string) => void;
 };
 
-export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSelect }) => {
+export const FileSearchModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  files,
+  onSelect,
+}) => {
   const [query, setQuery] = useState("");
   const [filtered, setFiltered] = useState<FileItem[]>([]);
   const [selected, setSelected] = useState(0);
@@ -22,7 +27,7 @@ export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSel
       setFiltered(files.slice(0, 20));
     } else {
       const results = files
-        .filter(f => f.name.toLowerCase().includes(query.toLowerCase()))
+        .filter((f) => f.name.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 20);
       setFiltered(results);
     }
@@ -39,10 +44,10 @@ export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSel
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelected(prev => Math.min(prev + 1, filtered.length - 1));
+      setSelected((prev) => Math.min(prev + 1, filtered.length - 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelected(prev => Math.max(prev - 1, 0));
+      setSelected((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (filtered[selected]) {
@@ -70,7 +75,7 @@ export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSel
             autoFocus
           />
         </div>
-        
+
         <div className="max-h-64 overflow-y-auto">
           {filtered.map((file, index) => (
             <div
@@ -87,12 +92,12 @@ export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSel
               <div className="text-xs text-gray-400 truncate">{file.path}</div>
             </div>
           ))}
-          
+
           {filtered.length === 0 && (
             <div className="p-4 text-gray-500 text-center">No files found</div>
           )}
         </div>
-        
+
         <div className="p-2 border-t border-gray-700 text-xs text-gray-400 text-center">
           ↑↓ Navigate • Enter Select • Esc Close
         </div>
@@ -100,3 +105,6 @@ export const FileSearchModal: React.FC<Props> = ({ isOpen, onClose, files, onSel
     </div>
   );
 };
+
+// Exports
+export { FileSearchModal };

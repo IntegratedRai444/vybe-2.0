@@ -32,7 +32,7 @@ DEFAULT_MODEL_PARAMS = {
     "top_p": 0.95,
     "frequency_penalty": 0.0,
     "presence_penalty": 0.0,
-    "stop": None
+    "stop": None,
 }
 
 # Application settings

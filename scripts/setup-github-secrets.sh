@@ -18,7 +18,7 @@ set_secret() {
     local secret_name=$1
     local prompt_message=$2
     local is_password=$3
-    
+
     echo -n "$prompt_message: "
     if [ "$is_password" = true ]; then
         read -s secret_value
@@ -26,12 +26,12 @@ set_secret() {
     else
         read secret_value
     fi
-    
+
     if [ -z "$secret_value" ]; then
         echo "Value cannot be empty. Skipping $secret_name."
         return 1
     fi
-    
+
     echo -n "Setting $secret_name... "
     echo "$secret_value" | gh secret set "$secret_name" --app actions
     echo "Done!"

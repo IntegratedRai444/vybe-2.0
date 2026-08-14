@@ -2,15 +2,21 @@
 Event service for handling WebSocket events
 """
 from datetime import datetime
-from typing import Dict, Any, Optional, List
-from ..services.websocket_service import websocket_manager, WebSocketEvent
-from ..models.package_models import PackageInfo, PackageVulnerability, PackageAuditResult
-from ..models.deployment_models import DeploymentStatus, DeploymentLog, DeploymentTarget
-from ..models.git_models import GitRepositoryInfo, GitCommit, GitBranch, GitFile
+from typing import Any, Dict, List, Optional
+
+from ..models.deployment_models import DeploymentLog, DeploymentStatus, DeploymentTarget
+from ..models.git_models import GitBranch, GitCommit, GitFile, GitRepositoryInfo
+from ..models.package_models import (
+    PackageAuditResult,
+    PackageInfo,
+    PackageVulnerability,
+)
+from ..services.websocket_service import WebSocketEvent, websocket_manager
+
 
 class EventService:
     """Service for handling WebSocket events"""
-    
+
     # Deployment Events
     @staticmethod
     async def deployment_started(deployment_id: str, target: DeploymentTarget):
@@ -23,9 +29,9 @@ class EventService:
                     "deployment_id": deployment_id,
                     "target": target.dict(),
                     "status": "in_progress",
-                    "start_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "start_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -39,9 +45,9 @@ class EventService:
                     "deployment_id": deployment_id,
                     "progress": progress,
                     "message": message,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -55,9 +61,9 @@ class EventService:
                     "deployment_id": deployment_id,
                     "logs": logs,
                     "is_error": is_error,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -71,9 +77,9 @@ class EventService:
                     "deployment_id": deployment_id,
                     "status": "completed",
                     "result": result,
-                    "end_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "end_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -87,9 +93,9 @@ class EventService:
                     "deployment_id": deployment_id,
                     "status": "failed",
                     "error": error,
-                    "end_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "end_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     # Git Events
@@ -103,9 +109,9 @@ class EventService:
                 {
                     "repo_path": repo_path,
                     "status": status,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -118,9 +124,9 @@ class EventService:
                 {
                     "repo_path": repo_path,
                     "branch": branch,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -133,9 +139,9 @@ class EventService:
                 {
                     "repo_path": repo_path,
                     "commit": commit.dict(),
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     # Package Events
@@ -150,9 +156,9 @@ class EventService:
                     "package": package_name,
                     "version": version,
                     "status": "installing",
-                    "start_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "start_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -166,9 +172,9 @@ class EventService:
                     "package": package_name,
                     "progress": progress,
                     "message": message,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
+                    "timestamp": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -182,9 +188,9 @@ class EventService:
                     "package": package_name,
                     "status": "installed",
                     "result": result,
-                    "end_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "end_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
 
     @staticmethod
@@ -198,10 +204,11 @@ class EventService:
                     "package": package_name,
                     "status": "failed",
                     "error": error,
-                    "end_time": datetime.utcnow().isoformat()
-                }
-            )
+                    "end_time": datetime.utcnow().isoformat(),
+                },
+            ),
         )
+
 
 # Global event service instance
 event_service = EventService()

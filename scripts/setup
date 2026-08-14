@@ -1,0 +1,224 @@
+#!/usr/bin/env python3
+"""
+Setup checker for Vybe AI OS
+Verifies that all dependencies and requirements are met
+"""
+
+import importlib
+import subprocess
+import sys
+from pathlib import Path
+
+
+def check_python_version():
+    """Check Python version"""
+    print("🐍 Checking Python version...")
+    if sys.version_info >= (3, 8):
+        print(f"✅ Python {sys.version.split()[0]} is supported")
+        return True
+    else:
+        print(f"❌ Python {sys.version.split()[0]} is too old. Python 3.8+ required.")
+        return False
+
+
+def check_python_packages():
+    """Check required Python packages"""
+    print("📦 Checking Python packages...")
+
+    required_packages = [
+        "fastapi",
+        "uvicorn",
+        "requests",
+        "pathlib",
+        "pydantic",
+        "asyncio",
+    ]
+
+    missing_packages = []
+
+    for package in required_packages:
+        try:
+            importlib.import_module(package)
+            print(f"✅ {package}")
+        except ImportError:
+            print(f"❌ {package} - MISSING")
+            missing_packages.append(package)
+
+    if missing_packages:
+        print(f"\n❌ Missing packages: {', '.join(missing_packages)}")
+        print("Run: pip install -r requirements.txt")
+        return False
+    else:
+        print("✅ All Python packages are available")
+        return True
+
+
+def check_nodejs():
+    """Check Node.js installation"""
+    print("🟢 Checking Node.js...")
+    try:
+        result = subprocess.run(["node", "--version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            version = result.stdout.strip()
+            print(f"✅ Node.js {version}")
+            return True
+        else:
+            print("❌ Node.js not working properly")
+            return False
+    except FileNotFoundError:
+        print("❌ Node.js not installed")
+        print("Install from: https://nodejs.org/")
+        return False
+
+
+def check_npm():
+    """Check npm installation"""
+    print("📦 Checking npm...")
+    try:
+        result = subprocess.run(["npm", "--version"], capture_output=True, text=True)
+        if result.returncode == 0:
+            version = result.stdout.strip()
+            print(f"✅ npm {version}")
+            return True
+        else:
+            print("❌ npm not working properly")
+            return False
+    except FileNotFoundError:
+        print("❌ npm not found")
+        return False
+
+
+def check_frontend_deps():
+    """Check frontend dependencies"""
+    print("🎨 Checking frontend dependencies...")
+
+    frontend_dir = Path("frontend")
+    if not frontend_dir.exists():
+        print("❌ Frontend directory not found")
+        return False
+
+    node_modules = frontend_dir / "node_modules"
+    package_json = frontend_dir / "package.json"
+
+    if not package_json.exists():
+        print("❌ package.json not found in frontend directory")
+        return False
+
+    if not node_modules.exists():
+        print("❌ node_modules not found. Run: cd frontend && npm install")
+        return False
+
+    print("✅ Frontend dependencies appear to be installed")
+    return True
+
+
+def check_project_structure():
+    """Check project structure"""
+    print("📁 Checking project structure...")
+
+    required_files = [
+        "backend/main.py",
+        "backend/orchestrator.py",
+        "backend/terminal.py",
+        "frontend/package.json",
+        "frontend/src/App.tsx",
+        "config.py",
+        "requirements.txt",
+    ]
+
+    missing_files = []
+
+    for file_path in required_files:
+        if Path(file_path).exists():
+            print(f"✅ {file_path}")
+        else:
+            print(f"❌ {file_path} - MISSING")
+            missing_files.append(file_path)
+
+    if missing_files:
+        print(f"\n❌ Missing files: {', '.join(missing_files)}")
+        return False
+    else:
+        print("✅ All required files are present")
+        return True
+
+
+def check_optional_services():
+    """Check optional services"""
+    print("🔧 Checking optional services...")
+
+    # Check Ollama
+    try:
+        result = subprocess.run(
+            ["ollama", "--version"], capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            print("✅ Ollama is installed (AI features will work)")
+        else:
+            print("⚠️  Ollama not working (AI features will be limited)")
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        print("⚠️  Ollama not installed (AI features will be limited)")
+        print("   Install from: https://ollama.ai/")
+
+    # Check Git
+    try:
+        result = subprocess.run(
+            ["git", "--version"], capture_output=True, text=True, timeout=5
+        )
+        if result.returncode == 0:
+            print("✅ Git is available")
+        else:
+            print("⚠️  Git not working properly")
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        print("⚠️  Git not installed (version control features will be limited)")
+
+    return True  # Optional services don't fail the check
+
+
+def main():
+    """Run all checks"""
+    print("🚀 Vybe AI OS Setup Checker\n")
+
+    checks = [
+        ("Python Version", check_python_version),
+        ("Python Packages", check_python_packages),
+        ("Node.js", check_nodejs),
+        ("npm", check_npm),
+        ("Frontend Dependencies", check_frontend_deps),
+        ("Project Structure", check_project_structure),
+        ("Optional Services", check_optional_services),
+    ]
+
+    passed = 0
+    total = len(checks) - 1  # Don't count optional services as required
+
+    for check_name, check_func in checks:
+        print(f"\n{'='*50}")
+        print(f"Checking: {check_name}")
+        print("=" * 50)
+
+        if check_func():
+            if check_name != "Optional Services":
+                passed += 1
+
+    print(f"\n{'='*60}")
+    print(f"SETUP CHECK RESULTS: {passed}/{total} required checks passed")
+    print("=" * 60)
+
+    if passed == total:
+        print("🎉 Setup is complete! You can now run the IDE.")
+        print("\nTo start the IDE:")
+        print("  python start_ide.py")
+        print("\nOr manually:")
+        print("  1. cd backend && python -m uvicorn main:app --reload")
+        print("  2. cd frontend && npm run dev")
+        return True
+    else:
+        print(f"⚠️  {total - passed} required checks failed.")
+        print("Please fix the issues above before running the IDE.")
+        return False
+
+
+if __name__ == "__main__":
+    success = main()
+    sys.exit(0 if success else 1)

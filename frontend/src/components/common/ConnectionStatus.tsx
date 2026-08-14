@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useWebSocketContext } from '../../contexts/WebSocketContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useWebSocketContext } from "../../contexts/WebSocketContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { Wifi, WifiOff, RefreshCw } from "lucide-react";
 
 const ConnectionStatus: React.FC = () => {
   const { isConnected, reconnect } = useWebSocketContext();
@@ -20,7 +20,7 @@ const ConnectionStatus: React.FC = () => {
       setIsReconnecting(true);
       await reconnect();
     } catch (error) {
-      console.error('Reconnection failed:', error);
+      console.error("Reconnection failed:", error);
     } finally {
       setIsReconnecting(false);
     }

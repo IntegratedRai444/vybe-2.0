@@ -1,7 +1,7 @@
 // Store configuration
-export { store } from './store';
-export type { RootState, AppDispatch } from './store';
-export { useAppDispatch, useAppSelector } from './store';
+export { store } from "./store";
+export type { RootState, AppDispatch } from "./store";
+export { useAppDispatch, useAppSelector } from "./store";
 
 // Auth slice
 export {
@@ -9,10 +9,10 @@ export {
   loginSuccess,
   loginFailure,
   logout,
-  clearError
-} from './slices/authSlice';
+  clearError,
+} from "./slices/authSlice";
 
-export type { AuthState } from './slices/authSlice';
+export type { AuthState } from "./slices/authSlice";
 
 // Editor slice
 export {
@@ -25,10 +25,10 @@ export {
   setViewState,
   setTerminalHeight,
   setSidebarWidth,
-  toggleSidebar
-} from './slices/editorSlice';
+  toggleSidebar,
+} from "./slices/editorSlice";
 
-export type { EditorState } from './slices/editorSlice';
+export type { EditorState } from "./slices/editorSlice";
 
 // Debugger slice
 export {
@@ -45,13 +45,13 @@ export {
   appendOutput,
   clearOutput,
   setError,
-  setLoading
-} from './slices/debuggerSlice';
+  setLoading,
+} from "./slices/debuggerSlice";
 
 export type {
   Breakpoint,
   StackFrame,
   Variable,
   DebugSession,
-  DebuggerState
-} from './slices/debuggerSlice';
+  DebuggerState,
+} from "./slices/debuggerSlice";

@@ -1,6 +1,7 @@
 # Vybe AI Frontend Setup Guide
 
 ## Prerequisites
+
 - Node.js v16 or later
 - npm (comes with Node.js) or yarn
 - Backend server (see backend documentation)
@@ -8,12 +9,14 @@
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-org/vybe-ai.git
    cd vybe-ai/frontend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -30,6 +33,7 @@
 ## Development
 
 1. **Start the development server**
+
    ```bash
    npm run dev
    # or
@@ -52,10 +56,10 @@
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API URL | `http://localhost:8000` |
-| `VITE_WS_URL` | WebSocket URL | `ws://localhost:8000/api/ws` |
+| Variable       | Description     | Default                      |
+| -------------- | --------------- | ---------------------------- |
+| `VITE_API_URL` | Backend API URL | `http://localhost:8000`      |
+| `VITE_WS_URL`  | WebSocket URL   | `ws://localhost:8000/api/ws` |
 
 ## Project Structure
 
@@ -81,11 +85,13 @@ frontend/
 ## Troubleshooting
 
 1. **Connection Issues**
+
    - Ensure the backend server is running
    - Check that the API URL in `.env.local` matches your backend URL
    - Verify CORS settings on the backend
 
 2. **Installation Issues**
+
    - Delete `node_modules` and `package-lock.json` then reinstall
    - Ensure you're using a compatible Node.js version
 

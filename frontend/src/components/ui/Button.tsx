@@ -1,26 +1,29 @@
-import React from 'react';
-import { cn } from '../../utils/cn';
+import React from "react";
+import { cn } from "../../utils/cn";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost" | "danger" | "success";
+  size?: "xs" | "sm" | "md" | "lg";
   loading?: boolean;
   icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
-    className, 
-    variant = 'primary', 
-    size = 'md', 
-    loading = false,
-    icon,
-    iconPosition = 'left',
-    children, 
-    disabled,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading = false,
+      icon,
+      iconPosition = "left",
+      children,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     const baseStyles = `
       inline-flex items-center justify-center gap-2 rounded-md font-medium
       transition-all duration-150 ease-out
@@ -66,20 +69,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      xs: 'h-6 px-2 text-xs',
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-sm',
-      lg: 'h-12 px-6 text-base',
+      xs: "h-6 px-2 text-xs",
+      sm: "h-8 px-3 text-sm",
+      md: "h-10 px-4 text-sm",
+      lg: "h-12 px-6 text-base",
     };
 
     return (
       <button
-        className={cn(
-          baseStyles,
-          variants[variant],
-          sizes[size],
-          className
-        )}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
         ref={ref}
         disabled={disabled || loading}
         {...props}
@@ -101,18 +99,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             />
           </svg>
         )}
-        
-        {!loading && icon && iconPosition === 'left' && icon}
-        
+
+        {!loading && icon && iconPosition === "left" && icon}
+
         {children}
-        
-        {!loading && icon && iconPosition === 'right' && icon}
+
+        {!loading && icon && iconPosition === "right" && icon}
       </button>
     );
-  }
+  },
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export { Button };
 export type { ButtonProps };

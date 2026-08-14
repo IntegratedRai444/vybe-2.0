@@ -1,8 +1,8 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { store } from '../../store';
-import { logout } from '../../store/slices/authSlice';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { store } from "../../store";
+import { logoutUser } from "../../store/slices/authSlice";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 class ApiClient {
   private client: AxiosInstance;
@@ -11,7 +11,7 @@ class ApiClient {
     this.client = axios.create({
       baseURL: API_BASE_URL,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -30,18 +30,20 @@ class ApiClient {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
       (response: AxiosResponse) => response,
-      (error) => {
+      async (error) => {
         if (error.response?.status === 401) {
-          store.dispatch(logout());
+          // Token expired or invalid, log out the user
+          await logoutUser();
+          window.location.href = '/login';
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -53,7 +55,7 @@ class ApiClient {
   public async post<T>(
     url: string,
     data?: any,
-    config?: AxiosRequestConfig
+    config?: AxiosRequestConfig,
   ): Promise<T> {
     const response = await this.client.post<T>(url, data, config);
     return response.data;

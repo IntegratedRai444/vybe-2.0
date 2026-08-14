@@ -1,2 +1,5 @@
-export { default as SettingsModal } from './SettingsModal';
-export { default as SettingsButton } from './SettingsButton';
+// Auto-generated file - DO NOT EDIT
+
+export * from './SettingsButton';
+export * from './SettingsModal';
+export * from './WorkspaceConfig';

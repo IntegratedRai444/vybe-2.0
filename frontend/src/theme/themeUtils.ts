@@ -19,7 +19,7 @@ interface StyleProps {
   pl?: ResponsiveValue<keyof Theme['spacing'] | string | number>;
   px?: ResponsiveValue<keyof Theme['spacing'] | string | number>;
   py?: ResponsiveValue<keyof Theme['spacing'] | string | number>;
-  
+
   // Typography
   fontSize?: ResponsiveValue<keyof Theme['typography']['fontSize'] | string | number>;
   fontWeight?: ResponsiveValue<keyof Theme['typography']['fontWeight'] | string | number>;
@@ -28,12 +28,12 @@ interface StyleProps {
   fontStyle?: ResponsiveValue<CSSProperties['fontStyle']>;
   textTransform?: ResponsiveValue<CSSProperties['textTransform']>;
   letterSpacing?: ResponsiveValue<keyof Theme['typography']['letterSpacing'] | string>;
-  
+
   // Colors
   color?: ResponsiveValue<keyof Theme['colors'] | string>;
   bg?: ResponsiveValue<keyof Theme['colors'] | string>;
   backgroundColor?: ResponsiveValue<keyof Theme['colors'] | string>;
-  
+
   // Borders
   border?: ResponsiveValue<CSSProperties['border']>;
   borderTop?: ResponsiveValue<CSSProperties['borderTop']>;
@@ -42,7 +42,7 @@ interface StyleProps {
   borderLeft?: ResponsiveValue<CSSProperties['borderLeft']>;
   borderColor?: ResponsiveValue<keyof Theme['colors'] | string>;
   borderRadius?: ResponsiveValue<keyof Theme['borderRadius'] | string | number>;
-  
+
   // Layout
   width?: ResponsiveValue<CSSProperties['width']>;
   height?: ResponsiveValue<CSSProperties['height']>;
@@ -50,7 +50,7 @@ interface StyleProps {
   maxWidth?: ResponsiveValue<CSSProperties['maxWidth']>;
   minHeight?: ResponsiveValue<CSSProperties['minHeight']>;
   maxHeight?: ResponsiveValue<CSSProperties['maxHeight']>;
-  
+
   // Flexbox
   flex?: ResponsiveValue<CSSProperties['flex']>;
   flexGrow?: ResponsiveValue<CSSProperties['flexGrow']>;
@@ -62,7 +62,7 @@ interface StyleProps {
   alignItems?: ResponsiveValue<CSSProperties['alignItems']>;
   alignContent?: ResponsiveValue<CSSProperties['alignContent']>;
   alignSelf?: ResponsiveValue<CSSProperties['alignSelf']>;
-  
+
   // Grid
   gridTemplateColumns?: ResponsiveValue<CSSProperties['gridTemplateColumns']>;
   gridTemplateRows?: ResponsiveValue<CSSProperties['gridTemplateRows']>;
@@ -73,7 +73,7 @@ interface StyleProps {
   gridColumnGap?: ResponsiveValue<CSSProperties['columnGap']>;
   gridRowGap?: ResponsiveValue<CSSProperties['rowGap']>;
   gridGap?: ResponsiveValue<CSSProperties['gap']>;
-  
+
   // Position
   position?: ResponsiveValue<CSSProperties['position']>;
   top?: ResponsiveValue<CSSProperties['top']>;
@@ -81,7 +81,7 @@ interface StyleProps {
   bottom?: ResponsiveValue<CSSProperties['bottom']>;
   left?: ResponsiveValue<CSSProperties['left']>;
   zIndex?: ResponsiveValue<keyof Theme['zIndex'] | number>;
-  
+
   // Misc
   display?: ResponsiveValue<CSSProperties['display']>;
   overflow?: ResponsiveValue<CSSProperties['overflow']>;
@@ -91,7 +91,7 @@ interface StyleProps {
   opacity?: ResponsiveValue<CSSProperties['opacity']>;
   cursor?: ResponsiveValue<CSSProperties['cursor']>;
   transition?: ResponsiveValue<CSSProperties['transition']>;
-  
+
   // Pseudo-classes
   '&:hover'?: Omit<StyleProps, '&:hover' | '&:focus' | '&:active'>;
   '&:focus'?: Omit<StyleProps, '&:hover' | '&:focus' | '&:active'>;
@@ -118,14 +118,14 @@ function getThemeValue<T = any>(
 ): T | undefined {
   const keys = path.split('.');
   let result: any = theme;
-  
+
   for (const key of keys) {
     if (result == null || typeof result !== 'object') {
       return defaultValue;
     }
     result = result[key];
   }
-  
+
   return result !== undefined ? result : defaultValue;
 }
 
@@ -138,25 +138,25 @@ export function createStyleProps(
   { theme, breakpoints = defaultBreakpoints }: ThemeUtils
 ): CSSProperties {
   const style: Record<string, any> = {};
-  
+
   // Process each prop
   for (const [key, value] of Object.entries(props)) {
     if (value === undefined || value === null) continue;
-    
+
     // Handle pseudo-classes
     if (key.startsWith('&:')) {
       continue; // Skip pseudo-classes for now
     }
-    
+
     // Handle responsive values
     if (Array.isArray(value)) {
       // Handle array syntax for responsive values
       value.forEach((val, index) => {
         if (val == null) return;
-        
+
         const breakpoint = Object.keys(breakpoints)[index];
         if (!breakpoint) return;
-        
+
         const mediaQuery = `@media (min-width: ${breakpoints[breakpoint as keyof typeof breakpoints]})`;
         style[mediaQuery] = style[mediaQuery] || {};
         style[mediaQuery][key] = val;
@@ -165,7 +165,7 @@ export function createStyleProps(
       // Handle object syntax for responsive values
       for (const [bp, val] of Object.entries(value)) {
         if (val == null) continue;
-        
+
         if (bp in breakpoints) {
           const mediaQuery = `@media (min-width: ${breakpoints[bp as keyof typeof breakpoints]})`;
           style[mediaQuery] = style[mediaQuery] || {};
@@ -233,7 +233,7 @@ export function createStyleProps(
       // Layout
       m, mt, mr, mb, ml, mx, my,
       p, pt, pr, pb, pl, px, py,
-      
+
       // Typography
       fontSize,
       fontWeight,
@@ -242,12 +242,12 @@ export function createStyleProps(
       fontStyle,
       textTransform,
       letterSpacing,
-      
+
       // Colors
       color,
       bg,
       backgroundColor,
-      
+
       // Borders
       border,
       borderTop,
@@ -256,7 +256,7 @@ export function createStyleProps(
       borderLeft,
       borderColor: borderColorProp,
       borderRadius,
-      
+
       // Layout
       width,
       height,
@@ -264,7 +264,7 @@ export function createStyleProps(
       maxWidth,
       minHeight,
       maxHeight,
-      
+
       // Flexbox
       flex,
       flexGrow,
@@ -276,7 +276,7 @@ export function createStyleProps(
       alignItems,
       alignContent,
       alignSelf,
-      
+
       // Grid
       gridTemplateColumns,
       gridTemplateRows,
@@ -287,7 +287,7 @@ export function createStyleProps(
       gridColumnGap,
       gridRowGap,
       gridGap,
-      
+
       // Position
       position,
       top,
@@ -295,7 +295,7 @@ export function createStyleProps(
       bottom,
       left,
       zIndex,
-      
+
       // Misc
       display,
       overflow,
@@ -305,7 +305,7 @@ export function createStyleProps(
       opacity,
       cursor,
       transition,
-      
+
       // Pseudo-classes (only process in root level)
       ...restProps
     } = props;
@@ -324,52 +324,52 @@ export function createStyleProps(
       ...(mr !== undefined && { marginRight: getSpacing(mr) }),
       ...(mb !== undefined && { marginBottom: getSpacing(mb) }),
       ...(ml !== undefined && { marginLeft: getSpacing(ml) }),
-      ...(mx !== undefined && { 
+      ...(mx !== undefined && {
         marginLeft: getSpacing(mx),
         marginRight: getSpacing(mx),
       }),
-      ...(my !== undefined && { 
+      ...(my !== undefined && {
         marginTop: getSpacing(my),
         marginBottom: getSpacing(my),
       }),
-      
+
       // Padding
       ...(p !== undefined && { padding: getSpacing(p) }),
       ...(pt !== undefined && { paddingTop: getSpacing(pt) }),
       ...(pr !== undefined && { paddingRight: getSpacing(pr) }),
       ...(pb !== undefined && { paddingBottom: getSpacing(pb) }),
       ...(pl !== undefined && { paddingLeft: getSpacing(pl) }),
-      ...(px !== undefined && { 
+      ...(px !== undefined && {
         paddingLeft: getSpacing(px),
         paddingRight: getSpacing(px),
       }),
-      ...(py !== undefined && { 
+      ...(py !== undefined && {
         paddingTop: getSpacing(py),
         paddingBottom: getSpacing(py),
       }),
-      
+
       // Typography
-      ...(fontSize !== undefined && { 
+      ...(fontSize !== undefined && {
         fontSize: resolveResponsiveValue(fontSize, 'typography.fontSize')
       }),
-      ...(fontWeight !== undefined && { 
+      ...(fontWeight !== undefined && {
         fontWeight: resolveResponsiveValue(fontWeight, 'typography.fontWeight')
       }),
-      ...(lineHeight !== undefined && { 
+      ...(lineHeight !== undefined && {
         lineHeight: resolveResponsiveValue(lineHeight, 'typography.lineHeight')
       }),
       ...(textAlign !== undefined && { textAlign }),
       ...(fontStyle !== undefined && { fontStyle }),
       ...(textTransform !== undefined && { textTransform }),
-      ...(letterSpacing !== undefined && { 
+      ...(letterSpacing !== undefined && {
         letterSpacing: resolveResponsiveValue(letterSpacing, 'typography.letterSpacing')
       }),
-      
+
       // Colors
       ...(resolvedColor !== undefined && { color: resolvedColor }),
       ...(resolvedBg !== undefined && { backgroundColor: resolvedBg }),
       ...(resolvedBackgroundColor !== undefined && { backgroundColor: resolvedBackgroundColor }),
-      
+
       // Borders
       ...(border !== undefined && { border }),
       ...(borderTop !== undefined && { borderTop }),
@@ -378,7 +378,7 @@ export function createStyleProps(
       ...(borderLeft !== undefined && { borderLeft }),
       ...(resolvedBorderColor !== undefined && { borderColor: resolvedBorderColor }),
       ...(borderRadius !== undefined && { borderRadius: getBorderRadius(borderRadius) }),
-      
+
       // Layout
       ...(width !== undefined && { width }),
       ...(height !== undefined && { height }),
@@ -386,7 +386,7 @@ export function createStyleProps(
       ...(maxWidth !== undefined && { maxWidth }),
       ...(minHeight !== undefined && { minHeight }),
       ...(maxHeight !== undefined && { maxHeight }),
-      
+
       // Flexbox
       ...(flex !== undefined && { flex }),
       ...(flexGrow !== undefined && { flexGrow }),
@@ -398,7 +398,7 @@ export function createStyleProps(
       ...(alignItems !== undefined && { alignItems }),
       ...(alignContent !== undefined && { alignContent }),
       ...(alignSelf !== undefined && { alignSelf }),
-      
+
       // Grid
       ...(gridTemplateColumns !== undefined && { gridTemplateColumns }),
       ...(gridTemplateRows !== undefined && { gridTemplateRows }),
@@ -409,7 +409,7 @@ export function createStyleProps(
       ...(gridColumnGap !== undefined && { columnGap: getSpacing(gridColumnGap) }),
       ...(gridRowGap !== undefined && { rowGap: getSpacing(gridRowGap) }),
       ...(gridGap !== undefined && { gap: getSpacing(gridGap) }),
-      
+
       // Position
       ...(position !== undefined && { position }),
       ...(top !== undefined && { top }),
@@ -417,7 +417,7 @@ export function createStyleProps(
       ...(bottom !== undefined && { bottom }),
       ...(left !== undefined && { left }),
       ...(zIndex !== undefined && { zIndex: getZIndex(zIndex) }),
-      
+
       // Misc
       ...(display !== undefined && { display }),
       ...(overflow !== undefined && { overflow }),
@@ -427,7 +427,7 @@ export function createStyleProps(
       ...(opacity !== undefined && { opacity }),
       ...(cursor !== undefined && { cursor }),
       ...(transition !== undefined && { transition: getTransition(transition) }),
-      
+
       // Any other props
       ...restProps,
     };
@@ -435,22 +435,22 @@ export function createStyleProps(
     // Process pseudo-classes if this is the root level (not a pseudo-class itself)
     if (!isPseudo) {
       const pseudoStyles: Record<string, CSSProperties> = {};
-      
+
       // Handle hover state
       if ('&:hover' in props) {
         pseudoStyles['&:hover'] = buildStyle(props['&:hover'] as StyleProps, true);
       }
-      
+
       // Handle focus state
       if ('&:focus' in props) {
         pseudoStyles['&:focus'] = buildStyle(props['&:focus'] as StyleProps, true);
       }
-      
+
       // Handle active state
       if ('&:active' in props) {
         pseudoStyles['&:active'] = buildStyle(props['&:active'] as StyleProps, true);
       }
-      
+
       // Merge pseudo-class styles if any exist
       if (Object.keys(pseudoStyles).length > 0) {
         return {
@@ -459,7 +459,7 @@ export function createStyleProps(
         } as unknown as CSSProperties;
       }
     }
-    
+
     return style;
   };
 
@@ -481,9 +481,9 @@ export const StyledBox: React.FC<StyledBoxProps> = ({
 }) => {
   const { theme } = useTheme();
   const style = createStyleProps(props, { theme });
-  
+
   return (
-    <div 
+    <div
       className={className}
       style={{
         ...style,

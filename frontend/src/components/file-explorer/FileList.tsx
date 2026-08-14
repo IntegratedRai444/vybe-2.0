@@ -1,6 +1,11 @@
-import React from 'react';
-import { FileItem } from './FileItem';
-import type { FileItem as FileItemType, SortField, SortOrder, ViewMode } from './types';
+import React from "react";
+import { FileItem } from "./FileItem";
+import type {
+  FileItem as FileItemType,
+  SortField,
+  SortOrder,
+  ViewMode,
+} from "./types";
 
 type FileListProps = {
   files: FileItemType[];
@@ -28,27 +33,29 @@ export const FileList: React.FC<FileListProps> = ({
   const sortedFiles = React.useMemo(() => {
     return [...files].sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
-        case 'name':
+        case "name":
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'size':
+        case "size":
           comparison = a.size - b.size;
           break;
-        case 'modified':
-          comparison = new Date(a.modified).getTime() - new Date(b.modified).getTime();
+        case "modified":
+          comparison =
+            new Date(a.modified).getTime() - new Date(b.modified).getTime();
           break;
-        case 'type':
-          comparison = a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+        case "type":
+          comparison =
+            a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
           break;
       }
 
-      return sortOrder === 'asc' ? comparison : -comparison;
+      return sortOrder === "asc" ? comparison : -comparison;
     });
   }, [files, sortBy, sortOrder]);
 
-  if (viewMode === 'grid') {
+  if (viewMode === "grid") {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2">
         {sortedFiles.map((file) => (
@@ -82,3 +89,6 @@ export const FileList: React.FC<FileListProps> = ({
     </div>
   );
 };
+
+// Exports
+export { FileList };

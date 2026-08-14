@@ -1,13 +1,13 @@
-export type IssueSeverity = 'error' | 'warning' | 'info' | 'hint';
-export type IssueCategory = 
-  | 'syntax' 
-  | 'type' 
-  | 'security' 
-  | 'style' 
-  | 'performance' 
-  | 'bug' 
-  | 'complexity' 
-  | 'import';
+export type IssueSeverity = "error" | "warning" | "info" | "hint";
+export type IssueCategory =
+  | "syntax"
+  | "type"
+  | "security"
+  | "style"
+  | "performance"
+  | "bug"
+  | "complexity"
+  | "import";
 
 export interface CodeIssue {
   filePath: string;
@@ -34,7 +34,7 @@ export interface ScanRequest {
   filePath?: string;
   languages?: string[];
   analyzers?: string[];
-  scanType?: 'full' | 'incremental' | 'on-save';
+  scanType?: "full" | "incremental" | "on-save";
 }
 
 export interface ScanResult {
@@ -89,7 +89,7 @@ export interface RealTimeScanConfig {
 }
 
 export interface FileChangeEvent {
-  eventType: 'created' | 'modified' | 'deleted' | 'moved';
+  eventType: "created" | "modified" | "deleted" | "moved";
   srcPath: string;
   destPath?: string;
   isDirectory: boolean;

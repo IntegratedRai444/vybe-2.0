@@ -1,4 +1,3 @@
-import { spawn } from 'node-pty';
 import { v4 as uuidv4 } from 'uuid';
 import os from 'os';
 import path from 'path';
@@ -7,517 +6,378 @@ import path from 'path';
 const terminals = new Map();
 const clients = new Map();
 
-// Default terminal themes
-const defaultThemes = {
-  'default-dark': {
-    background: '#1e1e1e',
-    foreground: '#d4d4d4',
-    cursor: '#ffffff',
-    cursorAccent: '#000000',
-    selection: '#264f78',
-    black: '#000000',
-    red: '#cd3131',
-    green: '#0dbc79',
-    yellow: '#e5e510',
-    blue: '#2472c8',
-    magenta: '#bc3fbc',
-    cyan: '#11a8cd',
-    white: '#e5e5e5',
-    brightBlack: '#666666',
-    brightRed: '#f14c4c',
-    brightGreen: '#23d18b',
-    brightYellow: '#f5f543',
-    brightBlue: '#3b8eea',
-    brightMagenta: '#d670d6',
-    brightCyan: '#29b8db',
-    brightWhite: '#e5e5e5'
-  },
-  'solarized-dark': {
-    background: '#002b36',
-    foreground: '#93a1a1',
-    cursor: '#93a1a1',
-    cursorAccent: '#002b36',
-    selection: '#073642',
-    black: '#073642',
-    red: '#dc322f',
-    green: '#859900',
-    yellow: '#b58900',
-    blue: '#268bd2',
-    magenta: '#d33682',
-    cyan: '#2aa198',
-    white: '#eee8d5',
-    brightBlack: '#586e75',
-    brightRed: '#cb4b16',
-    brightGreen: '#859900',
-    brightYellow: '#b58900',
-    brightBlue: '#268bd2',
-    brightMagenta: '#6c71c4',
-    brightCyan: '#2aa198',
-    brightWhite: '#fdf6e3'
+// Mock terminal implementation
+class MockTerminal {
+  constructor(options = {}) {
+    this.id = uuidv4();
+    this.rows = options.rows || 24;
+    this.cols = options.cols || 80;
+    this.cwd = options.cwd || process.cwd();
+    this.env = { ...process.env, ...options.env };
+    this.shell = process.platform === 'win32' ? 'powershell.exe' : 'bash';
+    this.buffer = '';
+    this.clients = new Set();
+    this.prompt = `${this.cwd} $ `;
+    this.history = [];
+    this.historyIndex = -1;
+    this.commands = [
+      'ls', 'dir', 'cd', 'pwd', 'echo', 'clear', 'help', 'date', 'whoami',
+      'git', 'npm', 'node', 'python', 'python3', 'python2', 'java', 'javac'
+    ];
+    
+    // Initial welcome message
+    this.write(`\x1b[1;32mWelcome to Mock Terminal (${this.id})\x1b[0m\r\n`);
+    this.write(`\x1b[1;34mType 'help' for available commands\x1b[0m\r\n\r\n`);
+    this.write(this.prompt);
   }
-};
 
-export function setupTerminalWebSocket(wss) {
-  wss.on('connection', (ws, req) => {
+  write(data) {
+    this.buffer += data;
+    this.broadcast({
+      type: 'data',
+      data: data
+    });
+  }
+
+  input(data) {
+    // Handle special keys
+    if (data === '\r') {  // Enter key
+      const command = this.buffer.split('\n').pop().replace(this.prompt, '').trim();
+      this.history.push(command);
+      this.historyIndex = this.history.length;
+      this.write('\r\n');
+      this.handleCommand(command);
+      this.prompt = `${this.cwd} $ `;
+      this.write(this.prompt);
+    } else if (data === '\x7f') {  // Backspace
+      if (this.buffer.endsWith(this.prompt)) return;
+      this.buffer = this.buffer.slice(0, -1);
+      this.broadcast({
+        type: 'data',
+        data: '\b \b'
+      });
+    } else if (data.startsWith('\x1b[')) {
+      // Handle arrow keys (simplified)
+      if (data === '\x1b[A') {  // Up arrow
+        if (this.historyIndex > 0) {
+          this.historyIndex--;
+          this.clearLine();
+          const cmd = this.history[this.historyIndex];
+          this.write(cmd);
+        }
+      } else if (data === '\x1b[B') {  // Down arrow
+        if (this.historyIndex < this.history.length - 1) {
+          this.historyIndex++;
+          this.clearLine();
+          const cmd = this.history[this.historyIndex];
+          this.write(cmd);
+        } else if (this.historyIndex === this.history.length - 1) {
+          this.historyIndex++;
+          this.clearLine();
+        }
+      } else if (data === '\x1b[C') {  // Right arrow
+        this.write('\x1b[C');
+      } else if (data === '\x1b[D') {  // Left arrow
+        this.write('\x1b[D');
+      }
+    } else if (data.charCodeAt(0) >= 32) {  // Printable characters
+      this.buffer += data;
+      this.broadcast({
+        type: 'data',
+        data: data
+      });
+    }
+  }
+
+  clearLine() {
+    // Clear current line and move cursor to beginning
+    this.broadcast({
+      type: 'data',
+      data: '\r\x1b[K'
+    });
+    // Rewrite prompt
+    this.broadcast({
+      type: 'data',
+      data: this.prompt
+    });
+  }
+
+  async handleCommand(command) {
+    if (!command) return;
+
+    const [cmd, ...args] = command.split(' ');
+
+    switch (cmd.toLowerCase()) {
+      case 'clear':
+        this.broadcast({ type: 'clear' });
+        this.buffer = '';
+        break;
+
+      case 'help':
+        this.write('\x1b[1mAvailable commands:\x1b[0m\r\n');
+        this.write('  ls, dir - List directory contents\r\n');
+        this.write('  cd <dir> - Change directory\r\n');
+        this.write('  pwd - Print working directory\r\n');
+        this.write('  echo <text> - Print text\r\n');
+        this.write('  clear - Clear the terminal\r\n');
+        this.write('  help - Show this help message\r\n');
+        this.write('  exit - Close the terminal\r\n');
+        break;
+
+      case 'ls':
+      case 'dir':
+        this.write('mock_file1.txt\r\n');
+        this.write('mock_directory/\r\n');
+        this.write('package.json\r\n');
+        break;
+
+      case 'cd':
+        const dir = args[0] || os.homedir();
+        this.cwd = path.resolve(this.cwd, dir);
+        this.write(`Changed directory to ${this.cwd}\r\n`);
+        break;
+
+      case 'pwd':
+        this.write(`${this.cwd}\r\n`);
+        break;
+
+      case 'echo':
+        this.write(`${args.join(' ')}\r\n`);
+        break;
+
+      case 'exit':
+        this.broadcast({ type: 'close' });
+        break;
+
+      default:
+        // Simulate command execution
+        this.write(`\x1b[33mExecuting: ${command}\x1b[0m\r\n`);
+        
+        // Mock execution delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        if (Math.random() > 0.2) {
+          this.write(`Command '${cmd}' completed successfully\r\n`);
+        } else {
+          this.write(`\x1b[31mCommand '${cmd}' not found\x1b[0m\r\n`);
+        }
+    }
+  }
+
+  resize(rows, cols) {
+    this.rows = rows;
+    this.cols = cols;
+    this.broadcast({
+      type: 'resize',
+      rows,
+      cols
+    });
+  }
+
+  addClient(clientId, ws) {
+    this.clients.add(clientId);
+    
+    // Send initial data to the new client
+    ws.send(JSON.stringify({
+      type: 'init',
+      id: this.id,
+      rows: this.rows,
+      cols: this.cols
+    }));
+    
+    // Send existing buffer
+    if (this.buffer) {
+      ws.send(JSON.stringify({
+        type: 'data',
+        data: this.buffer
+      }));
+    }
+  }
+
+  removeClient(clientId) {
+    this.clients.delete(clientId);
+  }
+
+  broadcast(message) {
+    const messageStr = JSON.stringify(message);
+    for (const clientId of this.clients) {
+      const client = clients.get(clientId);
+      if (client?.ws.readyState === 1) { // 1 = OPEN
+        client.ws.send(messageStr);
+      }
+    }
+  }
+}
+
+export function setupTerminalWebSocket(ws, req) {
+  try {
     const clientId = uuidv4();
-    clients.set(clientId, {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const terminalId = url.searchParams.get('id') || uuidv4();
+    
+    console.log(`New terminal connection: clientId=${clientId}, terminalId=${terminalId}`);
+    
+    // Initialize client
+    const client = { 
       ws,
-      sessions: new Set(),
-      preferences: {
-        theme: 'default-dark',
-        fontSize: 14,
-        fontFamily: 'Consolas, "Courier New", monospace',
-        cursorBlink: true,
-        cursorStyle: 'block',
-        scrollback: 1000
+      terminalId,
+      lastActivity: Date.now()
+    };
+    
+    clients.set(clientId, client);
+    
+    // Handle WebSocket close
+    const handleClose = () => {
+      console.log(`Terminal client disconnected: ${clientId}`);
+      clients.delete(clientId);
+      
+      const terminal = terminals.get(terminalId);
+      if (terminal) {
+        terminal.removeClient(clientId);
+      }
+    };
+    
+    // Handle WebSocket errors
+    const handleError = (error) => {
+      console.error(`Terminal WebSocket error for client ${clientId}:`, error);
+      ws.close(1011, 'Internal server error');
+    };
+    
+    // Set up event handlers
+    ws.on('error', handleError);
+    ws.on('close', handleClose);
+    
+    // Handle incoming messages
+    ws.on('message', (data) => {
+      try {
+        client.lastActivity = Date.now();
+        const message = JSON.parse(data);
+        
+        let terminal = terminals.get(terminalId);
+        
+        // Create new terminal if it doesn't exist
+        if (!terminal && message.type === 'create') {
+          terminal = new MockTerminal({
+            cwd: message.cwd || process.cwd(),
+            shell: message.shell || (process.platform === 'win32' ? 'powershell.exe' : 'bash'),
+            rows: message.rows || 24,
+            cols: message.cols || 80,
+            env: message.env || {}
+          });
+          terminals.set(terminalId, terminal);
+          console.log(`Created new terminal: ${terminalId}`);
+        }
+        
+        if (!terminal) {
+          throw new Error('Terminal not initialized');
+        }
+        
+        // Add client to terminal
+        if (!terminal.clients.has(clientId)) {
+          terminal.addClient(clientId, ws);
+        }
+        
+        // Handle different message types
+        switch (message.type) {
+          case 'input':
+            terminal.input(message.data);
+            break;
+            
+          case 'resize':
+            terminal.resize(message.rows, message.cols);
+            break;
+            
+          case 'heartbeat':
+            // Just update last activity
+            break;
+            
+          default:
+            console.warn(`Unknown message type: ${message.type}`);
+        }
+      } catch (error) {
+        console.error('Error handling terminal message:', error);
+        ws.send(JSON.stringify({
+          type: 'error',
+          message: error.message
+        }));
       }
     });
     
-    console.log(`🔌 Terminal client connected: ${clientId}`);
-
-    ws.on('message', async (data) => {
-      try {
-        const message = JSON.parse(data.toString());
-        await handleTerminalMessage(ws, clientId, message);
-      } catch (error) {
-        console.error('Terminal WebSocket error:', error);
-        sendToClient(clientId, {
-          type: 'error',
-          message: error.message
-        });
-      }
-    });
-
-    ws.on('close', () => {
-      console.log(`🔌 Terminal client disconnected: ${clientId}`);
-      
-      // Clean up all terminals for this client
-      const client = clients.get(clientId);
-      if (client) {
-        client.sessions.forEach(terminalId => {
-          const terminal = terminals.get(terminalId);
-          if (terminal) {
-            terminal.pty.kill();
-            terminals.delete(terminalId);
-          }
-        });
-      }
-      
-      clients.delete(clientId);
-    });
-
-    // Send welcome message with available themes and settings
-    sendToClient(clientId, {
+    // Send initial connection confirmation
+    ws.send(JSON.stringify({
+      type: 'connected',
+      terminalId,
+      clientId
+    }));
+    
+  } catch (error) {
+    console.error('Error in terminal WebSocket setup:', error);
+    if (ws.readyState === ws.OPEN) {
+      ws.close(1011, 'Internal server error');
+    }
+  }
+}
+    
+    // Add client to terminal
+    terminal.addClient(clientId);
+    
+    console.log(`🔌 Terminal client connected: ${clientId} to terminal: ${terminalId}`);
+    
+    // Send welcome message
+    ws.send(JSON.stringify({
       type: 'connected',
       clientId,
       message: 'Terminal WebSocket connected',
-      themes: Object.keys(defaultThemes),
-      preferences: clients.get(clientId).preferences
-    });
-  });
-}
-
-async function handleTerminalMessage(ws, clientId, message) {
-  const { type, terminalId, data } = message;
-  const client = clients.get(clientId);
-
-  if (!client) {
-    return;
-  }
-
-  switch (type) {
-    case 'create':
-      await createTerminal(ws, clientId, message);
-      break;
-
-    case 'input':
-      await handleTerminalInput(ws, terminalId, data);
-      break;
-
-    case 'resize':
-      await resizeTerminal(ws, terminalId, data);
-      break;
-
-    case 'kill':
-      await killTerminal(ws, terminalId);
-      break;
-
-    case 'list':
-      await listTerminals(ws, clientId);
-      break;
-      
-    case 'update_preferences':
-      // Update client preferences
-      if (message.preferences) {
-        client.preferences = {
-          ...client.preferences,
-          ...message.preferences
-        };
+      terminalId: terminal.id
+    }));
+    
+    // Handle messages from client
+    ws.on('message', (data) => {
+      try {
+        const message = JSON.parse(data.toString());
         
-        // Apply theme to all active terminals
-        if (message.preferences.theme) {
-          client.sessions.forEach(termId => {
-            const term = terminals.get(termId);
-            if (term) {
-              term.theme = defaultThemes[message.preferences.theme] || defaultThemes['default-dark'];
-              sendToClient(clientId, {
-                type: 'terminal_updated',
-                terminalId: termId,
-                updates: { theme: term.theme }
-              });
-            }
-          });
+        switch (message.type) {
+          case 'input':
+            terminal.input(message.data);
+            break;
+            
+          case 'resize':
+            terminal.resize(message.rows, message.cols);
+            break;
+            
+          case 'heartbeat':
+            // Just acknowledge the heartbeat
+            ws.send(JSON.stringify({ type: 'heartbeat' }));
+            break;
         }
-        
-        sendToClient(clientId, {
-          type: 'preferences_updated',
-          preferences: client.preferences
-        });
+      } catch (error) {
+        console.error('Terminal WebSocket error:', error);
+        ws.send(JSON.stringify({
+          type: 'error',
+          message: error.message
+        }));
       }
-      break;
-      
-    case 'rename_terminal':
-      if (terminalId && message.name) {
-        const term = terminals.get(terminalId);
-        if (term && term.clientId === clientId) {
-          term.name = message.name;
-          sendToClient(clientId, {
-            type: 'terminal_updated',
-            terminalId,
-            updates: { name: message.name }
-          });
-        }
-      }
-      break;
-      
-    case 'get_sessions':
-      const sessions = Array.from(client.sessions)
-        .map(id => terminals.get(id))
-        .filter(Boolean)
-        .map(getSessionInfo);
-        
-      sendToClient(clientId, {
-        type: 'sessions_list',
-        sessions
-      });
-      break;
-
-    default:
-      sendToClient(clientId, {
-        type: 'error',
-        message: `Unknown message type: ${type}`
-      });
-  }
-}
-
-// Helper function to send messages to client
-function sendToClient(clientId, message) {
-  const client = clients.get(clientId);
-  if (client && client.ws.readyState === 1) {
-    client.ws.send(JSON.stringify(message));
-  }
-}
-
-// Helper function to broadcast to all clients
-function broadcast(message) {
-  clients.forEach(client => {
-    if (client.ws.readyState === 1) {
-      client.ws.send(JSON.stringify(message));
-    }
-  });
-}
-
-async function createTerminal(ws, clientId, options) {
-  const terminalId = options.terminalId || uuidv4();
-  const client = clients.get(clientId);
-  
-  if (!client) {
-    throw new Error('Client not found');
-  }
-
-  const { 
-    shell = getDefaultShell(),
-    cwd = process.cwd(),
-    env = {},
-    cols = 80,
-    rows = 24,
-    theme = 'default-dark',
-    name = `Terminal-${Date.now()}`
-  } = options;
-
-  // Add client preferences to env
-  const terminalEnv = {
-    ...process.env,
-    ...env,
-    TERM: 'xterm-256color',
-    COLORTERM: 'truecolor',
-    TERM_PROGRAM: 'vybe-ide',
-    TERM_PROGRAM_VERSION: '1.0.0'
-  };
-
-  try {
-    // Validate and resolve working directory
-    const workingDir = path.resolve(cwd);
-    
-    // Create PTY process
-    const pty = spawn(shell, [], {
-      name: 'xterm-color',
-      cols,
-      rows,
-      cwd: workingDir,
-      env: terminalEnv
-    });
-
-    // Create terminal session
-    const session = {
-      id: terminalId,
-      pty,
-      clientId,
-      shell,
-      cwd: workingDir,
-      name,
-      theme: defaultThemes[theme] || defaultThemes['default-dark'],
-      env: terminalEnv,
-      createdAt: new Date(),
-      lastActivity: new Date(),
-      status: 'active',
-      cols,
-      rows,
-      title: name
-    };
-
-    // Store terminal session
-    terminals.set(terminalId, session);
-    client.sessions.add(terminalId);
-
-    // Handle PTY output
-    pty.onData((data) => {
-      const client = clients.get(clientId);
-      if (client) {
-        sendToClient(clientId, {
-          type: 'output',
-          terminalId,
-          data
-        });
-      }
-    });
-
-    // Handle title changes
-    pty.on('title', (title) => {
-      const session = terminals.get(terminalId);
-      if (session) {
-        session.title = title;
-        sendToClient(clientId, {
-          type: 'title',
-          terminalId,
-          title
-        });
-      }
-    });
-
-    // Handle PTY exit
-    pty.onExit(({ exitCode, signal }) => {
-      console.log(`Terminal ${terminalId} exited with code ${exitCode}, signal ${signal}`);
-      
-      const session = terminals.get(terminalId);
-      if (session) {
-        session.status = 'terminated';
-        session.lastActivity = new Date();
-        
-        sendToClient(clientId, {
-          type: 'exit',
-          terminalId,
-          exitCode,
-          signal,
-          session: getSessionInfo(session)
-        });
-      }
-    });
-
-    // Send success response with session info
-    sendToClient(clientId, {
-      type: 'created',
-      terminalId,
-      session: getSessionInfo(session)
     });
     
-    // Notify other clients about the new terminal
-    broadcast({
-      type: 'terminal_created',
-      clientId,
-      session: getSessionInfo(session)
-    });
-
-    console.log(`✅ Terminal created: ${terminalId} (${shell} in ${workingDir})`);
-
-  } catch (error) {
-    console.error('Error creating terminal:', error);
-    sendToClient(clientId, {
-      type: 'error',
-      message: `Failed to create terminal: ${error.message}`
-    });
-  }
-}
-
-async function handleTerminalInput(ws, terminalId, data) {
-  const terminal = terminals.get(terminalId);
-  
-  if (!terminal) {
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Terminal ${terminalId} not found`
-    });
-    return;
-  }
-
-  try {
-    terminal.pty.write(data);
-    terminal.lastActivity = new Date();
-  } catch (error) {
-    console.error('Error writing to terminal:', error);
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Failed to write to terminal: ${error.message}`
-    });
-  }
-}
-
-async function resizeTerminal(ws, terminalId, { cols, rows }) {
-  const terminal = terminals.get(terminalId);
-  
-  if (!terminal) {
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Terminal ${terminalId} not found`
-    });
-    return;
-  }
-
-  try {
-    terminal.pty.resize(cols, rows);
-    
-    sendToClient(terminal.clientId, {
-      type: 'resized',
-      terminalId,
-      cols,
-      rows
-    });
-  } catch (error) {
-    console.error('Error resizing terminal:', error);
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Failed to resize terminal: ${error.message}`
-    });
-  }
-}
-
-async function killTerminal(ws, terminalId) {
-  const terminal = terminals.get(terminalId);
-  
-  if (!terminal) {
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Terminal ${terminalId} not found`
-    });
-    return;
-  }
-
-  try {
-    terminal.pty.kill();
-    terminals.delete(terminalId);
-    
-    sendToClient(terminal.clientId, {
-      type: 'killed',
-      terminalId
-    });
-
-    console.log(`🗑️ Terminal killed: ${terminalId}`);
-  } catch (error) {
-    console.error('Error killing terminal:', error);
-    sendToClient(terminal.clientId, {
-      type: 'error',
-      message: `Failed to kill terminal: ${error.message}`
-    });
-  }
-}
-
-async function listTerminals(ws, clientId) {
-  const clientTerminals = [];
-  
-  for (const [terminalId, terminal] of terminals.entries()) {
-    if (terminal.clientId === clientId) {
-      clientTerminals.push({
-        id: terminalId,
-        shell: terminal.shell,
-        cwd: terminal.cwd,
-        created: terminal.created,
-        lastActivity: terminal.lastActivity
-      });
-    }
-  }
-
-  sendToClient(clientId, {
-    type: 'list',
-    terminals: clientTerminals
-  });
-}
-
-function getDefaultShell() {
-  const platform = os.platform();
-  
-  switch (platform) {
-    case 'win32':
-      return process.env.COMSPEC || 'cmd.exe';
-    case 'darwin':
-      return process.env.SHELL || '/bin/zsh';
-    default:
-      return process.env.SHELL || '/bin/bash';
-  }
-}
-
-// Helper function to get session info
-function getSessionInfo(session) {
-  return {
-    id: session.id,
-    name: session.name,
-    title: session.title,
-    shell: session.shell,
-    cwd: session.cwd,
-    theme: session.theme,
-    status: session.status,
-    createdAt: session.createdAt,
-    lastActivity: session.lastActivity,
-    cols: session.cols,
-    rows: session.rows
-  };
-}
-
-// Cleanup inactive terminals
-setInterval(() => {
-  const now = new Date();
-  const maxInactiveTime = 30 * 60 * 1000; // 30 minutes
-
-  for (const [terminalId, terminal] of terminals.entries()) {
-    if (now - terminal.lastActivity > maxInactiveTime) {
-      console.log(`Terminal ${terminalId} inactive, terminating`);
-      if (terminal.pty) {
-        terminal.pty.kill();
+    // Handle client disconnection
+    ws.on('close', () => {
+      console.log(`🔌 Terminal client disconnected: ${clientId}`);
+      
+      // Remove client from terminal
+      if (terminal) {
+        terminal.removeClient(clientId);
       }
       
-      // Remove from client's session list
-      const client = clients.get(terminal.clientId);
-      if (client) {
-        client.sessions.delete(terminalId);
-      }
-      
-      terminals.delete(terminalId);
-      
-      // Notify clients
-      broadcast({
-        type: 'terminal_terminated',
-        terminalId,
-        reason: 'inactive'
-      });
-    }
+      // Remove client
+      clients.delete(clientId);
+    });
+    
+    // Handle errors
+    ws.on('error', (error) => {
+      console.error('Terminal WebSocket error:', error);
+      ws.close();
+    });
+  } catch (error) {
+    console.error('Error setting up terminal WebSocket:', error);
+    ws.close(1011, 'Internal server error');
   }
-}, 5 * 60 * 1000); // Check every 5 minutes

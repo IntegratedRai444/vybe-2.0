@@ -1,0 +1,833 @@
+{
+  "generatedAt": "2025-11-05T17:50:59.170Z",
+  "stats": {
+    "totalFiles": 227,
+    "usedFiles": 22,
+    "unusedFiles": 186,
+    "allowedUnused": 19
+  },
+  "unusedFiles": [
+    {
+      "path": "components\\ai\\AIChatPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AICodeEditor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AIDashboard.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AILayout.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AIPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AIProvider.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AIProviderSelector.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\AISettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\CompletionBubble.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ai\\ModelSelector.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\CommandPalette\\index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\AnalysisButton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\CollaborationPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\ConnectionStatus.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\DeployPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\ErrorBoundary.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\MCPPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\OutlineView.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\PanelContainer.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\PanelSwitcher.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\ProblemsPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\SecurityButton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\ShortcutsPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\SnippetLibrary.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\SyncStatus.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\TerminalPane.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\TerminalTabs.new.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\common\\TerminalTabs.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\DebugButton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\Debugger.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\DebuggerPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\DebuggerToolbar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\ExceptionsPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\types.ts",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\useDebugger.ts",
+      "importedBy": []
+    },
+    {
+      "path": "components\\debug\\WatchExpressions.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\DeploymentPanel\\index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\CodeEditor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\DebugMonacoEditor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\EditorSettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\EditorTabs.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\EditorToolbar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\FormatSettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\InlineCompletion.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\MonacoCodeEditor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\MonacoEditor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\editor\\SplitPane.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\EnhancedFileTree.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ErrorBoundary.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\file-explorer\\FileExplorer.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\file-explorer\\FileItem.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\file-explorer\\FileList.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\file-explorer\\SearchPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\file-explorer\\types.ts",
+      "importedBy": []
+    },
+    {
+      "path": "components\\FileContextMenu.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\FileIcon.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\FileTabs.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\FolderPicker.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\forms\\FormField.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\git\\gitpanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\git\\GitSettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\git\\GitStatusBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\git\\index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\git\\SyncStatus.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Header\\index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\integrations\\ComponentIntegrations.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\ActivityBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\Layout.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\LayoutManager.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\MainLayout.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\NavigationBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\panels\\ChatPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\panels\\ExplorerPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\RightSidebar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\StatusBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\layout\\VSModernSidebar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\LoadingSpinner.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\mcp\\MCPFileTree.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\mcp\\MCPFixPanel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\mcp\\MCPIssuesList.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\mcp\\MCPSettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\PackageManager\\index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\PackageManager\\PackageManager.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\FileOperations.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\ProjectExplorer.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\ProjectManager.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\ProjectSettings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\ProjectStatusBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\project\\ProjectTemplatePicker.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\search\\FileSearchModal.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\search\\ProjectSearch.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\search\\SearchModal.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\search\\SearchReplace.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Settings\\SettingsButton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Settings\\SettingsModal.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Settings\\WorkspaceConfig.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\sidebar\\Sidebar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\theme-provider.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Toast\\Toast.test.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Toast\\Toast.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\Toast\\types.ts",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\badge.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\Breadcrumb.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\Button.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\Button\\Button.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\ChatPane.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\checkbox.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\design-system.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\design-system\\Button.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\design-system\\Card.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\design-system\\Input.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\EmptyState.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\EnhancedErrorBoundary.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\Input.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\label.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\LoadingSkeleton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\ModernFileTree.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\NotificationSystem.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\panel.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\scroll-area.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\select.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\Skeleton.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\tabs.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\ThemeCustomizer.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\ThemeToggle.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\toaster.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "components\\ui\\use-toast.ts",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\AIContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\DebuggerContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\GitContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\MCPContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\ProjectContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\ThemeContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\WebSocketContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "contexts\\WorkspaceContext.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "features\\layout\\Layout.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "features\\topbar\\TopBar.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "index.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\AIPage.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\Dashboard.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\Editor.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\Login.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\LoginPage.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\NotFound.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "pages\\Settings.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "providers\\AppProvider.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "providers\\AppProviders.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "providers\\WebSocketProvider.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "services\\aiService.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\base.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\config.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\debuggerApi.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\endpoints.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\errorHandler.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\exampleService.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\api\\serviceFactory.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\apiClient.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\auth.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\debugger\\DebuggerWebSocket.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\debuggerService.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\gitWebSocketService.ts",
+      "importedBy": []
+    },
+    {
+      "path": "services\\websocket.ts",
+      "importedBy": []
+    },
+    {
+      "path": "setupTests.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\aiSettingsSlice.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\aiSettingsStore.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\enhancedStore.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\gitSlice.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\rootReducer.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\slices\\authSlice.new.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\slices\\authSlice.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\slices\\debuggerSlice.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\slices\\editorSlice.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\store.ts",
+      "importedBy": []
+    },
+    {
+      "path": "store\\useStore.ts",
+      "importedBy": []
+    },
+    {
+      "path": "styles\\design-tokens.ts",
+      "importedBy": []
+    },
+    {
+      "path": "theme.ts",
+      "importedBy": []
+    },
+    {
+      "path": "theme\\GlobalStyles.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "theme\\theme.d.ts",
+      "importedBy": []
+    },
+    {
+      "path": "theme\\theme.ts",
+      "importedBy": []
+    },
+    {
+      "path": "theme\\ThemeProvider.tsx",
+      "importedBy": []
+    },
+    {
+      "path": "theme\\themeUtils.ts",
+      "importedBy": []
+    },
+    {
+      "path": "types.ts",
+      "importedBy": []
+    },
+    {
+      "path": "types\\ai.ts",
+      "importedBy": []
+    },
+    {
+      "path": "types\\fileSystem.ts",
+      "importedBy": []
+    },
+    {
+      "path": "types\\global.d.ts",
+      "importedBy": []
+    },
+    {
+      "path": "types\\mcp.ts",
+      "importedBy": []
+    }
+  ],
+  "allowedUnused": [
+    {
+      "path": "components\\Toast\\__tests__\\test-utils.tsx",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useAI.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useAuth.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useDebounce.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useEditorState.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useFileSystem.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useGit.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useProject.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useTerminal.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "hooks\\useWebSocket.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "test-utils.tsx",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\api.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\cn.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\fileUtils.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\gitFeatureCheck.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\gitUtils.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\markdown.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\performance.ts",
+      "reason": "Matched allowed unused pattern"
+    },
+    {
+      "path": "utils\\toast.ts",
+      "reason": "Matched allowed unused pattern"
+    }
+  ]
+}

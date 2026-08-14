@@ -15,11 +15,11 @@ type Props = {
   onSymbolClick: (line: number, column: number) => void;
 };
 
-export const OutlineView: React.FC<Props> = ({ 
+export const OutlineView: React.FC<Props> = ({
   id,
-  visible = false, 
-  filePath, 
-  onSymbolClick 
+  visible = false,
+  filePath,
+  onSymbolClick,
 }) => {
   if (!visible) return null;
   const [symbols, setSymbols] = useState<Symbol[]>([]);
@@ -35,7 +35,9 @@ export const OutlineView: React.FC<Props> = ({
   const loadSymbols = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/symbols?path=${encodeURIComponent(filePath)}`);
+      const response = await fetch(
+        `http://127.0.0.1:8000/symbols?path=${encodeURIComponent(filePath)}`,
+      );
       const data = await response.json();
       setSymbols(data.symbols || []);
     } catch (error) {
@@ -48,15 +50,27 @@ export const OutlineView: React.FC<Props> = ({
 
   const getSymbolIcon = (kind: string) => {
     switch (kind.toLowerCase()) {
-      case "class": return "🏛️";
-      case "function": case "method": return "⚡";
-      case "variable": case "field": return "📦";
-      case "interface": return "🔗";
-      case "enum": return "📋";
-      case "namespace": case "module": return "📁";
-      case "property": return "🔧";
-      case "constructor": return "🏗️";
-      default: return "📄";
+      case "class":
+        return "🏛️";
+      case "function":
+      case "method":
+        return "⚡";
+      case "variable":
+      case "field":
+        return "📦";
+      case "interface":
+        return "🔗";
+      case "enum":
+        return "📋";
+      case "namespace":
+      case "module":
+        return "📁";
+      case "property":
+        return "🔧";
+      case "constructor":
+        return "🏗️";
+      default:
+        return "📄";
     }
   };
 
@@ -97,7 +111,7 @@ export const OutlineView: React.FC<Props> = ({
           <span className="text-gray-200 truncate">{symbol.name}</span>
           <span className="ml-auto text-xs text-gray-500">{symbol.kind}</span>
         </div>
-        
+
         {hasChildren && isExpanded && (
           <div>
             {symbol.children!.map((child) => renderSymbol(child, depth + 1))}
@@ -112,12 +126,16 @@ export const OutlineView: React.FC<Props> = ({
       <div className="p-2 border-b border-gray-700">
         <h3 className="text-xs font-medium text-gray-400 uppercase">Outline</h3>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="p-4 text-center text-gray-500 text-sm">Loading...</div>
+          <div className="p-4 text-center text-gray-500 text-sm">
+            Loading...
+          </div>
         ) : symbols.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">No symbols found</div>
+          <div className="p-4 text-center text-gray-500 text-sm">
+            No symbols found
+          </div>
         ) : (
           symbols.map((symbol) => renderSymbol(symbol))
         )}
@@ -125,3 +143,6 @@ export const OutlineView: React.FC<Props> = ({
     </div>
   );
 };
+
+// Exports
+export { OutlineView };

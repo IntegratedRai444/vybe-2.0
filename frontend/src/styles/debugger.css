@@ -4,7 +4,8 @@
 }
 
 .monaco-editor .debug-breakpoint-glyph {
-  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTggMWE3IDcgMCAwIDAtNyA3YTcgNyAwIDAgMCA3IDcgNyA3IDAgMCAwIDctNyA3IDcgMCAwIDAtNy03eiIvPjwvc3ZnPg==") center center no-repeat;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmMDAwMCIgZD0iTTggMWE3IDcgMCAwIDAtNyA3YTcgNyAwIDAgMCA3IDcgNyA3IDAgMCAwIDctNyA3IDcgMCAwIDAtNy03eiIvPjwvc3ZnPg==")
+    center center no-repeat;
   width: 16px !important;
   height: 16px !important;
   margin-left: 4px;
@@ -120,9 +121,15 @@
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* Debug console */

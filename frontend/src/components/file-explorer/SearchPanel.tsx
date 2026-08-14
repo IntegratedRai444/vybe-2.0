@@ -1,5 +1,5 @@
-import React from 'react';
-import { SearchOptions } from './types';
+import React from "react";
+import { SearchOptions } from "./types";
 
 type SearchPanelProps = {
   searchOptions: SearchOptions;
@@ -19,7 +19,7 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     onSearchOptionsChange({
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -53,7 +53,7 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
               disabled={isSearching}
               className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm disabled:opacity-50"
             >
-              {isSearching ? 'Searching...' : 'Search'}
+              {isSearching ? "Searching..." : "Search"}
             </button>
           </div>
         </div>
@@ -98,3 +98,6 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
     </div>
   );
 };
+
+// Exports
+export { SearchPanel };

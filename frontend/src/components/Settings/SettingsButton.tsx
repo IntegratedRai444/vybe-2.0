@@ -1,10 +1,10 @@
-import React from 'react';
-import { Settings } from 'lucide-react';
-import { useAISettingsActions } from '../../store/aiSettingsStore';
+import React from "react";
+import { Settings } from "lucide-react";
+import { useAISettingsActions } from "../../store/aiSettingsStore";
 
 export const SettingsButton: React.FC = () => {
   const { toggleSettings } = useAISettingsActions();
-  
+
   return (
     <button
       onClick={() => toggleSettings()}
@@ -16,4 +16,9 @@ export const SettingsButton: React.FC = () => {
   );
 };
 
+// Default export for backward compatibility
+export const SettingsButton = SettingsButton;
+
+// Named exports
+export { SettingsButton };
 export default SettingsButton;

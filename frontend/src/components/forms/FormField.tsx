@@ -1,7 +1,7 @@
-import { forwardRef, useState, useId, ComponentProps } from 'react';
-import { cn } from '../../utils/cn';
+import { forwardRef, useState, useId, ComponentProps } from "react";
+import { cn } from "../../utils/cn";
 
-type InputProps = ComponentProps<'input'> & {
+type InputProps = ComponentProps<"input"> & {
   label?: string;
   error?: string | boolean;
   description?: string;
@@ -22,7 +22,7 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
       required,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [isFocused, setIsFocused] = useState(false);
     const id = useId();
@@ -40,15 +40,15 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
-        
-        <div 
+
+        <div
           className={cn(
-            'relative flex items-center border rounded-md transition-all',
+            "relative flex items-center border rounded-md transition-all",
             hasError
-              ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:border-red-500'
-              : 'border-gray-300 dark:border-gray-700 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500',
-            isFocused && 'ring-2 ring-blue-500/20',
-            className
+              ? "border-red-500 focus-within:ring-2 focus-within:ring-red-500/20 focus-within:border-red-500"
+              : "border-gray-300 dark:border-gray-700 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500",
+            isFocused && "ring-2 ring-blue-500/20",
+            className,
           )}
         >
           {leftIcon && (
@@ -56,17 +56,17 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
               {leftIcon}
             </div>
           )}
-          
+
           <input
             id={inputId}
             ref={ref}
             className={cn(
-              'w-full bg-transparent border-0 focus:ring-0 focus:outline-none py-2 px-3',
-              leftIcon ? 'pl-2' : 'pl-3',
-              rightIcon ? 'pr-2' : 'pr-3',
-              'text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500',
-              'disabled:opacity-50 disabled:cursor-not-allowed',
-              'transition-colors duration-200'
+              "w-full bg-transparent border-0 focus:ring-0 focus:outline-none py-2 px-3",
+              leftIcon ? "pl-2" : "pl-3",
+              rightIcon ? "pr-2" : "pr-3",
+              "text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500",
+              "disabled:opacity-50 disabled:cursor-not-allowed",
+              "transition-colors duration-200",
             )}
             onFocus={(e) => {
               setIsFocused(true);
@@ -76,18 +76,18 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
               setIsFocused(false);
               props.onBlur?.(e);
             }}
-            aria-invalid={hasError ? 'true' : 'false'}
+            aria-invalid={hasError ? "true" : "false"}
             aria-describedby={
               [
                 hasError ? `${inputId}-error` : undefined,
                 description ? `${inputId}-description` : undefined,
               ]
                 .filter(Boolean)
-                .join(' ') || undefined
+                .join(" ") || undefined
             }
             {...props}
           />
-          
+
           {rightIcon && (
             <div className="pr-3 text-gray-400 dark:text-gray-500">
               {rightIcon}
@@ -103,8 +103,8 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
             {description}
           </p>
         )}
-        
-        {hasError && typeof error === 'string' && (
+
+        {hasError && typeof error === "string" && (
           <p
             id={`${inputId}-error`}
             className="mt-1 text-xs text-red-600 dark:text-red-400"
@@ -114,10 +114,10 @@ export const FormField = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-FormField.displayName = 'FormField';
+FormField.displayName = "FormField";
 
 // Example usage:
 /*
@@ -129,3 +129,6 @@ FormField.displayName = 'FormField';
   {...register('email')}
 />
 */
+
+// Exports
+export { FormField };

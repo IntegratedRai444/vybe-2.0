@@ -165,3 +165,6 @@ export const EnhancedFileTree: React.FC<Props> = ({ root, onSelect, onContextMen
     </div>
   );
 };
+
+// Exports
+export { EnhancedFileTree };

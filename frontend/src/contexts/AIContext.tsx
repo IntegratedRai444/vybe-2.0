@@ -1,8 +1,14 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 
 interface AIMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: number;
 }
@@ -30,9 +36,9 @@ interface AIContextType {
 }
 
 const defaultConfig: AIConfig = {
-  provider: 'openai',
-  model: 'gpt-4',
-  apiKey: '',
+  provider: "openai",
+  model: "gpt-4",
+  apiKey: "",
   temperature: 0.7,
   maxTokens: 2048,
 };
@@ -51,17 +57,18 @@ export const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const newMessage: AIMessage = {
         id: Date.now().toString(),
-        role: 'assistant',
+        role: "assistant",
         content: `Response to: ${message}`,
         timestamp: Date.now(),
       };
-      setMessages(prev => [...prev, newMessage]);
+      setMessages((prev) => [...prev, newMessage]);
       return { text: newMessage.content };
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to send message');
+      const error =
+        err instanceof Error ? err : new Error("Failed to send message");
       setError(error);
       throw error;
     } finally {
@@ -74,20 +81,20 @@ export const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     if (settings.model) setModel(settings.model);
     if (settings.apiKey !== undefined) setApiKey(settings.apiKey);
     // Simulate async save
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }, []);
 
   const setTheme = useCallback((theme: string) => {
     // Implement theme change logic
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
   }, []);
 
-  const getAvailableModels = useCallback((provider = 'openai') => {
+  const getAvailableModels = useCallback((provider = "openai") => {
     // Return mock models based on provider
-    if (provider === 'openai') {
-      return ['gpt-4', 'gpt-3.5-turbo', 'text-davinci-003'];
+    if (provider === "openai") {
+      return ["gpt-4", "gpt-3.5-turbo", "text-davinci-003"];
     }
-    return ['default-model'];
+    return ["default-model"];
   }, []);
 
   const clearConversation = useCallback(() => {
@@ -118,7 +125,7 @@ export const AIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 export const useAI = () => {
   const context = useContext(AIContext);
   if (!context) {
-    throw new Error('useAI must be used within an AIProvider');
+    throw new Error("useAI must be used within an AIProvider");
   }
   return context;
 };

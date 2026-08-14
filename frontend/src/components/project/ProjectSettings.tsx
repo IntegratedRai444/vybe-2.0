@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  FiSave, FiPlus, FiTrash2, FiPackage, FiCode, 
-  FiLock, FiUnlock, FiCopy, FiGitBranch, 
+import {
+  FiSave, FiPlus, FiTrash2, FiPackage, FiCode,
+  FiLock, FiUnlock, FiCopy, FiGitBranch,
   FiGitCommit, FiPlay, FiTerminal, FiRefreshCw,
   FiCheckCircle, FiAlertTriangle, FiGitMerge,
   FiSettings, FiExternalLink, FiSearch,
@@ -158,7 +158,7 @@ type ProjectSettings = {
 const ProjectSettings: React.FC = () => {
   const { currentProject, updateProject } = useProject();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Form and state management
   const [activeTab, setActiveTab] = useState('general');
   const [isSaving, setIsSaving] = useState(false);
@@ -167,7 +167,7 @@ const ProjectSettings: React.FC = () => {
   const [showAddDependency, setShowAddDependency] = useState(false);
   const [showAddScript, setShowAddScript] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Git states
   const [gitStatus, setGitStatus] = useState<GitStatus>({
     branch: null,
@@ -179,13 +179,13 @@ const ProjectSettings: React.FC = () => {
     ahead: 0,
     behind: 0
   });
-  
+
   const [branches, setBranches] = useState<GitBranchInfo>({
     current: 'main',
     branches: ['main'],
     remote: null
   });
-  
+
   const [selectedBranch, setSelectedBranch] = useState('main');
   const [commits, setCommits] = useState<GitCommit[]>([]);
   const [commitMessage, setCommitMessage] = useState('');
@@ -195,11 +195,11 @@ const ProjectSettings: React.FC = () => {
   const [isGitInstalled, setIsGitInstalled] = useState(false);
 
   // Initialize form with react-hook-form
-  const { 
-    control, 
-    handleSubmit, 
-    register, 
-    formState: { errors, isDirty }, 
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors, isDirty },
     reset,
     watch,
     setValue,
@@ -241,22 +241,22 @@ const ProjectSettings: React.FC = () => {
           const status = await gitService.getStatus();
           setGitStatus(status);
           setIsGitInstalled(true);
-          
+
           // Load branches and commits if Git is initialized
           const branchInfo = await gitService.getBranches();
           setBranches(branchInfo);
           setSelectedBranch(branchInfo.current);
-          
+
           const commitHistory = await gitService.getCommits(5);
           setCommits(commitHistory);
-          
+
           const userConfig = await gitService.getUserConfig();
           setGitUser(userConfig);
         } catch (error) {
           console.warn('Git not initialized:', error);
           setIsGitInstalled(false);
         }
-        
+
         // Load project data if available
         if (currentProject) {
           // Load environment variables
@@ -265,17 +265,17 @@ const ProjectSettings: React.FC = () => {
               id: uuidv4(),
               key,
               value: String(value),
-              isSecret: key.toLowerCase().includes('secret') || 
-                        key.toLowerCase().includes('key') || 
+              isSecret: key.toLowerCase().includes('secret') ||
+                        key.toLowerCase().includes('key') ||
                         key.toLowerCase().includes('token') ||
                         key.toLowerCase().includes('password')
             }));
             setValue('envVars', envVars);
           }
-          
+
           // Load dependencies
           const deps: Dependency[] = [];
-          
+
           if (currentProject.dependencies) {
             Object.entries(currentProject.dependencies).forEach(([name, version]) => {
               deps.push({
@@ -286,7 +286,7 @@ const ProjectSettings: React.FC = () => {
               });
             });
           }
-          
+
           if (currentProject.devDependencies) {
             Object.entries(currentProject.devDependencies).forEach(([name, version]) => {
               deps.push({
@@ -297,11 +297,11 @@ const ProjectSettings: React.FC = () => {
               });
             });
           }
-          
+
           if (deps.length > 0) {
             setValue('dependencies', deps);
           }
-          
+
           // Load custom scripts
           if (currentProject.scripts) {
             const customScripts = Object.entries(currentProject.scripts)
@@ -311,7 +311,7 @@ const ProjectSettings: React.FC = () => {
                 command: String(command),
                 description: ''
               }));
-              
+
             if (customScripts.length > 0) {
               setValue('buildScripts.custom', customScripts);
             }
@@ -324,7 +324,7 @@ const ProjectSettings: React.FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadProjectData();
   }, [currentProject, setValue]);
 
@@ -332,7 +332,7 @@ const ProjectSettings: React.FC = () => {
   const onSubmit = async (data: ProjectSettings) => {
     try {
       setIsSaving(true);
-      
+
       // Update project in context
       const updatedProject = {
         ...currentProject,
@@ -367,15 +367,15 @@ const ProjectSettings: React.FC = () => {
           }, {} as Record<string, string>),
         updatedAt: new Date().toISOString()
       };
-      
+
       await updateProject(updatedProject);
-      
+
       // Update Git status if Git is initialized
       if (isGitInstalled && gitStatus) {
         const newStatus = await gitService.getStatus();
         setGitStatus(newStatus);
       }
-      
+
       toast.success('Project settings saved successfully');
     } catch (error) {
       console.error('Error saving project settings:', error);
@@ -404,21 +404,21 @@ const ProjectSettings: React.FC = () => {
       toast.error('Please enter a commit message');
       return;
     }
-    
+
     try {
       await gitService.commit(commitMessage);
       setCommitMessage('');
-      
+
       // Refresh Git status and commits
       const [newStatus, newCommits] = await Promise.all([
         gitService.getStatus(),
         gitService.getCommits(5)
       ]);
-      
+
       setGitStatus(newStatus);
       setCommits(newCommits);
       setStagedFiles([]);
-      
+
       toast.success('Changes committed successfully');
     } catch (error) {
       console.error('Error committing changes:', error);
@@ -724,8 +724,8 @@ const ProjectSettings: React.FC = () => {
                     </div>
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                       {dependencies
-                        .filter(dep => 
-                          searchTerm === '' || 
+                        .filter(dep =>
+                          searchTerm === '' ||
                           dep.name.toLowerCase().includes(searchTerm.toLowerCase())
                         )
                         .map((dep) => (
@@ -1301,7 +1301,7 @@ const ProjectSettings: React.FC = () => {
 
   const exportProject = () => {
     if (!currentProject) return;
-    
+
     const data = {
       ...currentProject,
       // Don't include sensitive data in export
@@ -1309,7 +1309,7 @@ const ProjectSettings: React.FC = () => {
         Object.entries(currentProject.envVars || {}).map(([key]) => [key, ''])
       )
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1354,7 +1354,7 @@ const ProjectSettings: React.FC = () => {
 
   const saveAsTemplate = async () => {
     if (!currentProject) return;
-    
+
     try {
       // In a real app, this would save to a templates database
       const templates = JSON.parse(localStorage.getItem('projectTemplates') || '[]');
@@ -1373,7 +1373,7 @@ const ProjectSettings: React.FC = () => {
         },
         createdAt: new Date().toISOString()
       };
-      
+
       templates.push(template);
       localStorage.setItem('projectTemplates', JSON.stringify(templates));
       toast.success('Project saved as template');
@@ -1398,20 +1398,20 @@ const ProjectSettings: React.FC = () => {
       setIsGitLoading(false);
     }
   };
-  
+
   const toggleFileDiff = async (filePath: string) => {
-    setFileStatuses(prev => 
-      prev.map(file => 
-        file.path === filePath 
-          ? { 
-              ...file, 
+    setFileStatuses(prev =>
+      prev.map(file =>
+        file.path === filePath
+          ? {
+              ...file,
               isExpanded: !file.isExpanded,
-              diff: file.isExpanded ? undefined : file.diff 
-            } 
+              diff: file.isExpanded ? undefined : file.diff
+            }
           : file
       )
     );
-    
+
     if (!selectedFiles[filePath]) {
       try {
         const diff = await gitService.getFileDiff(filePath);
@@ -1425,13 +1425,13 @@ const ProjectSettings: React.FC = () => {
         toast.error('Failed to load file diff');
       }
     }
-    
+
     setSelectedFiles(prev => ({
       ...prev,
       [filePath]: !prev[filePath]
     }));
   };
-  
+
   const stageFiles = async (files: string[]) => {
     try {
       setIsGitLoading(true);
@@ -1445,7 +1445,7 @@ const ProjectSettings: React.FC = () => {
       setIsGitLoading(false);
     }
   };
-  
+
   const unstageFiles = async (files: string[]) => {
     try {
       setIsGitLoading(true);
@@ -1459,31 +1459,31 @@ const ProjectSettings: React.FC = () => {
       setIsGitLoading(false);
     }
   };
-  
+
   const handleStageAll = () => {
     const filesToStage = [
       ...gitStatus.modified,
       ...gitStatus.untracked,
       ...gitStatus.conflicted
     ];
-    
+
     if (filesToStage.length > 0) {
       stageFiles(filesToStage);
     }
   };
-  
+
   const handleUnstageAll = () => {
     if (gitStatus.staged.length > 0) {
       unstageFiles(gitStatus.staged);
     }
   };
-  
+
   const handleCreateBranch = async () => {
     if (!newBranchName.trim()) {
       toast.error('Please enter a branch name');
       return;
     }
-    
+
     try {
       setIsGitLoading(true);
       await gitService.createBranch(newBranchName);
@@ -1497,10 +1497,10 @@ const ProjectSettings: React.FC = () => {
       setIsGitLoading(false);
     }
   };
-  
+
   const handleSwitchBranch = async (branch: string) => {
     if (branch === branches.current) return;
-    
+
     try {
       setIsGitLoading(true);
       await gitService.switchBranch(branch);
@@ -1513,7 +1513,7 @@ const ProjectSettings: React.FC = () => {
       setIsGitLoading(false);
     }
   };
-  
+
   const handleSaveConfig = async () => {
     try {
       setIsGitLoading(true);
@@ -1626,31 +1626,31 @@ const ProjectSettings: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: checked !== undefined ? checked : value
     }));
   };
-  
+
   const addEnvVar = () => {
     if (!newEnvVar.key) return;
-    
+
     setFormData(prev => ({
       ...prev,
       envVars: [...prev.envVars, { ...newEnvVar }]
     }));
-    
+
     setNewEnvVar({ key: '', value: '', isSecret: false });
   };
-  
+
   const removeEnvVar = (index: number) => {
     setFormData(prev => ({
       ...prev,
       envVars: prev.envVars.filter((_, i) => i !== index)
     }));
   };
-  
+
   const updateEnvVar = (index: number, field: keyof EnvVar, value: string | boolean) => {
     setFormData(prev => {
       const updated = [...prev.envVars];
@@ -1658,38 +1658,38 @@ const ProjectSettings: React.FC = () => {
       return { ...prev, envVars: updated };
     });
   };
-  
+
   const addDependency = () => {
     if (!newDependency.name) return;
-    
+
     const depList = newDependency.isDev ? 'devDependencies' : 'dependencies';
-    
+
     setFormData(prev => ({
       ...prev,
       [depList]: [...prev[depList], { ...newDependency }]
     }));
-    
+
     setNewDependency({ name: '', version: 'latest', isDev: false });
     setIsAddingDependency(false);
   };
-  
+
   const removeDependency = (name: string, isDev: boolean) => {
     const depList = isDev ? 'devDependencies' : 'dependencies';
-    
+
     setFormData(prev => ({
       ...prev,
       [depList]: prev[depList].filter(dep => dep.name !== name)
     }));
   };
-  
+
   const toggleDependencyType = (name: string, currentIsDev: boolean) => {
     const currentList = currentIsDev ? 'devDependencies' : 'dependencies';
     const targetList = currentIsDev ? 'dependencies' : 'devDependencies';
-    
+
     setFormData(prev => {
       const dep = prev[currentList].find(d => d.name === name);
       if (!dep) return prev;
-      
+
       return {
         ...prev,
         [currentList]: prev[currentList].filter(d => d.name !== name),
@@ -1697,15 +1697,15 @@ const ProjectSettings: React.FC = () => {
       };
     });
   };
-  
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
   };
-  
+
   const filteredDependencies = (deps: Dependency[]) => {
     if (!dependencySearch) return deps;
-    return deps.filter(dep => 
+    return deps.filter(dep =>
       dep.name.toLowerCase().includes(dependencySearch.toLowerCase()) ||
       dep.version.toLowerCase().includes(dependencySearch.toLowerCase())
     );
@@ -1717,7 +1717,7 @@ const ProjectSettings: React.FC = () => {
   useEffect(() => {
     const initializeGit = async () => {
       if (!currentProject) return;
-      
+
       try {
         setIsGitLoading(true);
         await checkGitStatus();
@@ -1730,10 +1730,10 @@ const ProjectSettings: React.FC = () => {
         setIsGitLoading(false);
       }
     };
-    
+
     initializeGit();
   }, [currentProject]);
-  
+
   const loadBranches = async () => {
     try {
       const branchInfo = await gitService.getBranches();
@@ -1742,7 +1742,7 @@ const ProjectSettings: React.FC = () => {
       console.error('Error loading branches:', error);
     }
   };
-  
+
   const loadCommits = async () => {
     try {
       const commitList = await gitService.getCommits(10);
@@ -1751,7 +1751,7 @@ const ProjectSettings: React.FC = () => {
       console.error('Error loading commits:', error);
     }
   };
-  
+
   const loadUserConfig = async () => {
     try {
       const config = await gitService.getUserConfig();
@@ -1761,26 +1761,26 @@ const ProjectSettings: React.FC = () => {
       console.error('Error loading user config:', error);
     }
   };
-  
+
   const updateFileStatuses = async (status: GitStatus) => {
     const files: FileStatus[] = [];
-    
+
     status.staged.forEach(path => {
       files.push({ path, status: 'staged' });
     });
-    
+
     status.modified.forEach(path => {
       files.push({ path, status: 'modified' });
     });
-    
+
     status.untracked.forEach(path => {
       files.push({ path, status: 'untracked' });
     });
-    
+
     status.conflicted.forEach(path => {
       files.push({ path, status: 'conflicted' });
     });
-    
+
     setFileStatuses(files);
   };
 
@@ -1822,7 +1822,7 @@ const ProjectSettings: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8 overflow-x-auto">
@@ -1842,7 +1842,7 @@ const ProjectSettings: React.FC = () => {
           ))}
         </nav>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* General Settings Tab */}
         {activeTab === 'general' && (
@@ -1944,13 +1944,13 @@ const ProjectSettings: React.FC = () => {
               <h2 className="text-lg font-medium mb-4 flex items-center">
                 <FiLock className="mr-2" /> Environment Variables
               </h2>
-              
+
               <div className="mb-6">
                 <p className="text-sm text-gray-600 mb-4">
                   Environment variables are used to store sensitive information and configuration.
                   Variables marked as secret will be hidden by default.
                 </p>
-                
+
                 <div className="grid grid-cols-12 gap-4 mb-4">
                   <div className="col-span-5">
                     <input
@@ -2060,7 +2060,7 @@ const ProjectSettings: React.FC = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <h3 className="text-md font-medium text-gray-900 mb-3">Environment Files</h3>
                 <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
@@ -2080,7 +2080,7 @@ const ProjectSettings: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -2183,7 +2183,7 @@ const ProjectSettings: React.FC = () => {
                       {formData.dependencies.length} packages
                     </span>
                   </div>
-                  
+
                   {formData.dependencies.length > 0 ? (
                     <div className="overflow-hidden border border-gray-200 rounded-lg">
                       <table className="min-w-full divide-y divide-gray-200">
@@ -2249,7 +2249,7 @@ const ProjectSettings: React.FC = () => {
                       {formData.devDependencies.length} packages
                     </span>
                   </div>
-                  
+
                   {formData.devDependencies.length > 0 ? (
                     <div className="overflow-hidden border border-gray-200 rounded-lg">
                       <table className="min-w-full divide-y divide-gray-200">
@@ -2307,7 +2307,7 @@ const ProjectSettings: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <h3 className="text-md font-medium text-gray-900 mb-3">Package Management</h3>
                 <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
@@ -2327,7 +2327,7 @@ const ProjectSettings: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -2346,7 +2346,7 @@ const ProjectSettings: React.FC = () => {
               <h2 className="text-lg font-medium mb-4 flex items-center">
                 <FiGitBranch className="mr-2" /> Version Control
               </h2>
-              
+
               {gitStatus.branch ? (
                 <div className="space-y-6">
                   <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
@@ -2366,7 +2366,7 @@ const ProjectSettings: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <h3 className="text-md font-medium text-gray-900">Commit Changes</h3>
@@ -2394,7 +2394,7 @@ const ProjectSettings: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <h3 className="text-md font-medium text-gray-900">Remote Operations</h3>
                       <div className="flex space-x-2">
@@ -2461,7 +2461,7 @@ const ProjectSettings: React.FC = () => {
               <h2 className="text-lg font-medium mb-6 flex items-center">
                 <FiTerminal className="mr-2" /> Build & Run
               </h2>
-              
+
               <div className="space-y-6">
                 <div>
                   <h3 className="text-md font-medium text-gray-900 mb-3">Available Scripts</h3>
@@ -2483,7 +2483,7 @@ const ProjectSettings: React.FC = () => {
                           <FiPlay className="mr-1.5" /> Run Build
                         </button>
                       </div>
-                      
+
                       <div className="bg-white p-4 rounded-md border border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium">Start</h4>
@@ -2500,7 +2500,7 @@ const ProjectSettings: React.FC = () => {
                           <FiPlay className="mr-1.5" /> Start Server
                         </button>
                       </div>
-                      
+
                       <div className="bg-white p-4 rounded-md border border-gray-200">
                         <div className="flex items-center justify-between">
                           <h4 className="font-medium">Test</h4>
@@ -2520,7 +2520,7 @@ const ProjectSettings: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="text-md font-medium text-gray-900 mb-3">Dependency Management</h3>
                   <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -2536,7 +2536,7 @@ const ProjectSettings: React.FC = () => {
                         {isLoading ? 'Checking...' : 'Check for Updates'}
                       </button>
                     </div>
-                    
+
                     {outdatedDeps.length > 0 ? (
                       <div className="overflow-hidden border border-gray-200 rounded-lg">
                         <table className="min-w-full divide-y divide-gray-200">
@@ -2601,7 +2601,7 @@ const ProjectSettings: React.FC = () => {
                         <p className="mt-2 text-sm text-gray-500">All dependencies are up to date</p>
                       </div>
                     )}
-                    
+
                     <div className="mt-6 pt-6 border-t border-gray-200">
                       <div className="flex justify-between items-center">
                         <div>
@@ -2625,7 +2625,7 @@ const ProjectSettings: React.FC = () => {
           </div>
         )}
       </form>
-      
+
       {/* Hidden file input for project import */}
       <input
         type="file"
@@ -2638,4 +2638,9 @@ const ProjectSettings: React.FC = () => {
   );
 };
 
+// Default export for backward compatibility
+export const ProjectSettings = ProjectSettings;
+
+// Named exports
+export { ProjectSettings };
 export default ProjectSettings;

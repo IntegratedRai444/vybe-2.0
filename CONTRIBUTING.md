@@ -11,14 +11,16 @@ Thank you for your interest in contributing to Vybe AI! Here's how you can help:
    cd vybe-ai
    ```
 3. **Set up** the development environment
+
    ```bash
    # Create and activate a virtual environment
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   
+
    # Install dependencies
    pip install -e ".[dev,ai]"
    ```
+
 4. **Configure** environment variables
    ```bash
    cp .env.example .env
@@ -60,6 +62,7 @@ Thank you for your interest in contributing to Vybe AI! Here's how you can help:
 ## Reporting Issues
 
 When reporting issues, please include:
+
 - A clear description of the problem
 - Steps to reproduce the issue
 - Expected vs. actual behavior

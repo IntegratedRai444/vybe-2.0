@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { FiMenu, FiSearch, FiSettings, FiBell, FiUser } from 'react-icons/fi';
+import React, { ReactNode } from "react";
+import { FiMenu, FiSearch, FiSettings, FiBell, FiUser } from "react-icons/fi";
 
 interface TopBarProps {
   rightContent?: ReactNode;

@@ -1,137 +1,174 @@
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { RootState, AppDispatch } from '../store';
-import { login, logoutUser, refreshToken, selectCurrentUser, selectIsAuthenticated } from '../store/slices/authSlice';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface UseAuthReturn {
-  user: ReturnType<typeof selectCurrentUser>;
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  role?: string;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  refreshAuth: () => Promise<boolean>;
 }
 
-export const useAuth = (): UseAuthReturn => {
-  const dispatch = useDispatch<AppDispatch>();
+const useAuth = () => {
+  const [auth, setAuth] = useState<AuthState>({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    isLoading: true,
+    error: null,
+  });
+
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const user = useSelector(selectCurrentUser);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const { loading, error, isTokenRefreshing } = useSelector((state: RootState) => ({
-    loading: state.auth.loading,
-    error: state.auth.error,
-    isTokenRefreshing: state.auth.isTokenRefreshing,
-  }));
 
-  // Handle login
-  const handleLogin = useCallback(
-    async (email: string, password: string) => {
-      const resultAction = await dispatch(login({ email, password }));
-      
-      if (login.fulfilled.match(resultAction)) {
-        // Redirect to the requested page or home
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
-      }
-    },
-    [dispatch, navigate, location.state]
-  );
+  // Check if user is logged in on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
 
-  // Handle logout
-  const handleLogout = useCallback(async () => {
-    await dispatch(logoutUser());
-    navigate('/login', { replace: true });
-  }, [dispatch, navigate]);
-
-  // Handle token refresh
-  const handleRefreshToken = useCallback(async (): Promise<boolean> => {
-    try {
-      const resultAction = await dispatch(refreshToken());
-      return refreshToken.fulfilled.match(resultAction);
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      return false;
+    if (token && user) {
+      setAuth({
+        user: JSON.parse(user),
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+    } else {
+      setAuth(prev => ({
+        ...prev,
+        isLoading: false,
+      }));
     }
-  }, [dispatch]);
+  }, []);
 
-  // Auto refresh token before it expires
-  useEffect(() => {
-    if (!isAuthenticated) return;
+  const login = useCallback(async (email: string, password: string) => {
+    setAuth(prev => ({ ...prev, isLoading: true, error: null }));
+    
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const refreshInterval = 14 * 60 * 1000; // 14 minutes
-    const refreshTimer = setInterval(() => {
-      if (!isTokenRefreshing) {
-        handleRefreshToken().catch(console.error);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Login failed');
       }
-    }, refreshInterval);
 
-    return () => clearInterval(refreshTimer);
-  }, [isAuthenticated, isTokenRefreshing, handleRefreshToken]);
-
-  // Check auth state on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const { user, token } = await response.json();
       
-      if (token && !isAuthenticated) {
-        try {
-          await handleRefreshToken();
-        } catch (error) {
-          console.error('Failed to refresh token on mount:', error);
-          await handleLogout();
-        }
-      }
-    };
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-    checkAuth();
-  }, [isAuthenticated, handleRefreshToken, handleLogout]);
+      setAuth({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+
+      return user;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Login failed');
+      setAuth(prev => ({
+        ...prev,
+        error: error.message,
+        isLoading: false,
+      }));
+      throw error;
+    }
+  }, []);
+
+  const register = useCallback(async (userData: {
+    name: string;
+    email: string;
+    password: string;
+  }) => {
+    setAuth(prev => ({ ...prev, isLoading: true, error: null }));
+    
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Registration failed');
+      }
+
+      const { user, token } = await response.json();
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      setAuth({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+
+      return user;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Registration failed');
+      setAuth(prev => ({
+        ...prev,
+        error: error.message,
+        isLoading: false,
+      }));
+      throw error;
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    setAuth({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
+    });
+
+    navigate('/login');
+  }, [navigate]);
+
+  const updateUser = useCallback((userData: Partial<User>) => {
+    setAuth(prev => {
+      if (!prev.user) return prev;
+      
+      const updatedUser = { ...prev.user, ...userData };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      return {
+        ...prev,
+        user: updatedUser,
+      };
+    });
+  }, []);
 
   return {
-    user,
-    isAuthenticated,
-    isLoading: loading || isTokenRefreshing,
-    error,
-    login: handleLogin,
-    logout: handleLogout,
-    refreshAuth: handleRefreshToken,
+    ...auth,
+    login,
+    register,
+    logout,
+    updateUser,
   };
-};
-
-// Create a higher-order component for protected routes
-export const withAuth = <P extends object>(
-  Component: React.ComponentType<P>,
-  options: { redirectTo?: string } = {}
-) => {
-  const WrappedComponent: React.FC<P> = (props) => {
-    const { isAuthenticated, isLoading } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    useEffect(() => {
-      if (!isLoading && !isAuthenticated) {
-        navigate(options.redirectTo || '/login', {
-          state: { from: location },
-          replace: true,
-        });
-      }
-    }, [isAuthenticated, isLoading, navigate, location]);
-
-    if (isLoading) {
-      return <div>Loading...</div>; // Or your custom loading component
-    }
-
-    if (!isAuthenticated) {
-      return null;
-    }
-
-    return <Component {...(props as P)} />;
-  };
-
-  return WrappedComponent;
 };
 
 export default useAuth;

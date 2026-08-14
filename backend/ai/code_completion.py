@@ -8,23 +8,23 @@ This module provides intelligent code completion by combining:
 - Caching for performance optimization
 """
 
+import ast
+import asyncio
+import hashlib
+import inspect
+import json
+import logging
 import os
 import re
 import time
-import logging
-import asyncio
-import ast
-import inspect
-import json
-import hashlib
-from typing import Dict, List, Optional, Any, Tuple, Set, AsyncGenerator, Union
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from collections import defaultdict
+from typing import Any, AsyncGenerator, Dict, List, Optional, Set, Tuple, Union
 
 # Import AI providers and utilities
-from ..ai_providers import ai_orchestrator, AIProvider
+from ..ai_providers import AIProvider, ai_orchestrator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -48,7 +48,7 @@ class CompletionItem:
     is_snippet: bool = False
     deprecated: bool = False
     commit_characters: List[str] = field(default_factory=lambda: ['.', ':', '(', '[', '"', "'", ',', ' '])
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
         kind_map = {
@@ -78,7 +78,7 @@ class CompletionItem:
             'operator': 24,
             'typeParameter': 25
         }
-        
+
         return {
             'label': self.label,
             'kind': kind_map.get(self.kind.lower(), 1),
@@ -108,16 +108,16 @@ class CompletionRequest:
     max_results: int = 10
     trigger_character: str = ""
     context: Optional[Dict[str, Any]] = None
-    
+
     def __post_init__(self):
         if not self.language_id:
             self.language_id = self.detect_language()
-    
+
     def detect_language(self) -> str:
         """Detect language from file extension"""
         if not self.file_path:
             return "text"
-        
+
         ext = Path(self.file_path).suffix.lower()
         lang_map = {
             '.py': 'python',
@@ -159,28 +159,28 @@ class CompletionRequest:
             'dockerfile': 'dockerfile',
         }
         return lang_map.get(ext, 'text')
-    
+
     def get_context_before_cursor(self, lines_before: int = 5) -> str:
         """Get context before cursor position"""
         if not self.file_content:
             return ""
-        
+
         lines = self.file_content.splitlines()
         start_line = max(0, self.line - lines_before)
         context_lines = lines[start_line:self.line]
-        
+
         # Add the current line up to cursor
         if self.line < len(lines):
             current_line = lines[self.line][:self.character]
             context_lines.append(current_line)
-        
+
         return "\n".join(context_lines)
 
 
 class CodeCompletionService:
     """
     Advanced code completion service with AI integration
-    
+
     Features:
     - Multi-language support
     - AI-powered contextual completions
@@ -189,12 +189,12 @@ class CodeCompletionService:
     - Fallback strategies
     - Snippet support
     """
-    
+
     def __init__(self):
         # Cache for completions with TTL
         self._completion_cache: Dict[str, Tuple[float, List[Dict]]] = {}
         self._cache_ttl = 300  # 5 minutes
-        
+
         # Rate limiting
         self._rate_limits: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {
@@ -205,7 +205,7 @@ class CodeCompletionService:
                 'window_seconds': 60
             }
         )
-        
+
         # Language-specific data and configurations
         self.language_data = {
             'python': {
@@ -256,9 +256,9 @@ class CodeCompletionService:
                 ]
             }
         }
-    
+
     # ===== Core Completion Methods =====
-    
+
     async def get_completions(
         self,
         file_path: str,
@@ -272,7 +272,7 @@ class CodeCompletionService:
     ) -> CompletionList:
         """
         Get code completions at the given position in the file.
-        
+
         Args:
             file_path: Path to the file
             file_content: Full content of the file
@@ -282,7 +282,7 @@ class CodeCompletionService:
             max_results: Maximum number of completions to return
             trigger_character: Character that triggered the completion
             context: Additional context for the completion
-            
+
         Returns:
             List of completion items
         """
@@ -296,20 +296,20 @@ class CodeCompletionService:
             trigger_character=trigger_character,
             context=context or {}
         )
-        
+
         # Check cache first
         cache_key = self._generate_cache_key(request)
         cached = self._get_from_cache(cache_key)
         if cached is not None:
             return cached[:max_results]
-        
+
         # Get completions from all sources
         completions = []
-        
+
         # 1. Get language-specific completions
         language_completions = self._get_language_completions(request)
         completions.extend(language_completions)
-        
+
         # 2. Get AI-powered completions if enabled
         if self._should_use_ai_completion(request):
             try:
@@ -317,15 +317,15 @@ class CodeCompletionService:
                 completions.extend(ai_completions)
             except Exception as e:
                 logger.error(f"AI completion failed: {str(e)}")
-        
+
         # 3. Sort and deduplicate
         completions = self._sort_and_dedup(completions)
-        
+
         # 4. Cache the results
         self._add_to_cache(cache_key, completions)
-        
+
         return completions[:max_results]
-    
+
     async def stream_completions(
         self,
         file_path: str,
@@ -339,7 +339,7 @@ class CodeCompletionService:
     ) -> CompletionStream:
         """
         Stream completions as they become available.
-        
+
         Yields:
             Completion responses with 'type' field indicating the update type:
             - 'start': Initial response with metadata
@@ -357,7 +357,7 @@ class CodeCompletionService:
             trigger_character=trigger_character,
             context=context or {}
         )
-        
+
         # Check cache first
         cache_key = self._generate_cache_key(request)
         cached = self._get_from_cache(cache_key)
@@ -375,14 +375,14 @@ class CodeCompletionService:
                 }
             yield {'type': 'end', 'request_id': cache_key}
             return
-        
+
         # Start streaming
         yield {
             'type': 'start',
             'request_id': cache_key,
             'is_cached': False
         }
-        
+
         # Get language completions first (immediate)
         language_completions = self._get_language_completions(request)
         for item in language_completions[:max_results]:
@@ -392,7 +392,7 @@ class CodeCompletionService:
                 'source': 'language',
                 'request_id': cache_key
             }
-        
+
         # Then get AI completions (streaming)
         if self._should_use_ai_completion(request):
             try:
@@ -405,17 +405,17 @@ class CodeCompletionService:
                     'error': str(e),
                     'request_id': cache_key
                 }
-        
+
         yield {'type': 'end', 'request_id': cache_key}
-    
+
     # ===== AI Integration =====
     async def _get_ai_completions(
         self,
         request: CompletionRequest
-        
+
         # Build a comprehensive prompt with enhanced context
         prompt = self._build_enhanced_prompt(request)
-        
+
         # Generate completions with appropriate parameters
         response = await provider.generate(
             prompt=prompt,
@@ -426,9 +426,9 @@ class CodeCompletionService:
             presence_penalty=0.1,
             stop=["\n\n", "```", "\nclass ", "\ndef ", "\n#"],  # Stop on common code boundaries
             n=3  # Generate multiple completions
-                
+
             buffer += chunk.get('content', '')
-            
+
             # Try to parse completions from the buffer
             completions = self._parse_ai_response(buffer, request, partial=True)
             if completions:
@@ -439,27 +439,27 @@ class CodeCompletionService:
                         'source': 'ai',
                         'request_id': request_id
                     }
-    
+
     def _create_ai_prompt(self, request: CompletionRequest) -> str:
         """Create a prompt for the AI model"""
         context = request.get_context_before_cursor()
-        
+
         prompt = f"""Complete the following code at the cursor position (marked with |).
         Provide {request.max_results} relevant completions in the format:
         ```
         |completion text|:description of what it does
         ```
-        
+
         Code context:
         ```{request.language_id}
         {context}|
         ```
-        
+
         Completions:
         """
-        
+
         return prompt
-    
+
     def _parse_ai_response(
         self,
         response: str,
@@ -469,10 +469,10 @@ class CodeCompletionService:
         """Parse AI response into completion items"""
         # This is a simplified parser - in practice, you'd want more robust parsing
         items = []
-        
+
         # Look for code blocks with completions
         code_blocks = re.findall(r'```(?:[a-z]*\n)?(.*?)```', response, re.DOTALL)
-        
+
         for block in code_blocks:
             # Parse each line in the block
             for line in block.split('\n'):
@@ -483,7 +483,7 @@ class CodeCompletionService:
                     if len(parts) == 2:
                         completion = parts[0].strip(' |')
                         description = parts[1].strip()
-                        
+
                         items.append(CompletionItem(
                             label=completion,
                             kind='snippet' if '\n' in completion else 'text',
@@ -493,9 +493,9 @@ class CodeCompletionService:
                             score=0.9,  # High score for AI suggestions
                             is_snippet='\n' in completion
                         ))
-        
+
         return items
-    
+
     def _get_system_prompt(self, language_id: str) -> str:
         """Get system prompt for the given language"""
         return f"""You are a helpful coding assistant that provides accurate and relevant code completions.
@@ -505,9 +505,9 @@ class CodeCompletionService:
         - For {language_id}, follow the standard conventions and style guides.
         - Only return valid code completions.
         """
-    
+
     # ===== Utility Methods =====
-    
+
     def _generate_cache_key(self, request: CompletionRequest) -> str:
         """Generate a cache key for the request"""
         key_parts = [
@@ -518,7 +518,7 @@ class CodeCompletionService:
             request.get_context_before_cursor()[-100:]  # Last 100 chars of context
         ]
         return hashlib.md5(json.dumps(key_parts).encode()).hexdigest()
-    
+
     def _get_from_cache(self, key: str) -> Optional[List[Dict]]:
         """Get completions from cache if valid"""
         if key in self._completion_cache:
@@ -527,46 +527,46 @@ class CodeCompletionService:
                 return completions
             del self._completion_cache[key]
         return None
-    
+
     def _add_to_cache(self, key: str, completions: List[Dict]) -> None:
         """Add completions to cache"""
         self._completion_cache[key] = (time.time(), completions)
-        
+
         # Clean up old cache entries
         now = time.time()
-        expired_keys = [k for k, (t, _) in self._completion_cache.items() 
+        expired_keys = [k for k, (t, _) in self._completion_cache.items()
                        if now - t > self._cache_ttl]
         for k in expired_keys:
             del self._completion_cache[k]
-    
+
     def _should_use_ai_completion(self, request: CompletionRequest) -> bool:
         """Determine if AI completion should be used"""
         # Check rate limits
         if not self._check_rate_limit('ai_completion'):
             return False
-            
+
         # Check if AI is enabled for this language
         ai_enabled_languages = {'python', 'javascript', 'typescript', 'java', 'go', 'rust'}
         return request.language_id in ai_enabled_languages
-    
+
     def _check_rate_limit(self, endpoint: str) -> bool:
         """Check and update rate limits"""
         now = time.time()
         limit = self._rate_limits[endpoint]
-        
+
         # Reset window if needed
         if now - limit['window_start'] > limit['window_seconds']:
             limit['window_start'] = now
             limit['requests'] = 0
-        
+
         # Check if we've hit the limit
         if limit['requests'] >= limit['max_requests']:
             return False
-            
+
         limit['requests'] += 1
         limit['last_request'] = now
         return True
-    
+
     def _sort_and_dedup(self, items: List[CompletionItem]) -> List[Dict]:
         """Sort and deduplicate completion items"""
         # Remove duplicates based on label
@@ -574,27 +574,27 @@ class CodeCompletionService:
         for item in items:
             if item.label not in unique_items or item.score > unique_items[item.label].score:
                 unique_items[item.label] = item
-        
+
         # Sort by score (descending) and label (ascending)
         sorted_items = sorted(
             unique_items.values(),
             key=lambda x: (-x.score, x.label)
         )
-        
+
         # Convert to dict format
         return [item.to_dict() for item in sorted_items]
-    
+
     def _get_language_completions(self, request: CompletionRequest) -> List[CompletionItem]:
         """Get language-specific completions"""
         # This is a simplified implementation
         # In practice, you'd want to use a language server or static analysis
-        
+
         items = []
-        
+
         # Add language keywords
         if request.language_id in self.language_data:
             lang_data = self.language_data[request.language_id]
-            
+
             # Add keywords
             for keyword in lang_data.get('keywords', []):
                 items.append(CompletionItem(
@@ -603,7 +603,7 @@ class CodeCompletionService:
                     documentation=f"{keyword} keyword",
                     score=0.8
                 ))
-            
+
             # Add builtins
             for builtin in lang_data.get('builtins', []):
                 items.append(CompletionItem(
@@ -612,7 +612,7 @@ class CodeCompletionService:
                     documentation=f"Built-in {builtin} function",
                     score=0.7
                 ))
-            
+
             # Add common imports
             for imp in lang_data.get('common_imports', []):
                 items.append(CompletionItem(
@@ -622,44 +622,44 @@ class CodeCompletionService:
                     insert_text=f"import {imp}",
                     score=0.6
                 ))
-        
+
         return items
-            
+
             # Build/Config files (exact matches)
             **{f: 'dockerfile' for f in ['dockerfile', 'dockerfile.prod', 'dockerfile.dev']},
             **{f: 'makefile' for f in ['makefile', 'gnumakefile', 'makefile.*']},
             **{'.gitignore': 'gitignore'},
             **{'.env': 'dotenv'},
-            
+
             # Documentation
             **{e: 'markdown' for e in ['.md', '.markdown', '.mdown', '.mdwn', '.mkd']},
             **{e: 'restructuredtext' for e in ['.rst', '.rest']},
-            
+
             # Other common files
             **{'.dockerignore': 'dockerignore'},
             **{'.gitattributes': 'gitattributes'},
             **{'.editorconfig': 'editorconfig'},
             **{'.gitmodules': 'gitmodules'}
         }
-        
+
         # Check for exact filename matches first (like Dockerfile, Makefile)
         if filename in language_map:
             return language_map[filename]
-            
+
         # Check for extensions
         if ext in language_map:
             return language_map[ext]
-            
+
         # Check for special cases
         if filename == 'dockerfile':
             return 'dockerfile'
-            
+
         # Default to text if no match found
         return 'text'
-    
+
     def _get_code_context(self, code: str, cursor_pos: int, language: str) -> CodeContext:
         """Extract comprehensive context from the code around the cursor position.
-        
+
         Enhanced to include:
         - Full file AST analysis
         - Import analysis
@@ -669,12 +669,12 @@ class CodeCompletionService:
         - Type hints information
         - Documentation strings
         - Recent edits context
-        
+
         Args:
             code: The complete source code
             cursor_pos: Current cursor position in the code
             language: Programming language of the code
-            
+
         Returns:
             Dictionary containing comprehensive context information
         """
@@ -712,56 +712,56 @@ class CodeCompletionService:
                 'surrounding_code': ''
             }
         }
-        
+
         try:
             # Get lines and cursor position
             lines = code.splitlines()
             cursor_line = code[:cursor_pos].count('\n')
             context['line_number'] = cursor_line + 1  # 1-based line number
-            
+
             # Get current line and surrounding context
             start_line = max(0, cursor_line - 2)
             end_line = min(len(lines), cursor_line + 3)
             context['cursor_context']['surrounding_lines'] = lines[start_line:end_line]
-            
+
             # Set current line and calculate indentation
             if 0 <= cursor_line < len(lines):
                 context['line'] = lines[cursor_line]
                 context['indent_level'] = len(context['line']) - len(context['line'].lstrip())
-            
+
             # Get surrounding code block (simplified)
             if 0 <= cursor_line < len(lines):
                 # Get the current block by finding the nearest empty lines
                 block_start = cursor_line
                 block_end = cursor_line
-                
+
                 # Find block start
                 while block_start > 0 and lines[block_start - 1].strip():
                     block_start -= 1
-                
+
                 # Find block end
                 while block_end < len(lines) - 1 and lines[block_end + 1].strip():
                     block_end += 1
-                
+
                 context['cursor_context']['current_block'] = '\n'.join(lines[block_start:block_end + 1])
-                
+
                 # Get surrounding code (wider context)
                 context_start = max(0, cursor_line - 10)
                 context_end = min(len(lines), cursor_line + 10)
                 context['cursor_context']['surrounding_code'] = '\n'.join(lines[context_start:context_end])
-            
+
             # Parse language-specific context
             if language == 'python':
                 self._extract_python_context(code, cursor_pos, context)
-            
+
             # Detect if we're in a string or comment
             self._detect_strings_and_comments(code, cursor_pos, context)
-            
+
         except Exception as e:
             logger.debug(f"Error extracting context: {e}", exc_info=True)
-        
+
         return context
-        
+
     def _extract_python_context(self, code: str, cursor_pos: int, context: CodeContext) -> None:
         """Extract Python-specific context using AST, including:
         - Class hierarchies and inheritance
@@ -774,10 +774,10 @@ class CodeCompletionService:
             # Parse the complete code with type comments
             tree = ast.parse(code, type_comments=True)
             cursor_lineno = context['line_number']
-            
+
             # Track the current scope and position
             current_scope = []
-            
+
             # First pass: build class hierarchy and function signatures
             for node in ast.walk(tree):
                 # Track imports with aliases and from-imports
@@ -787,7 +787,7 @@ class CodeCompletionService:
                         context['imports'].add(module_name)
                         if name.asname:
                             context['imported_symbols'][name.asname] = module_name
-                        
+
                 elif isinstance(node, ast.ImportFrom):
                     if node.module:
                         module_name = node.module.split('.')[0]
@@ -795,7 +795,7 @@ class CodeCompletionService:
                         for name in node.names:
                             full_name = f"{module_name}.{name.name}" if name.name != '*' else module_name
                             context['imported_symbols'][name.name] = full_name
-                
+
                 # Track class definitions and hierarchy
                 if isinstance(node, ast.ClassDef):
                     class_info = {
@@ -807,11 +807,11 @@ class CodeCompletionService:
                         'lineno': node.lineno,
                         'end_lineno': getattr(node, 'end_lineno', node.lineno)
                     }
-                    
+
                     # Add to class hierarchy
                     context['class_hierarchy'][node.name] = class_info
                     context['code_structure']['classes'].append(class_info)
-                    
+
                     # Track class variables and methods
                     for item in node.body:
                         if isinstance(item, ast.FunctionDef) or isinstance(item, ast.AsyncFunctionDef):
@@ -823,23 +823,23 @@ class CodeCompletionService:
                                 'type': ast.unparse(item.annotation) if item.annotation else 'Any',
                                 'value': ast.unparse(item.value) if item.value else None
                             })
-                
+
                 # Track function/method definitions
                 elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     func_info = self._extract_function_info(node)
                     context['function_signatures'][node.name] = func_info
                     context['code_structure']['functions'].append(func_info)
-            
+
             # Second pass: analyze variable usage and type hints
             self._analyze_variable_usage(tree, cursor_lineno, context)
-            
+
             # Third pass: find the current scope
             self._find_current_scope(tree, cursor_lineno, context)
-            
+
         except Exception as e:
             logger.debug(f"Error in Python context extraction: {e}", exc_info=True)
-    
-    def _extract_function_info(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef], 
+
+    def _extract_function_info(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef],
                              is_method: bool = False) -> Dict[str, Any]:
         """Extract detailed information about a function or method."""
         # Get return type annotation
@@ -851,7 +851,7 @@ class CodeCompletionService:
             type_comment = node.type_comment
             if '->' in type_comment:
                 return_type = type_comment.split('->')[-1].strip()
-        
+
         # Process parameters
         params = []
         for param in node.args.args:
@@ -862,7 +862,7 @@ class CodeCompletionService:
                 'kind': 'param'
             }
             params.append(param_info)
-        
+
         # Process keyword-only arguments
         for param in node.args.kwonlyargs:
             param_info = {
@@ -872,7 +872,7 @@ class CodeCompletionService:
                 'kind': 'keyword_only'
             }
             params.append(param_info)
-        
+
         # Process varargs and kwargs
         if node.args.vararg:
             params.append({
@@ -881,7 +881,7 @@ class CodeCompletionService:
                 'default': None,
                 'kind': 'varargs'
             })
-        
+
         if node.args.kwarg:
             params.append({
                 'name': f"**{node.args.kwarg.arg}",
@@ -889,10 +889,10 @@ class CodeCompletionService:
                 'default': None,
                 'kind': 'varkwargs'
             })
-        
+
         # Extract docstring
         docstring = ast.get_docstring(node) or ''
-        
+
         return {
             'name': node.name,
             'async': isinstance(node, ast.AsyncFunctionDef),
@@ -904,7 +904,7 @@ class CodeCompletionService:
             'lineno': node.lineno,
             'end_lineno': getattr(node, 'end_lineno', node.lineno)
         }
-    
+
     def _analyze_variable_usage(self, tree: ast.AST, cursor_lineno: int, context: CodeContext) -> None:
         """Analyze variable usage and type hints in the code."""
         for node in ast.walk(tree):
@@ -913,19 +913,19 @@ class CodeCompletionService:
                 for target in node.targets:
                     if isinstance(target, ast.Name):
                         context['variables'].add(target.id)
-                        
+
                         # Try to infer type from value
                         if isinstance(node.value, ast.Call):
                             if isinstance(node.value.func, ast.Name):
                                 context['type_hints'][target.id] = node.value.func.id
                         elif isinstance(node.value, ast.Constant):
                             context['type_hints'][target.id] = type(node.value.value).__name__
-            
+
             # Track function arguments
             elif isinstance(node, ast.arg):
                 if node.annotation:
                     context['type_hints'][node.arg] = ast.unparse(node.annotation)
-    
+
     def _find_current_scope(self, tree: ast.AST, cursor_lineno: int, context: CodeContext) -> None:
         """Find the current scope at the cursor position."""
         try:
@@ -933,7 +933,7 @@ class CodeCompletionService:
                 if hasattr(node, 'lineno') and hasattr(node, 'end_lineno'):
                     start = node.lineno
                     end = getattr(node, 'end_lineno', start)
-                    
+
                     if start <= cursor_lineno <= end:
                         if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                             context['scope'].append(node.name)
@@ -943,15 +943,15 @@ class CodeCompletionService:
                             else:
                                 context['functions'].add(node.name)
                                 context['parent_node'] = 'function'
-                
+
 
         except (SyntaxError, ValueError) as e:
             # Handle incomplete code gracefully
             logger.debug(f"Error parsing Python code: {e}")
-            
+
         # Extract variables in scope
         self._extract_variables_in_scope(tree, cursor_lineno, context)
-    
+
     def _extract_variables_in_scope(self, tree: ast.AST, cursor_lineno: int, context: CodeContext) -> None:
         """Extract variables that are in scope at the cursor position."""
         for node in ast.walk(tree):
@@ -966,18 +966,18 @@ class CodeCompletionService:
                 if hasattr(node, 'args') and hasattr(node, 'lineno') and node.lineno <= cursor_lineno:
                     for arg in node.args.args:
                         context['variables'].add(arg.arg)
-    
+
     def _detect_strings_and_comments(self, code: str, cursor_pos: int, context: CodeContext) -> None:
         """Detect if cursor is inside a string or comment."""
         in_string = None  # Track the type of string ('"', "'", or None)
         in_comment = False
         in_multiline_comment = False
         i = 0
-        
+
         while i < cursor_pos and i < len(code):
             char = code[i]
             next_char = code[i+1] if i+1 < len(code) else ''
-            
+
             if not in_string and not in_comment and not in_multiline_comment:
                 # Check for string start
                 if char in ("'", '"'):
@@ -994,7 +994,7 @@ class CodeCompletionService:
                     if i + 3 <= len(code) and code[i:i+3] in ("'\""", '\"\"\"'):
                         in_string = code[i:i+3]
                         i += 2  # Skip the next two characters
-            
+
             # Handle string termination
             elif in_string:
                 # Check for end of string (handling escaped quotes)
@@ -1006,18 +1006,18 @@ class CodeCompletionService:
                     # Handle single-quoted strings
                     elif len(in_string) == 1:
                         in_string = None
-            
+
             # Handle comment termination
             elif in_comment and char == '\n':
                 in_comment = False
-            
+
             # Handle multi-line comment termination
             elif in_multiline_comment and char == '*' and next_char == '/':
                 in_multiline_comment = False
                 i += 1  # Skip the next character
-            
+
             i += 1
-        
+
         # Update context
         context['in_string'] = in_string is not None
         context['in_comment'] = in_comment or in_multiline_comment
@@ -1026,7 +1026,7 @@ class CodeCompletionService:
         """Generate multi-line completion suggestions based on context."""
         completions = []
         language = context.get('language', 'python')
-        
+
         if language == 'python':
             # Common Python patterns
             completions.extend([
@@ -1079,7 +1079,7 @@ class CodeCompletionService:
                     score=0.8
                 )
             ])
-            
+
             # Add class-specific completions
             for class_name in context.get('classes', []):
                 completions.append(
@@ -1092,7 +1092,7 @@ class CodeCompletionService:
                         score=0.85
                     )
                 )
-        
+
         return completions
 
     async def get_completions(
@@ -1105,14 +1105,14 @@ class CodeCompletionService:
     ) -> List[Dict[str, Any]]:
         """
         Get code completion suggestions with AI-powered context awareness
-        
+
         Args:
             code: The complete source code
             cursor_pos: Current cursor position in the code
             file_path: Path to the file being edited
             language: Programming language (auto-detected if None)
             context: Additional context (e.g., imported modules, local variables)
-            
+
         Returns:
             List of completion items as dictionaries
         """
@@ -1120,48 +1120,48 @@ class CodeCompletionService:
             # Rate limiting with enhanced debouncing
             current_time = time.time()
             cache_key = f"{file_path}:{cursor_pos}:{hash(code[:cursor_pos])}"
-            
-            if (cache_key in self._last_request_time and 
+
+            if (cache_key in self._last_request_time and
                 current_time - self._last_request_time[cache_key] < 0.1):  # 100ms debounce
                 return []
-            
+
             self._last_request_time[cache_key] = current_time
-            
+
             # Detect language if not provided
             if not language:
                 language = self.detect_language(file_path)
-            
+
             # Get context around cursor with enhanced analysis
             context = self._get_code_context(code, cursor_pos, language)
-            
+
             # Get the current line and cursor position
             lines = code[:cursor_pos].split('\n')
             current_line = lines[-1] if lines else ""
             current_word = self._get_current_word(current_line)
-            
+
             # Get prefix (text before cursor) and suffix (text after cursor)
             line_start = cursor_pos - len(current_line) if lines else 0
             column = cursor_pos - line_start
             prefix = current_line[:column]
             suffix = current_line[column:]
-            
+
             # Check if we're in a string or comment
             if context.get('in_comment', False) or context.get('in_string', False):
                 # Only provide basic completions in comments/strings
                 return []
-            
+
             # Get completions from cache if available
             cached = self._completion_cache.get(cache_key)
             if cached and (current_time - cached[0]) < self._cache_ttl:
                 return cached[1]
-            
+
             # Initialize completions list
             completions: List[Dict[str, Any]] = []
-            
+
             # 1. Get multi-line completions based on context
             multi_line_completions = self._generate_multi_line_completions(context)
             completions.extend([c.to_dict() for c in multi_line_completions])
-            
+
             # 2. Get AI-powered completions if available
             if ai_orchestrator.is_available():
                 try:
@@ -1171,31 +1171,31 @@ class CodeCompletionService:
                     completions.extend(ai_completions)
                 except Exception as e:
                     logger.warning(f"AI completion failed: {e}", exc_info=True)
-            
+
             # 3. Add language-specific completions with enhanced context awareness
             local_completions = self._get_local_completions(prefix, language, context)
             completions.extend(local_completions)
-            
+
             # 4. Filter and sort completions
             if current_word:
                 completions = [
-                    c for c in completions 
+                    c for c in completions
                     if current_word.lower() in c.get('label', '').lower()
                 ]
-            
+
             # Sort by score and limit results
             completions.sort(key=lambda x: -x.get('score', 0))
             completions = completions[:50]  # Limit to top 50
-            
+
             # Cache the results with context information
             self._completion_cache[cache_key] = (current_time, completions)
-            
+
             return completions
-            
+
         except Exception as e:
             logger.error(f"Error in get_completions: {e}")
             return []
-    
+
     async def _get_ai_completions(
         self,
         code: str,
@@ -1211,7 +1211,7 @@ class CodeCompletionService:
             end_line = code[cursor_pos:].count('\n') + code[:cursor_pos].count('\n') + 5
             lines = code.splitlines()
             context_lines = lines[start_line:end_line]
-            
+
             # Prepare the prompt
             prompt = self._build_ai_prompt(
                 code=code,
@@ -1220,7 +1220,7 @@ class CodeCompletionService:
                 context=context,
                 context_lines=context_lines
             )
-            
+
             # Get completion from AI
             response = await ai_orchestrator.generate(
                 prompt=prompt,
@@ -1229,15 +1229,15 @@ class CodeCompletionService:
                 temperature=0.2,
                 stop=['\n', '  ']
             )
-            
+
             # Parse the response into completion items
             completions = self._parse_ai_response(response, language)
             return completions
-            
+
         except Exception as e:
             logger.error(f"Error in _get_ai_completions: {e}")
             return []
-    
+
     def _build_ai_prompt(
         self,
         code: str,
@@ -1252,14 +1252,14 @@ class CodeCompletionService:
             f"Language: {language}",
             ""
         ]
-        
+
         # Add context
         if 'imports' in context:
             prompt_parts.append("// Imported modules:")
             for imp in context.get('imports', []):
                 prompt_parts.append(f"//   {imp}")
             prompt_parts.append("")
-        
+
         # Add code with cursor position
         prompt_parts.append("// Code context:")
         for i, line in enumerate(context_lines):
@@ -1267,30 +1267,30 @@ class CodeCompletionService:
                 prompt_parts.append(f"{line}|  // <-- Cursor position")
             else:
                 prompt_parts.append(line)
-        
+
         prompt_parts.extend([
             "",
             "// Provide 3-5 possible completions for the cursor position:",
             "1. "
         ])
-        
+
         return "\n".join(prompt_parts)
-    
+
     def _parse_ai_response(self, response: str, language: str) -> List[Dict[str, Any]]:
         """Parse AI response into completion items"""
         completions = []
-        
+
         # Simple parsing - each line starting with a number is a completion
         for line in response.split('\n'):
             line = line.strip()
             if not line or not line[0].isdigit():
                 continue
-                
+
             # Remove the number prefix
             completion = re.sub(r'^\d+[\.\)]\s*', '', line).strip()
             if not completion:
                 continue
-                
+
             # Create completion item
             completions.append({
                 'label': completion,
@@ -1301,31 +1301,31 @@ class CodeCompletionService:
                 'insertText': completion,
                 'data': {'source': 'ai'}
             })
-        
+
         return completions
-    
+
     def _get_local_completions(
-        self, 
-        prefix: str, 
-        language: str, 
+        self,
+        prefix: str,
+        language: str,
         context: CodeContext
     ) -> List[Dict[str, Any]]:
         """Get context-aware local completions with enhanced suggestions."""
         completions = []
         lang_data = self.language_data.get(language, {})
-        
+
         # Get context information
         in_import = context.get('line', '').strip().startswith(('import ', 'from '))
         in_class = any(marker in context.get('line', '') for marker in ['class ', 'def '])
         in_function = 'def ' in context.get('line', '')
-        
+
         # 1. Add keywords (context-aware filtering)
         if not in_import:  # Don't show keywords in import statements
             for kw in lang_data.get('keywords', []):
                 if not prefix or kw.lower().startswith(prefix.lower()):
                     # Adjust score based on context
                     score = 1.0
-                    
+
                     # Increase score for likely keywords in current context
                     if in_class and kw in ('def', 'self', 'super', 'classmethod', 'staticmethod'):
                         score = 1.1
@@ -1333,7 +1333,7 @@ class CodeCompletionService:
                         score = 1.1
                     elif kw in ('True', 'False', 'None') and '=' in context.get('line', ''):
                         score = 1.1
-                    
+
                     completions.append({
                         'label': kw,
                         'kind': 'keyword',
@@ -1341,7 +1341,7 @@ class CodeCompletionService:
                         'score': score,
                         'insertText': kw
                     })
-        
+
         # 2. Add built-ins with enhanced documentation
         if not in_import:  # Don't show built-ins in import statements
             for func in lang_data.get('builtins', []):
@@ -1358,7 +1358,7 @@ class CodeCompletionService:
                     except Exception:
                         doc = f'Built-in {language} function'
                         detail = f'{func}()'
-                    
+
                     completions.append({
                         'label': f"{func}()",
                         'kind': 'function',
@@ -1368,18 +1368,18 @@ class CodeCompletionService:
                         'insertText': f"{func}($0)",
                         'is_snippet': True
                     })
-        
+
         # 3. Add common imports with context awareness
         if in_import or not prefix:  # Only show imports at the start or when explicitly typing
             for imp in lang_data.get('common_imports', []):
                 if not prefix or imp.lower().startswith(prefix.lower()):
                     # Adjust score based on context
                     score = 0.9
-                    
+
                     # Increase score for imports that match the current file's context
                     if context.get('imports') and imp in context['imports']:
                         score = 1.0
-                    
+
                     completions.append({
                         'label': imp,
                         'kind': 'module',
@@ -1387,7 +1387,7 @@ class CodeCompletionService:
                         'score': score,
                         'insertText': imp
                     })
-        
+
         # 4. Add context-aware completions
         if language == 'python' and not in_import:
             # Add class names when defining inheritance
@@ -1401,7 +1401,7 @@ class CodeCompletionService:
                             'score': 1.05,  # Higher score for local classes
                             'insertText': class_name
                         })
-            
+
             # Add local variables and functions
             for var in context.get('variables', set()):
                 if not prefix or var.lower().startswith(prefix.lower()):
@@ -1412,7 +1412,7 @@ class CodeCompletionService:
                         'score': 1.02,  # Slightly higher than built-ins
                         'insertText': var
                     })
-            
+
             for func in context.get('functions', set()):
                 if not prefix or func.lower().startswith(prefix.lower()):
                     completions.append({
@@ -1423,7 +1423,7 @@ class CodeCompletionService:
                         'insertText': f"{func}($0)",
                         'is_snippet': True
                     })
-        
+
         # Remove duplicates while preserving order
         seen = set()
         unique_completions = []
@@ -1431,40 +1431,40 @@ class CodeCompletionService:
             if comp['label'] not in seen:
                 seen.add(comp['label'])
                 unique_completions.append(comp)
-        
+
         return unique_completions
-    
+
     def _get_current_word(self, line: str) -> str:
         """Get the current word at cursor position"""
         if not line:
             return ""
-            
+
         # Match word characters and dots (for method chaining)
         match = re.search(r'([\w.]+)$', line)
         return match.group(1) if match else ""
-    
+
     def _get_cache_key(self, prefix: str, language: str, context: Dict) -> str:
         """Generate a cache key for completions"""
         import json
         context_str = json.dumps(context, sort_keys=True) if context else ""
         return f"{language}:{prefix}:{context_str}"
-    
+
     def _determine_completion_kind(self, text: str, language: str) -> str:
         """Determine the kind of completion"""
         text = text.strip()
-        
+
         # Check for function/method call
         if '(' in text and ')' in text:
             return 'function'
-            
+
         # Check for class definition
         if language == 'python' and text.startswith('class '):
             return 'class'
-            
+
         # Check for import statement
         if any(text.startswith(kw) for kw in ['import ', 'from ', 'using ', 'require ']):
             return 'module'
-            
+
         # Default to variable
         return 'variable'
 

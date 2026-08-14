@@ -1,13 +1,13 @@
-import * as git from 'isomorphic-git';
-import { fs } from 'memfs';
-import { Buffer } from 'buffer';
-import http from 'isomorphic-git/http/web';
-import { toUint8Array } from 'js-base64';
+import * as git from "isomorphic-git";
+import { fs } from "memfs";
+import { Buffer } from "buffer";
+import http from "isomorphic-git/http/web";
+import { toUint8Array } from "js-base64";
 
 global.Buffer = Buffer;
 
 // Configure isomorphic-git to use in-memory filesystem
-git.plugins.set('fs', fs);
+git.plugins.set("fs", fs);
 
 export interface GitStatus {
   branch: string | null;
@@ -57,7 +57,7 @@ class GitService {
   async getStatus(): Promise<GitStatus> {
     // Implementation for git status
     return {
-      branch: 'main',
+      branch: "main",
       changes: 0,
       modified: [],
       staged: [],
@@ -71,17 +71,17 @@ class GitService {
   async getBranches(): Promise<GitBranchInfo> {
     // Implementation for git branch
     return {
-      current: 'main',
-      branches: ['main'],
-      remote: 'origin/main',
+      current: "main",
+      branches: ["main"],
+      remote: "origin/main",
     };
   }
 
   async getUserConfig(): Promise<GitUserConfig> {
     // Implementation for git config
     return {
-      name: 'User',
-      email: 'user@example.com',
+      name: "User",
+      email: "user@example.com",
     };
   }
 
@@ -91,18 +91,18 @@ class GitService {
       await git.setConfig({
         fs: this.fs,
         dir: this.dir,
-        path: 'user.name',
-        value: config.name
+        path: "user.name",
+        value: config.name,
       });
-      
+
       await git.setConfig({
         fs: this.fs,
         dir: this.dir,
-        path: 'user.email',
-        value: config.email
+        path: "user.email",
+        value: config.email,
       });
     } catch (error) {
-      console.error('Error setting git config:', error);
+      console.error("Error setting git config:", error);
       throw error;
     }
   }
@@ -111,11 +111,11 @@ class GitService {
     // Implementation for git log
     return [
       {
-        oid: 'abc123',
-        message: 'Initial commit',
+        oid: "abc123",
+        message: "Initial commit",
         author: {
-          name: 'User',
-          email: 'user@example.com',
+          name: "User",
+          email: "user@example.com",
           timestamp: Date.now() / 1000,
         },
       },

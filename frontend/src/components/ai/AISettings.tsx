@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useAI, ProviderType, PROVIDER_MODELS } from './AIProvider';
-import { Dialog, Transition } from '@headlessui/react';
-import { FiSettings, FiX, FiCheck, FiAlertCircle } from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import { useAI, ProviderType, PROVIDER_MODELS } from "./AIProvider";
+import { Dialog, Transition } from "@headlessui/react";
+import { FiSettings, FiX, FiCheck, FiAlertCircle } from "react-icons/fi";
 
 interface AISettingsProps {
   onSave: () => boolean;
@@ -19,9 +19,9 @@ export const AISettings: React.FC<AISettingsProps> = ({
   onModelChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [provider, setProvider] = useState<ProviderType>('ollama');
-  const [model, setModel] = useState('llama3');
+  const [apiKey, setApiKey] = useState("");
+  const [provider, setProvider] = useState<ProviderType>("ollama");
+  const [model, setModel] = useState("llama3");
   const [error, setError] = useState<string | null>(null);
 
   const { provider: currentProvider, model: currentModel } = useAI();
@@ -39,18 +39,19 @@ export const AISettings: React.FC<AISettingsProps> = ({
       if (apiKey) {
         onApiKeyChange(apiKey);
       }
-      
+
       const success = onSave();
       if (success) {
         setIsOpen(false);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save settings');
+      setError(err instanceof Error ? err.message : "Failed to save settings");
     }
   };
 
   const availableModels = PROVIDER_MODELS[provider] || [];
-  const selectedModel = availableModels.find(m => m.id === model) || availableModels[0];
+  const selectedModel =
+    availableModels.find((m) => m.id === model) || availableModels[0];
 
   return (
     <>
@@ -63,7 +64,11 @@ export const AISettings: React.FC<AISettingsProps> = ({
       </button>
 
       <Transition.Root show={isOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => !isSaving && setIsOpen(false)}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => !isSaving && setIsOpen(false)}
+        >
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -99,17 +104,23 @@ export const AISettings: React.FC<AISettingsProps> = ({
                       <FiX className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
-                  
+
                   <div>
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-white">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-white"
+                      >
                         AI Settings
                       </Dialog.Title>
-                      
+
                       <div className="mt-4 space-y-4">
                         {/* Provider Selection */}
                         <div>
-                          <label htmlFor="provider" className="block text-sm font-medium text-gray-300">
+                          <label
+                            htmlFor="provider"
+                            className="block text-sm font-medium text-gray-300"
+                          >
                             AI Provider
                           </label>
                           <select
@@ -118,7 +129,8 @@ export const AISettings: React.FC<AISettingsProps> = ({
                             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-gray-700 text-white border"
                             value={provider}
                             onChange={(e) => {
-                              const newProvider = e.target.value as ProviderType;
+                              const newProvider = e.target
+                                .value as ProviderType;
                               setProvider(newProvider);
                               // Reset model when provider changes
                               const models = PROVIDER_MODELS[newProvider] || [];
@@ -137,7 +149,10 @@ export const AISettings: React.FC<AISettingsProps> = ({
 
                         {/* Model Selection */}
                         <div>
-                          <label htmlFor="model" className="block text-sm font-medium text-gray-300">
+                          <label
+                            htmlFor="model"
+                            className="block text-sm font-medium text-gray-300"
+                          >
                             Model
                           </label>
                           <select
@@ -151,16 +166,21 @@ export const AISettings: React.FC<AISettingsProps> = ({
                             {availableModels.map((model) => (
                               <option key={model.id} value={model.id}>
                                 {model.name}
-                                {model.description ? ` - ${model.description}` : ''}
+                                {model.description
+                                  ? ` - ${model.description}`
+                                  : ""}
                               </option>
                             ))}
                           </select>
                         </div>
 
                         {/* API Key */}
-                        {provider !== 'ollama' && (
+                        {provider !== "ollama" && (
                           <div>
-                            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-300">
+                            <label
+                              htmlFor="apiKey"
+                              className="block text-sm font-medium text-gray-300"
+                            >
                               API Key
                             </label>
                             <div className="mt-1">
@@ -168,7 +188,10 @@ export const AISettings: React.FC<AISettingsProps> = ({
                                 type="password"
                                 id="apiKey"
                                 name="apiKey"
-                                placeholder={`Enter your ${provider.charAt(0).toUpperCase() + provider.slice(1)} API key`}
+                                placeholder={`Enter your ${
+                                  provider.charAt(0).toUpperCase() +
+                                  provider.slice(1)
+                                } API key`}
                                 className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-600 rounded-md bg-gray-700 text-white border p-2"
                                 value={apiKey}
                                 onChange={(e) => setApiKey(e.target.value)}
@@ -176,7 +199,8 @@ export const AISettings: React.FC<AISettingsProps> = ({
                               />
                             </div>
                             <p className="mt-1 text-xs text-gray-400">
-                              Your API key is stored locally and only sent to the selected provider.
+                              Your API key is stored locally and only sent to
+                              the selected provider.
                             </p>
                           </div>
                         )}
@@ -184,13 +208,18 @@ export const AISettings: React.FC<AISettingsProps> = ({
                         {/* Model Info */}
                         {selectedModel && (
                           <div className="p-3 bg-gray-700/50 rounded-md text-sm text-gray-300">
-                            <h4 className="font-medium text-white">{selectedModel.name}</h4>
+                            <h4 className="font-medium text-white">
+                              {selectedModel.name}
+                            </h4>
                             {selectedModel.description && (
-                              <p className="mt-1">{selectedModel.description}</p>
+                              <p className="mt-1">
+                                {selectedModel.description}
+                              </p>
                             )}
                             {selectedModel.maxTokens && (
                               <p className="mt-1 text-xs">
-                                Max tokens: {selectedModel.maxTokens.toLocaleString()}
+                                Max tokens:{" "}
+                                {selectedModel.maxTokens.toLocaleString()}
                               </p>
                             )}
                           </div>
@@ -198,7 +227,7 @@ export const AISettings: React.FC<AISettingsProps> = ({
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Error Message */}
                   {error && (
                     <div className="mt-4 p-3 bg-red-900/30 border border-red-800 rounded-md text-sm text-red-200 flex items-start">
@@ -206,20 +235,38 @@ export const AISettings: React.FC<AISettingsProps> = ({
                       <span>{error}</span>
                     </div>
                   )}
-                  
+
                   {/* Actions */}
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                     <button
                       type="button"
                       className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleSave}
-                      disabled={isSaving || (provider !== 'ollama' && !apiKey.trim())}
+                      disabled={
+                        isSaving || (provider !== "ollama" && !apiKey.trim())
+                      }
                     >
                       {isSaving ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
                           Saving...
                         </>
@@ -249,4 +296,9 @@ export const AISettings: React.FC<AISettingsProps> = ({
   );
 };
 
+// Default export for backward compatibility
+export const AISettings = AISettings;
+
+// Named exports
+export { AISettings };
 export default AISettings;

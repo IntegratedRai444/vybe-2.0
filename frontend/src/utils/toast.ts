@@ -1,25 +1,25 @@
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
-type ToastType = 'success' | 'error' | 'info' | 'loading';
+type ToastType = "success" | "error" | "info" | "loading";
 
 export const showToast = (
-  message: string, 
-  type: ToastType = 'info',
-  duration: number = 3000
+  message: string,
+  type: ToastType = "info",
+  duration: number = 3000,
 ) => {
   const options = {
     duration,
-    position: 'bottom-right' as const,
+    position: "bottom-right" as const,
   };
 
   switch (type) {
-    case 'success':
+    case "success":
       toast.success(message, options);
       break;
-    case 'error':
+    case "error":
       toast.error(message, options);
       break;
-    case 'loading':
+    case "loading":
       toast.loading(message, options);
       break;
     default:

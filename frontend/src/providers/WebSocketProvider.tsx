@@ -1,15 +1,17 @@
-import React from 'react';
-import { WebSocketProvider as WSProvider } from '../contexts/WebSocketContext';
-import ConnectionStatus from '../components/common/ConnectionStatus';
-import { useAuth } from '../hooks/useAuth';
+import React from "react";
+import { WebSocketProvider as WSProvider } from "../contexts/WebSocketContext";
+import ConnectionStatus from "../components/common/ConnectionStatus";
+import { useAuth } from "../hooks/useAuth";
 
 type WebSocketProviderProps = {
   children: React.ReactNode;
 };
 
-export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
+export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
+  children,
+}) => {
   const { token } = useAuth();
-  
+
   // The WebSocket client is already a singleton, so we don't need to create a new instance
   // Just make sure to set the auth token when it changes
   React.useEffect(() => {

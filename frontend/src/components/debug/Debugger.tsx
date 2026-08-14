@@ -1,30 +1,54 @@
 // src/components/Debugger.tsx - Enhanced Debugger Component
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  FaPlay, FaPause, FaStop, FaBug, FaCodeBranch, FaEye, FaStepForward,
-  FaStepOver, FaStepInto, FaStepOut, FaTerminal, FaListUl, FaCode,
-  FaExclamationTriangle, FaCheckCircle, FaTimesCircle
+import {
+  FaPlay,
+  FaPause,
+  FaStop,
+  FaBug,
+  FaCodeBranch,
+  FaEye,
+  FaStepForward,
+  FaStepOver,
+  FaStepInto,
+  FaStepOut,
+  FaTerminal,
+  FaListUl,
+  FaCode,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 import * as api from "../../services/api";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { 
-  setCurrentLine, 
-  setBreakpoints, 
-  setVariables, 
+import {
+  setCurrentLine,
+  setBreakpoints,
+  setVariables,
   setCallStack,
   setThreads,
   setActiveThread,
   setActiveFrame,
   addToConsole,
   clearConsole,
-  setDebugStatus
+  setDebugStatus,
 } from "../../store/slices/debuggerSlice";
 import { debounce } from "lodash";
 
 // Types
-type DebugStatus = 'inactive' | 'initializing' | 'running' | 'paused' | 'terminated' | 'error';
+type DebugStatus =
+  | "inactive"
+  | "initializing"
+  | "running"
+  | "paused"
+  | "terminated"
+  | "error";
 
-type DebuggerMode = 'debug' | 'console' | 'breakpoints' | 'variables' | 'callstack';
+type DebuggerMode =
+  | "debug"
+  | "console"
+  | "breakpoints"
+  | "variables"
+  | "callstack";
 
 interface DebugToolbarProps {
   status: DebugStatus;
@@ -51,11 +75,11 @@ const DebugToolbar: React.FC<DebugToolbarProps> = ({
   onStepInto,
   onStepOut,
   breakpoints,
-  currentLine
+  currentLine,
 }) => {
-  const isPaused = status === 'paused';
-  const isRunning = status === 'running';
-  const isInactive = status === 'inactive';
+  const isPaused = status === "paused";
+  const isRunning = status === "running";
+  const isInactive = status === "inactive";
 
   return (
     <div className="flex items-center space-x-2 p-2 bg-gray-800 text-white border-b border-gray-700">
@@ -108,7 +132,7 @@ const DebugToolbar: React.FC<DebugToolbarProps> = ({
           <FaPause className="text-yellow-500" />
         </button>
       )}
-      
+
       <button
         onClick={onStop}
         className="p-2 rounded hover:bg-gray-700 disabled:opacity-50"
@@ -117,13 +141,13 @@ const DebugToolbar: React.FC<DebugToolbarProps> = ({
       >
         <FaStop className="text-red-500" />
       </button>
-      
+
       <div className="h-6 w-px bg-gray-600 mx-2"></div>
-      
+
       <div className="text-xs text-gray-400">
-        {status === 'paused' && currentLine && `Paused on line ${currentLine}`}
-        {status === 'running' && 'Running...'}
-        {status === 'initializing' && 'Initializing debugger...'}
+        {status === "paused" && currentLine && `Paused on line ${currentLine}`}
+        {status === "running" && "Running..."}
+        {status === "initializing" && "Initializing debugger..."}
       </div>
     </div>
   );
@@ -194,26 +218,45 @@ export interface IDebuggerState {
 }
 
 // Debug event types
-type DebugEvent = 
-  | { type: 'breakpoint'; breakpoint: IBreakpoint }
-  | { type: 'stopped'; reason: string; description?: string; threadId?: number; allThreadsStopped?: boolean; }
-  | { type: 'continued'; threadId: number; allThreadsContinued?: boolean; }
-  | { type: 'exited'; exitCode: number }
-  | { type: 'terminated'; restart?: any }
-  | { type: 'initialized' }
-  | { type: 'output'; category: 'console' | 'stdout' | 'stderr' | 'telemetry'; output: string; }
-  | { type: 'breakpointConditionalError'; breakpointId: string; error: string }
-  | { type: 'breakpointLogMessage'; breakpointId: string; message: string };
+type DebugEvent =
+  | { type: "breakpoint"; breakpoint: IBreakpoint }
+  | {
+      type: "stopped";
+      reason: string;
+      description?: string;
+      threadId?: number;
+      allThreadsStopped?: boolean;
+    }
+  | { type: "continued"; threadId: number; allThreadsContinued?: boolean }
+  | { type: "exited"; exitCode: number }
+  | { type: "terminated"; restart?: any }
+  | { type: "initialized" }
+  | {
+      type: "output";
+      category: "console" | "stdout" | "stderr" | "telemetry";
+      output: string;
+    }
+  | { type: "breakpointConditionalError"; breakpointId: string; error: string }
+  | { type: "breakpointLogMessage"; breakpointId: string; message: string };
 
-export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebugStart, onDebugStop }) => {
+export const Debugger: React.FC<Props> = ({
+  filePath,
+  onBreakpointToggle,
+  onDebugStart,
+  onDebugStop,
+}) => {
   const [breakpoints, setBreakpoints] = useState<Breakpoint[]>([]);
   const [_debugSession, setDebugSession] = useState<DebugSession | null>(null);
   const [_threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<number | null>(null);
   const [stackFrames, setStackFrames] = useState<StackFrame[]>([]);
   const [variables, setVariables] = useState<Variable[]>([]);
-  const [activeTab, setActiveTab] = useState<'breakpoints' | 'variables' | 'callstack' | 'watch'>('breakpoints');
-  const [watchExpressions, setWatchExpressions] = useState<{expression: string, value?: string, error?: string}[]>([{expression: ''}]);
+  const [activeTab, setActiveTab] = useState<
+    "breakpoints" | "variables" | "callstack" | "watch"
+  >("breakpoints");
+  const [watchExpressions, setWatchExpressions] = useState<
+    { expression: string; value?: string; error?: string }[]
+  >([{ expression: "" }]);
   const [isDebugging, setIsDebugging] = useState(false);
   const [debugOutput, setDebugOutput] = useState<string[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -227,19 +270,20 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
     try {
       const data = await api.listDAPSessions();
       const sessions = data.sessions || [];
-      
+
       if (sessions.length > 0) {
-        const activeSession = sessions.find((s: DebugSession) => s.is_running) || sessions[0];
+        const activeSession =
+          sessions.find((s: DebugSession) => s.is_running) || sessions[0];
         setDebugSession(activeSession);
         setCurrentSessionId(activeSession.session_id);
         setIsDebugging(activeSession.is_running);
-        
+
         if (activeSession.is_running) {
           loadThreads(activeSession.session_id);
         }
       }
     } catch (error) {
-      console.error('Failed to load debug sessions:', error);
+      console.error("Failed to load debug sessions:", error);
     }
   };
 
@@ -248,13 +292,13 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
       const data = await api.getDAPThreads(sessionId);
       const threadList = data.threads || [];
       setThreads(threadList);
-      
+
       if (threadList.length > 0 && !activeThread) {
         setActiveThread(threadList[0].id);
         loadStackTrace(sessionId, threadList[0].id);
       }
     } catch (error) {
-      console.error('Failed to load threads:', error);
+      console.error("Failed to load threads:", error);
     }
   };
 
@@ -263,60 +307,69 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
       const data = await api.getDAPStackTrace(sessionId, threadId);
       const frames = data.stack_frames || [];
       setStackFrames(frames);
-      
+
       if (frames.length > 0) {
         loadVariables(sessionId, frames[0].id);
       }
     } catch (error) {
-      console.error('Failed to load stack trace:', error);
+      console.error("Failed to load stack trace:", error);
     }
   };
 
-  const loadVariables = async (sessionId: string, variablesReference: number) => {
+  const loadVariables = async (
+    sessionId: string,
+    variablesReference: number,
+  ) => {
     try {
       const data = await api.getDAPVariables(sessionId, variablesReference);
       setVariables(data.variables || []);
     } catch (error) {
-      console.error('Failed to load variables:', error);
+      console.error("Failed to load variables:", error);
     }
   };
 
   const updateBreakpoints = async (file: string, breakpointLines: number[]) => {
     if (!currentSessionId) return;
-    
+
     try {
-      const breakpointData = breakpointLines.map(line => ({
+      const breakpointData = breakpointLines.map((line) => ({
         line,
-        enabled: true
+        enabled: true,
       }));
-      
-      const data = await api.setDAPBreakpoints(currentSessionId, file, breakpointData);
+
+      const data = await api.setDAPBreakpoints(
+        currentSessionId,
+        file,
+        breakpointData,
+      );
       if (data.success) {
         setBreakpoints(data.breakpoints || []);
       }
     } catch (error) {
-      console.error('Failed to set breakpoints:', error);
+      console.error("Failed to set breakpoints:", error);
     }
   };
 
   const toggleBreakpoint = (file: string, line: number) => {
-    const existingBp = breakpoints.find(bp => bp.file === file && bp.line === line);
+    const existingBp = breakpoints.find(
+      (bp) => bp.file === file && bp.line === line,
+    );
     let newLines: number[];
-    
+
     if (existingBp) {
       // Remove breakpoint
       newLines = breakpoints
-        .filter(bp => !(bp.file === file && bp.line === line))
-        .filter(bp => bp.file === file)
-        .map(bp => bp.line);
+        .filter((bp) => !(bp.file === file && bp.line === line))
+        .filter((bp) => bp.file === file)
+        .map((bp) => bp.line);
     } else {
       // Add breakpoint
       newLines = [
-        ...breakpoints.filter(bp => bp.file === file).map(bp => bp.line),
-        line
+        ...breakpoints.filter((bp) => bp.file === file).map((bp) => bp.line),
+        line,
       ];
     }
-    
+
     updateBreakpoints(file, newLines);
     onBreakpointToggle(file, line);
   };
@@ -324,42 +377,47 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
   const startDebugging = async () => {
     try {
       setIsLoading(true);
-      
+
       // Detect language from file extension
-      const ext = filePath.split('.').pop()?.toLowerCase();
-      const language = ext === 'py' ? 'python' : 
-                     ext === 'js' ? 'javascript' : 
-                     ext === 'ts' ? 'typescript' : 'python';
-      
+      const ext = filePath.split(".").pop()?.toLowerCase();
+      const language =
+        ext === "py"
+          ? "python"
+          : ext === "js"
+            ? "javascript"
+            : ext === "ts"
+              ? "typescript"
+              : "python";
+
       // Create debug session
       const createData = await api.createDAPSession(language, filePath, []);
-      
+
       if (!createData.success) {
-        throw new Error(createData.error || 'Failed to create debug session');
+        throw new Error(createData.error || "Failed to create debug session");
       }
-      
+
       const sessionId = createData.session_id;
       setCurrentSessionId(sessionId);
-      
+
       // Launch the session
       const launchData = await api.launchDAPSession(sessionId);
-      
+
       if (launchData.success) {
         setIsDebugging(true);
         onDebugStart();
-        
+
         // Load session data
         setTimeout(() => {
           loadThreads(sessionId);
         }, 1000); // Give debugger time to start
-        
-        setDebugOutput(prev => [...prev, `Started debugging ${filePath}`]);
+
+        setDebugOutput((prev) => [...prev, `Started debugging ${filePath}`]);
       } else {
-        throw new Error('Failed to launch debug session');
+        throw new Error("Failed to launch debug session");
       }
     } catch (error) {
-      console.error('Failed to start debugging:', error);
-      setDebugOutput(prev => [...prev, `Error: ${error}`]);
+      console.error("Failed to start debugging:", error);
+      setDebugOutput((prev) => [...prev, `Error: ${error}`]);
     } finally {
       setIsLoading(false);
     }
@@ -367,11 +425,11 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
 
   const stopDebugging = async () => {
     if (!currentSessionId) return;
-    
+
     try {
       setIsLoading(true);
       const data = await api.terminateDAPSession(currentSessionId);
-      
+
       if (data.success) {
         setIsDebugging(false);
         onDebugStop();
@@ -380,10 +438,10 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
         setThreads([]);
         setStackFrames([]);
         setVariables([]);
-        setDebugOutput(prev => [...prev, 'Debug session terminated']);
+        setDebugOutput((prev) => [...prev, "Debug session terminated"]);
       }
     } catch (error) {
-      console.error('Failed to stop debugging:', error);
+      console.error("Failed to stop debugging:", error);
     } finally {
       setIsLoading(false);
     }
@@ -391,104 +449,110 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
 
   const pauseDebugging = async () => {
     if (!currentSessionId || !activeThread) return;
-    
+
     try {
       await api.pauseDAPExecution(currentSessionId, activeThread);
-      setDebugOutput(prev => [...prev, 'Execution paused']);
+      setDebugOutput((prev) => [...prev, "Execution paused"]);
     } catch (error) {
-      console.error('Failed to pause debugging:', error);
+      console.error("Failed to pause debugging:", error);
     }
   };
 
   const resumeDebugging = async () => {
     if (!currentSessionId) return;
-    
+
     try {
-      await api.continueDAPExecution(currentSessionId, activeThread || undefined);
-      setDebugOutput(prev => [...prev, 'Execution resumed']);
+      await api.continueDAPExecution(
+        currentSessionId,
+        activeThread || undefined,
+      );
+      setDebugOutput((prev) => [...prev, "Execution resumed"]);
     } catch (error) {
-      console.error('Failed to resume debugging:', error);
+      console.error("Failed to resume debugging:", error);
     }
   };
 
   const stepOver = async () => {
     if (!currentSessionId || !activeThread) return;
-    
+
     try {
       await api.stepOverDAP(currentSessionId, activeThread);
-      
+
       // Refresh stack trace and variables
       setTimeout(() => {
         loadStackTrace(currentSessionId, activeThread);
       }, 500);
-      
-      setDebugOutput(prev => [...prev, 'Stepped over']);
+
+      setDebugOutput((prev) => [...prev, "Stepped over"]);
     } catch (error) {
-      console.error('Failed to step over:', error);
+      console.error("Failed to step over:", error);
     }
   };
 
   const stepInto = async () => {
     if (!currentSessionId || !activeThread) return;
-    
+
     try {
       await api.stepIntoDAP(currentSessionId, activeThread);
-      
+
       // Refresh stack trace and variables
       setTimeout(() => {
         loadStackTrace(currentSessionId, activeThread);
       }, 500);
-      
-      setDebugOutput(prev => [...prev, 'Stepped into']);
+
+      setDebugOutput((prev) => [...prev, "Stepped into"]);
     } catch (error) {
-      console.error('Failed to step into:', error);
+      console.error("Failed to step into:", error);
     }
   };
 
   const stepOut = async () => {
     if (!currentSessionId || !activeThread) return;
-    
+
     try {
       await api.stepOutDAP(currentSessionId, activeThread);
-      
+
       // Refresh stack trace and variables
       setTimeout(() => {
         loadStackTrace(currentSessionId, activeThread);
       }, 500);
-      
-      setDebugOutput(prev => [...prev, 'Stepped out']);
+
+      setDebugOutput((prev) => [...prev, "Stepped out"]);
     } catch (error) {
-      console.error('Failed to step out:', error);
+      console.error("Failed to step out:", error);
     }
   };
 
   const addWatchExpression = () => {
-    setWatchExpressions([...watchExpressions, {expression: ''}]);
+    setWatchExpressions([...watchExpressions, { expression: "" }]);
   };
 
   const updateWatchExpression = (index: number, value: string) => {
     const newExpressions = [...watchExpressions];
-    newExpressions[index] = {expression: value};
+    newExpressions[index] = { expression: value };
     setWatchExpressions(newExpressions);
   };
 
   const evaluateWatchExpression = async (index: number) => {
     if (!currentSessionId || !watchExpressions[index].expression.trim()) return;
-    
+
     try {
-      const result = await api.evaluateDAPExpression(currentSessionId, watchExpressions[index].expression);
+      const result = await api.evaluateDAPExpression(
+        currentSessionId,
+        watchExpressions[index].expression,
+      );
       const newExpressions = [...watchExpressions];
       if (result.success && result.result) {
         newExpressions[index] = {
           ...newExpressions[index],
           value: result.result.result,
-          error: undefined
+          error: undefined,
         };
       } else {
         newExpressions[index] = {
           ...newExpressions[index],
           value: undefined,
-          error: result.error || 'Evaluation failed'
+          error: result.error || "Evaluation failed",
         };
       }
       setWatchExpressions(newExpressions);
@@ -497,7 +561,7 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
       newExpressions[index] = {
         ...newExpressions[index],
         value: undefined,
-        error: String(error)
+        error: String(error),
       };
       setWatchExpressions(newExpressions);
     }
@@ -527,7 +591,7 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
               </span>
             )}
           </div>
-          
+
           {/* Debug controls */}
           <div className="flex space-x-1">
             {!isDebugging ? (
@@ -597,17 +661,17 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
         {/* Tab navigation */}
         <div className="flex space-x-1">
           {[
-            { id: 'breakpoints', label: 'Breakpoints', icon: FaCodeBranch },
-            { id: 'variables', label: 'Variables', icon: FaEye },
-            { id: 'callstack', label: 'Call Stack', icon: FaCodeBranch },
-            { id: 'watch', label: 'Watch', icon: FaEye }
+            { id: "breakpoints", label: "Breakpoints", icon: FaCodeBranch },
+            { id: "variables", label: "Variables", icon: FaEye },
+            { id: "callstack", label: "Call Stack", icon: FaCodeBranch },
+            { id: "watch", label: "Watch", icon: FaEye },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               className={`px-3 py-1 rounded text-sm flex items-center space-x-1 ${
                 activeTab === id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-800 hover:bg-gray-700 text-gray-300"
               }`}
               onClick={() => setActiveTab(id as any)}
             >
@@ -621,14 +685,16 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto">
         {/* Breakpoints Tab */}
-        {activeTab === 'breakpoints' && (
+        {activeTab === "breakpoints" && (
           <div className="p-2">
             <div className="space-y-1">
               {breakpoints.length === 0 ? (
                 <div className="p-4 text-gray-500 text-center">
                   <FaCodeBranch className="w-8 h-8 mx-auto mb-2 opacity-50" />
                   <p>No breakpoints set</p>
-                  <p className="text-xs mt-1">Click in the editor gutter to add breakpoints</p>
+                  <p className="text-xs mt-1">
+                    Click in the editor gutter to add breakpoints
+                  </p>
                 </div>
               ) : (
                 breakpoints.map((bp) => (
@@ -636,12 +702,20 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
                     key={bp.id}
                     className="flex items-center p-2 hover:bg-gray-800 rounded group"
                   >
-                    <div className={`w-3 h-3 rounded-full mr-2 ${bp.verified ? 'bg-red-500' : 'bg-gray-500'}`} />
+                    <div
+                      className={`w-3 h-3 rounded-full mr-2 ${
+                        bp.verified ? "bg-red-500" : "bg-gray-500"
+                      }`}
+                    />
                     <div className="flex-1">
                       <div className="text-sm font-medium">{bp.file}</div>
-                      <div className="text-xs text-gray-400">Line {bp.line}</div>
+                      <div className="text-xs text-gray-400">
+                        Line {bp.line}
+                      </div>
                       {bp.condition && (
-                        <div className="text-xs text-blue-400">Condition: {bp.condition}</div>
+                        <div className="text-xs text-blue-400">
+                          Condition: {bp.condition}
+                        </div>
                       )}
                     </div>
                     <button
@@ -659,7 +733,7 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
         )}
 
         {/* Variables Tab */}
-        {activeTab === 'variables' && (
+        {activeTab === "variables" && (
           <div className="p-2">
             {variables.length === 0 ? (
               <div className="p-4 text-gray-500 text-center">
@@ -672,10 +746,16 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
                 {variables.map((variable, index) => (
                   <div key={index} className="p-2 bg-gray-800 rounded">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-blue-300">{variable.name}</span>
-                      <span className="text-xs text-gray-400">{variable.type}</span>
+                      <span className="font-medium text-blue-300">
+                        {variable.name}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {variable.type}
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-300 mt-1 font-mono">{variable.value}</div>
+                    <div className="text-sm text-gray-300 mt-1 font-mono">
+                      {variable.value}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -684,13 +764,15 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
         )}
 
         {/* Call Stack Tab */}
-        {activeTab === 'callstack' && (
+        {activeTab === "callstack" && (
           <div className="p-2">
             {stackFrames.length === 0 ? (
               <div className="p-4 text-gray-500 text-center">
                 <FaCodeBranch className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No call stack available</p>
-                <p className="text-xs mt-1">Start debugging to see call stack</p>
+                <p className="text-xs mt-1">
+                  Start debugging to see call stack
+                </p>
               </div>
             ) : (
               <div className="space-y-1">
@@ -698,11 +780,13 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
                   <div
                     key={frame.id}
                     className={`p-2 rounded cursor-pointer hover:bg-gray-700 ${
-                      index === 0 ? 'bg-blue-900' : 'bg-gray-800'
+                      index === 0 ? "bg-blue-900" : "bg-gray-800"
                     }`}
                   >
                     <div className="text-sm font-medium">{frame.name}</div>
-                    <div className="text-xs text-gray-400">{frame.source}:{frame.line}</div>
+                    <div className="text-xs text-gray-400">
+                      {frame.source}:{frame.line}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -711,7 +795,7 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
         )}
 
         {/* Watch Tab */}
-        {activeTab === 'watch' && (
+        {activeTab === "watch" && (
           <div className="p-2">
             <div className="space-y-2">
               {watchExpressions.map((watch, index) => (
@@ -720,8 +804,12 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
                     <input
                       type="text"
                       value={watch.expression}
-                      onChange={(e) => updateWatchExpression(index, e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && evaluateWatchExpression(index)}
+                      onChange={(e) =>
+                        updateWatchExpression(index, e.target.value)
+                      }
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && evaluateWatchExpression(index)
+                      }
                       placeholder="Enter expression to watch..."
                       className="flex-1 p-2 bg-gray-800 border border-gray-600 rounded text-sm"
                     />
@@ -769,7 +857,9 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
           <div className="text-xs text-gray-400 mb-1">Debug Output:</div>
           <div className="text-xs font-mono max-h-20 overflow-y-auto bg-gray-800 p-2 rounded">
             {debugOutput.map((line, index) => (
-              <div key={index} className="text-gray-300">{line}</div>
+              <div key={index} className="text-gray-300">
+                {line}
+              </div>
             ))}
           </div>
         </div>
@@ -777,3 +867,6 @@ export const Debugger: React.FC<Props> = ({ filePath, onBreakpointToggle, onDebu
     </div>
   );
 };
+
+// Exports
+export { Debugger };

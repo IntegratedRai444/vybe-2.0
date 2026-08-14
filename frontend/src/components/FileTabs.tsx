@@ -46,3 +46,6 @@ export const FileTabs: React.FC<Props> = ({ tabs, activeTab, onTabClick, onTabCl
     </div>
   );
 };
+
+// Exports
+export { FileTabs };

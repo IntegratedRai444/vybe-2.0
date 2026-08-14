@@ -1,0 +1,1654 @@
+{
+  "timestamp": "2025-11-03T06:15:02.770Z",
+  "totalFiles": 274,
+  "usedFiles": 0,
+  "unusedFiles": 274,
+  "unusedFilesList": [
+    "backend\\middleware\\auth.js",
+    "backend\\routes\\ai.js",
+    "backend\\routes\\files.js",
+    "backend\\routes\\git.js",
+    "backend\\routes\\lint.js",
+    "backend\\server.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ar.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.da.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.de.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.du.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.es.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.fi.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.fr.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hi.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hu.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hy.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.it.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ja.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.jp.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.kn.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ko.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.multi.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.nl.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.no.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.pt.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ro.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ru.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.sa.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.stemmer.support.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.sv.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ta.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.te.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.th.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.tr.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.vi.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.zh.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\tinyseg.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\lunr.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\main.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\worker.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\base.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\bootstrap.bundle.min.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\darkmode.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\html5shiv.min.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\jquery-3.6.0.min.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\theme.js",
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\theme_extra.js",
+    "backend\\venv\\Lib\\site-packages\\sklearn\\utils\\_repr_html\\estimator.js",
+    "backend\\venv\\Lib\\site-packages\\torch\\utils\\model_dump\\code.js",
+    "backend\\venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\emscripten_fetch_worker.js",
+    "backend\\websockets\\collaboration.js",
+    "backend\\websockets\\terminal.js",
+    "frontend\\eslint.config.js",
+    "frontend\\find-unused-files.js",
+    "frontend\\jest.config.js",
+    "frontend\\postcss.config.js",
+    "frontend\\src\\App.tsx",
+    "frontend\\src\\components\\CommandPalette\\index.tsx",
+    "frontend\\src\\components\\DeploymentPanel\\index.tsx",
+    "frontend\\src\\components\\EnhancedErrorBoundary.tsx",
+    "frontend\\src\\components\\EnhancedFileTree.tsx",
+    "frontend\\src\\components\\ErrorBoundary.tsx",
+    "frontend\\src\\components\\FileContextMenu.tsx",
+    "frontend\\src\\components\\FileIcon.tsx",
+    "frontend\\src\\components\\FileTabs.tsx",
+    "frontend\\src\\components\\FolderPicker.tsx",
+    "frontend\\src\\components\\Header\\index.tsx",
+    "frontend\\src\\components\\PackageManager\\PackageManager.tsx",
+    "frontend\\src\\components\\PackageManager\\index.new.tsx",
+    "frontend\\src\\components\\PackageManager\\index.tsx",
+    "frontend\\src\\components\\PackageManager\\temp_index.tsx",
+    "frontend\\src\\components\\Settings\\SettingsButton.tsx",
+    "frontend\\src\\components\\Settings\\SettingsModal.tsx",
+    "frontend\\src\\components\\Settings\\WorkspaceConfig.tsx",
+    "frontend\\src\\components\\Settings\\index.ts",
+    "frontend\\src\\components\\Toast\\Toast.tsx",
+    "frontend\\src\\components\\Toast\\index.ts",
+    "frontend\\src\\components\\ai\\AIChatPanel.tsx",
+    "frontend\\src\\components\\ai\\AICodeEditor.tsx",
+    "frontend\\src\\components\\ai\\AIDashboard.tsx",
+    "frontend\\src\\components\\ai\\AILayout.tsx",
+    "frontend\\src\\components\\ai\\AIPanel.tsx",
+    "frontend\\src\\components\\ai\\AIProvider.tsx",
+    "frontend\\src\\components\\ai\\AIProviderSelector.tsx",
+    "frontend\\src\\components\\ai\\AISettings.tsx",
+    "frontend\\src\\components\\ai\\CompletionBubble.tsx",
+    "frontend\\src\\components\\ai\\ModelSelector.tsx",
+    "frontend\\src\\components\\ai\\index.ts",
+    "frontend\\src\\components\\common\\AnalysisButton.tsx",
+    "frontend\\src\\components\\common\\CollaborationPanel.tsx",
+    "frontend\\src\\components\\common\\ConnectionStatus.tsx",
+    "frontend\\src\\components\\common\\DeployPanel.tsx",
+    "frontend\\src\\components\\common\\ErrorBoundary.tsx",
+    "frontend\\src\\components\\common\\MCPPanel.tsx",
+    "frontend\\src\\components\\common\\OutlineView.tsx",
+    "frontend\\src\\components\\common\\PanelContainer.tsx",
+    "frontend\\src\\components\\common\\PanelSwitcher.tsx",
+    "frontend\\src\\components\\common\\ProblemsPanel.tsx",
+    "frontend\\src\\components\\common\\SecurityButton.tsx",
+    "frontend\\src\\components\\common\\ShortcutsPanel.tsx",
+    "frontend\\src\\components\\common\\SnippetLibrary.tsx",
+    "frontend\\src\\components\\common\\SyncStatus.tsx",
+    "frontend\\src\\components\\common\\TerminalPane.tsx",
+    "frontend\\src\\components\\common\\TerminalTabs.new.tsx",
+    "frontend\\src\\components\\common\\TerminalTabs.tsx",
+    "frontend\\src\\components\\common\\index.ts",
+    "frontend\\src\\components\\debug\\DebugButton.tsx",
+    "frontend\\src\\components\\debug\\Debugger.tsx",
+    "frontend\\src\\components\\debug\\DebuggerPanel.tsx",
+    "frontend\\src\\components\\debug\\DebuggerToolbar.tsx",
+    "frontend\\src\\components\\debug\\ExceptionsPanel.tsx",
+    "frontend\\src\\components\\debug\\WatchExpressions.tsx",
+    "frontend\\src\\components\\editor\\CodeEditor.tsx",
+    "frontend\\src\\components\\editor\\DebugMonacoEditor.tsx",
+    "frontend\\src\\components\\editor\\EditorSettings.tsx",
+    "frontend\\src\\components\\editor\\EditorTabs.tsx",
+    "frontend\\src\\components\\editor\\EditorToolbar.tsx",
+    "frontend\\src\\components\\editor\\FormatSettings.tsx",
+    "frontend\\src\\components\\editor\\InlineCompletion.tsx",
+    "frontend\\src\\components\\editor\\MonacoCodeEditor.tsx",
+    "frontend\\src\\components\\editor\\MonacoEditor.tsx",
+    "frontend\\src\\components\\editor\\SplitPane.tsx",
+    "frontend\\src\\components\\editor\\index.ts",
+    "frontend\\src\\components\\file-explorer\\FileExplorer.tsx",
+    "frontend\\src\\components\\file-explorer\\FileItem.tsx",
+    "frontend\\src\\components\\file-explorer\\FileList.tsx",
+    "frontend\\src\\components\\file-explorer\\SearchPanel.tsx",
+    "frontend\\src\\components\\file-explorer\\index.ts",
+    "frontend\\src\\components\\file-system\\index.ts",
+    "frontend\\src\\components\\forms\\FormField.tsx",
+    "frontend\\src\\components\\git\\GitSettings.tsx",
+    "frontend\\src\\components\\git\\GitStatusBar.tsx",
+    "frontend\\src\\components\\git\\SyncStatus.tsx",
+    "frontend\\src\\components\\git\\gitpanel.tsx",
+    "frontend\\src\\components\\git\\index.tsx",
+    "frontend\\src\\components\\index.ts",
+    "frontend\\src\\components\\layout\\ActivityBar.tsx",
+    "frontend\\src\\components\\layout\\Layout.tsx",
+    "frontend\\src\\components\\layout\\LayoutManager.tsx",
+    "frontend\\src\\components\\layout\\MainLayout.tsx",
+    "frontend\\src\\components\\layout\\NavigationBar.tsx",
+    "frontend\\src\\components\\layout\\RightSidebar.tsx",
+    "frontend\\src\\components\\layout\\StatusBar.tsx",
+    "frontend\\src\\components\\layout\\VSModernSidebar.tsx",
+    "frontend\\src\\components\\layout\\panels\\ChatPanel.tsx",
+    "frontend\\src\\components\\layout\\panels\\ExplorerPanel.tsx",
+    "frontend\\src\\components\\mcp\\MCPFileTree.tsx",
+    "frontend\\src\\components\\mcp\\MCPFixPanel.tsx",
+    "frontend\\src\\components\\mcp\\MCPIssuesList.tsx",
+    "frontend\\src\\components\\mcp\\MCPSettings.tsx",
+    "frontend\\src\\components\\project\\FileOperations.tsx",
+    "frontend\\src\\components\\project\\ProjectExplorer.tsx",
+    "frontend\\src\\components\\project\\ProjectManager.tsx",
+    "frontend\\src\\components\\project\\ProjectSettings.tsx",
+    "frontend\\src\\components\\project\\ProjectStatusBar.tsx",
+    "frontend\\src\\components\\project\\ProjectTemplatePicker.tsx",
+    "frontend\\src\\components\\search\\FileSearchModal.tsx",
+    "frontend\\src\\components\\search\\ProjectSearch.tsx",
+    "frontend\\src\\components\\search\\SearchModal.tsx",
+    "frontend\\src\\components\\search\\SearchReplace.tsx",
+    "frontend\\src\\components\\search\\index.ts",
+    "frontend\\src\\components\\sidebar\\Sidebar.tsx",
+    "frontend\\src\\components\\ui\\Breadcrumb.tsx",
+    "frontend\\src\\components\\ui\\Button.tsx",
+    "frontend\\src\\components\\ui\\Button\\Button.tsx",
+    "frontend\\src\\components\\ui\\ChatPane.tsx",
+    "frontend\\src\\components\\ui\\EmptyState.tsx",
+    "frontend\\src\\components\\ui\\EnhancedErrorBoundary.tsx",
+    "frontend\\src\\components\\ui\\Input.tsx",
+    "frontend\\src\\components\\ui\\LoadingSkeleton.tsx",
+    "frontend\\src\\components\\ui\\ModernFileTree.tsx",
+    "frontend\\src\\components\\ui\\NotificationSystem.tsx",
+    "frontend\\src\\components\\ui\\Skeleton.tsx",
+    "frontend\\src\\components\\ui\\ThemeCustomizer.tsx",
+    "frontend\\src\\components\\ui\\ThemeToggle.tsx",
+    "frontend\\src\\components\\ui\\badge.tsx",
+    "frontend\\src\\components\\ui\\checkbox.tsx",
+    "frontend\\src\\components\\ui\\design-system.tsx",
+    "frontend\\src\\components\\ui\\design-system\\Button.tsx",
+    "frontend\\src\\components\\ui\\design-system\\Card.tsx",
+    "frontend\\src\\components\\ui\\design-system\\Input.tsx",
+    "frontend\\src\\components\\ui\\index.ts",
+    "frontend\\src\\components\\ui\\label.tsx",
+    "frontend\\src\\components\\ui\\scroll-area.tsx",
+    "frontend\\src\\components\\ui\\select.tsx",
+    "frontend\\src\\components\\ui\\tabs.tsx",
+    "frontend\\src\\components\\ui\\use-toast.ts",
+    "frontend\\src\\contexts\\AIContext.tsx",
+    "frontend\\src\\contexts\\DebuggerContext.tsx",
+    "frontend\\src\\contexts\\GitContext.tsx",
+    "frontend\\src\\contexts\\MCPContext.tsx",
+    "frontend\\src\\contexts\\ProjectContext.tsx",
+    "frontend\\src\\contexts\\ThemeContext.tsx",
+    "frontend\\src\\contexts\\WebSocketContext.tsx",
+    "frontend\\src\\contexts\\WorkspaceContext.tsx",
+    "frontend\\src\\env.d.ts",
+    "frontend\\src\\features\\layout\\Layout.tsx",
+    "frontend\\src\\features\\topbar\\TopBar.tsx",
+    "frontend\\src\\hooks\\useAI.new.ts",
+    "frontend\\src\\hooks\\useAI.ts",
+    "frontend\\src\\hooks\\useAuth.ts",
+    "frontend\\src\\hooks\\useChat.ts",
+    "frontend\\src\\hooks\\useDebounce.ts",
+    "frontend\\src\\hooks\\useDeployment.ts",
+    "frontend\\src\\hooks\\useEditorDebugger.ts",
+    "frontend\\src\\hooks\\useFileWatcher.ts",
+    "frontend\\src\\hooks\\useGit.ts",
+    "frontend\\src\\hooks\\useGitWebSocket.ts",
+    "frontend\\src\\hooks\\useMCP.ts",
+    "frontend\\src\\hooks\\usePackageManager.ts",
+    "frontend\\src\\hooks\\useProject.ts",
+    "frontend\\src\\hooks\\useWebSocket.ts",
+    "frontend\\src\\index.tsx",
+    "frontend\\src\\lib\\utils.ts",
+    "frontend\\src\\main.tsx",
+    "frontend\\src\\pages\\AIPage.tsx",
+    "frontend\\src\\pages\\Dashboard.tsx",
+    "frontend\\src\\pages\\Editor.tsx",
+    "frontend\\src\\pages\\Login.tsx",
+    "frontend\\src\\pages\\LoginPage.tsx",
+    "frontend\\src\\pages\\NotFound.tsx",
+    "frontend\\src\\pages\\Settings.tsx",
+    "frontend\\src\\providers\\AppProvider.tsx",
+    "frontend\\src\\providers\\AppProviders.tsx",
+    "frontend\\src\\providers\\WebSocketProvider.tsx",
+    "frontend\\src\\react-app-env.d.ts",
+    "frontend\\src\\services\\aiService.ts",
+    "frontend\\src\\services\\apiClient.ts",
+    "frontend\\src\\services\\api\\base.ts",
+    "frontend\\src\\services\\api\\config.ts",
+    "frontend\\src\\services\\api\\debuggerApi.ts",
+    "frontend\\src\\services\\api\\endpoints.ts",
+    "frontend\\src\\services\\api\\errorHandler.ts",
+    "frontend\\src\\services\\api\\exampleService.ts",
+    "frontend\\src\\services\\api\\serviceFactory.ts",
+    "frontend\\src\\services\\auth.ts",
+    "frontend\\src\\services\\debuggerService.ts",
+    "frontend\\src\\services\\debugger\\DebuggerWebSocket.ts",
+    "frontend\\src\\services\\gitWebSocketService.ts",
+    "frontend\\src\\services\\index.ts",
+    "frontend\\src\\services\\websocket.ts",
+    "frontend\\src\\setupTests.ts",
+    "frontend\\src\\store\\aiSettingsSlice.ts",
+    "frontend\\src\\store\\aiSettingsStore.ts",
+    "frontend\\src\\store\\enhancedStore.ts",
+    "frontend\\src\\store\\gitSlice.ts",
+    "frontend\\src\\store\\index.ts",
+    "frontend\\src\\store\\rootReducer.ts",
+    "frontend\\src\\store\\slices\\authSlice.new.ts",
+    "frontend\\src\\store\\slices\\authSlice.ts",
+    "frontend\\src\\store\\slices\\debuggerSlice.ts",
+    "frontend\\src\\store\\slices\\editorSlice.ts",
+    "frontend\\src\\store\\store.ts",
+    "frontend\\src\\store\\useStore.ts",
+    "frontend\\src\\styles\\design-tokens.ts",
+    "frontend\\src\\templates\\projectTemplates.ts",
+    "frontend\\src\\theme.ts",
+    "frontend\\src\\theme\\GlobalStyles.tsx",
+    "frontend\\src\\theme\\ThemeProvider.tsx",
+    "frontend\\src\\theme\\theme.d.ts",
+    "frontend\\src\\theme\\theme.ts",
+    "frontend\\src\\theme\\themeUtils.ts",
+    "frontend\\src\\utils\\api.ts",
+    "frontend\\src\\utils\\cn.ts",
+    "frontend\\src\\utils\\fileUtils.ts",
+    "frontend\\src\\utils\\gitUtils.ts",
+    "frontend\\src\\utils\\markdown.ts",
+    "frontend\\src\\utils\\performance.ts",
+    "frontend\\src\\utils\\toast.ts",
+    "frontend\\tailwind.config.js",
+    "frontend\\vite.config.ts",
+    "venv\\Lib\\site-packages\\sklearn\\utils\\_repr_html\\estimator.js",
+    "venv\\Lib\\site-packages\\torch\\utils\\model_dump\\code.js",
+    "venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\emscripten_fetch_worker.js"
+  ],
+  "fileUsage": {
+    "backend\\middleware\\auth.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\routes\\ai.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\routes\\files.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\routes\\git.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\routes\\lint.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\server.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ar.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.da.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.de.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.du.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.es.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.fi.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.fr.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hi.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hu.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.hy.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.it.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ja.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.jp.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.kn.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ko.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.multi.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.nl.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.no.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.pt.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ro.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ru.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.sa.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.stemmer.support.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.sv.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.ta.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.te.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.th.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.tr.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.vi.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\lunr.zh.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\lunr-language\\tinyseg.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\lunr.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\main.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\contrib\\search\\templates\\search\\worker.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\base.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\bootstrap.bundle.min.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\mkdocs\\js\\darkmode.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\html5shiv.min.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\jquery-3.6.0.min.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\theme.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\mkdocs\\themes\\readthedocs\\js\\theme_extra.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\sklearn\\utils\\_repr_html\\estimator.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\torch\\utils\\model_dump\\code.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\emscripten_fetch_worker.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\websockets\\collaboration.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "backend\\websockets\\terminal.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\eslint.config.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\find-unused-files.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\jest.config.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\postcss.config.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\App.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AIChatPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AICodeEditor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AIDashboard.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AILayout.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AIPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AIProvider.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AIProviderSelector.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\AISettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\CompletionBubble.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ai\\ModelSelector.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\CommandPalette\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\AnalysisButton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\CollaborationPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\ConnectionStatus.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\DeployPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\ErrorBoundary.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\MCPPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\OutlineView.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\PanelContainer.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\PanelSwitcher.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\ProblemsPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\SecurityButton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\ShortcutsPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\SnippetLibrary.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\SyncStatus.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\TerminalPane.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\TerminalTabs.new.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\common\\TerminalTabs.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\DebugButton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\Debugger.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\DebuggerPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\DebuggerToolbar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\ExceptionsPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\debug\\WatchExpressions.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\DeploymentPanel\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\CodeEditor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\DebugMonacoEditor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\EditorSettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\EditorTabs.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\EditorToolbar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\FormatSettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\InlineCompletion.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\MonacoCodeEditor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\MonacoEditor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\editor\\SplitPane.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\EnhancedErrorBoundary.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\EnhancedFileTree.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ErrorBoundary.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-explorer\\FileExplorer.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-explorer\\FileItem.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-explorer\\FileList.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-explorer\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-explorer\\SearchPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\file-system\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\FileContextMenu.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\FileIcon.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\FileTabs.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\FolderPicker.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\forms\\FormField.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\git\\gitpanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\git\\GitSettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\git\\GitStatusBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\git\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\git\\SyncStatus.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Header\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\ActivityBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\Layout.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\LayoutManager.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\MainLayout.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\NavigationBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\panels\\ChatPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\panels\\ExplorerPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\RightSidebar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\StatusBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\layout\\VSModernSidebar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\mcp\\MCPFileTree.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\mcp\\MCPFixPanel.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\mcp\\MCPIssuesList.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\mcp\\MCPSettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\PackageManager\\index.new.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\PackageManager\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\PackageManager\\PackageManager.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\PackageManager\\temp_index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\FileOperations.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\ProjectExplorer.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\ProjectManager.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\ProjectSettings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\ProjectStatusBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\project\\ProjectTemplatePicker.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\search\\FileSearchModal.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\search\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\search\\ProjectSearch.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\search\\SearchModal.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\search\\SearchReplace.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Settings\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Settings\\SettingsButton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Settings\\SettingsModal.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Settings\\WorkspaceConfig.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\sidebar\\Sidebar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Toast\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\Toast\\Toast.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\badge.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\Breadcrumb.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\Button\\Button.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\Button.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\ChatPane.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\checkbox.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\design-system\\Button.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\design-system\\Card.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\design-system\\Input.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\design-system.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\EmptyState.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\EnhancedErrorBoundary.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\Input.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\label.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\LoadingSkeleton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\ModernFileTree.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\NotificationSystem.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\scroll-area.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\select.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\Skeleton.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\tabs.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\ThemeCustomizer.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\ThemeToggle.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\components\\ui\\use-toast.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\AIContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\DebuggerContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\GitContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\MCPContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\ProjectContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\ThemeContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\WebSocketContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\contexts\\WorkspaceContext.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\env.d.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\features\\layout\\Layout.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\features\\topbar\\TopBar.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useAI.new.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useAI.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useAuth.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useChat.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useDebounce.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useDeployment.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useEditorDebugger.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useFileWatcher.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useGit.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useGitWebSocket.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useMCP.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\usePackageManager.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useProject.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\hooks\\useWebSocket.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\index.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\lib\\utils.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\main.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\AIPage.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\Dashboard.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\Editor.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\Login.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\LoginPage.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\NotFound.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\pages\\Settings.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\providers\\AppProvider.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\providers\\AppProviders.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\providers\\WebSocketProvider.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\react-app-env.d.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\aiService.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\base.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\config.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\debuggerApi.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\endpoints.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\errorHandler.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\exampleService.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\api\\serviceFactory.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\apiClient.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\auth.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\debugger\\DebuggerWebSocket.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\debuggerService.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\gitWebSocketService.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\services\\websocket.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\setupTests.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\aiSettingsSlice.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\aiSettingsStore.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\enhancedStore.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\gitSlice.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\index.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\rootReducer.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\slices\\authSlice.new.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\slices\\authSlice.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\slices\\debuggerSlice.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\slices\\editorSlice.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\store.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\store\\useStore.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\styles\\design-tokens.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\templates\\projectTemplates.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme\\GlobalStyles.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme\\theme.d.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme\\theme.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme\\ThemeProvider.tsx": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme\\themeUtils.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\theme.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\api.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\cn.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\fileUtils.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\gitUtils.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\markdown.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\performance.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\src\\utils\\toast.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\tailwind.config.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "frontend\\vite.config.ts": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "venv\\Lib\\site-packages\\sklearn\\utils\\_repr_html\\estimator.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "venv\\Lib\\site-packages\\torch\\utils\\model_dump\\code.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    },
+    "venv\\Lib\\site-packages\\urllib3\\contrib\\emscripten\\emscripten_fetch_worker.js": {
+      "used": false,
+      "usedBy": [],
+      "isEntry": false
+    }
+  }
+}

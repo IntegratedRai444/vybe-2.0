@@ -4,25 +4,25 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
-        - staging
-        - production
+          - staging
+          - production
       version:
-        description: 'Image tag to deploy (default: latest)'
+        description: "Image tag to deploy (default: latest)"
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
 
 jobs:
   deploy:
     name: Deploy to ${{ github.event.inputs.environment || 'staging' }}
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'staging' }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,16 +39,16 @@ jobs:
         run: |
           # Set the Kubernetes context
           kubectl config set-context --current --namespace=$KUBE_NAMESPACE
-          
+
           # Apply Kubernetes manifests
           kubectl apply -f k8s/$KUBE_NAMESPACE/
-          
+
           # Update the image
           kubectl set image deployment/vybe-$KUBE_NAMESPACE vybe=ghcr.io/your-org/vybe:$IMAGE_TAG -n $KUBE_NAMESPACE
-          
+
           # Wait for rollout to complete
           kubectl rollout status deployment/vybe-$KUBE_NAMESPACE -n $KUBE_NAMESPACE
-          
+
           # Get service info
           echo "Deployment to $KUBE_NAMESPACE complete!"
           kubectl get services -n $KUBE_NAMESPACE

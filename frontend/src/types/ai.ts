@@ -1,7 +1,7 @@
-import { ProviderType } from '../components/ai/AIProviderSelector';
+import { ProviderType } from "../components/ai/AIProviderSelector";
 
 export interface AIMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   id: string;
   timestamp: number;
@@ -62,7 +62,7 @@ export interface AIConfig {
   topP: number;
   frequencyPenalty: number;
   presencePenalty: number;
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
 }
 
 export interface Conversation {

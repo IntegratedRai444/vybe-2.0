@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
-import { useTheme } from '../theme/ThemeProvider';
-import { FiZap, FiCheck, FiX } from 'react-icons/fi';
-import * as monaco from 'monaco-editor';
+import React, { useRef, useState } from "react";
+import Editor, { OnMount } from "@monaco-editor/react";
+import { useTheme } from "../../theme/ThemeProvider";
+import { FiZap, FiCheck, FiX } from "react-icons/fi";
+import * as monaco from "monaco-editor";
 
 interface CursorPosition {
   lineNumber: number;
@@ -22,7 +22,7 @@ interface AICodeEditorProps {
 export const AICodeEditor: React.FC<AICodeEditorProps> = ({
   value,
   onChange,
-  language = 'typescript',
+  language = "typescript",
   path,
   onSave,
   cursorPosition,
@@ -30,7 +30,9 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
 }) => {
   const { theme } = useTheme();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const [suggestions, setSuggestions] = useState<Array<{id: string; text: string}>>([]);
+  const [suggestions, setSuggestions] = useState<
+    Array<{ id: string; text: string }>
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const decorationIds = useRef<string[]>([]);
 
@@ -45,18 +47,19 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
 
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
-    
+
     // Add command for AI suggestions
     editor.addAction({
-      id: 'ai-suggest',
-      label: 'Get AI Suggestions',
+      id: "ai-suggest",
+      label: "Get AI Suggestions",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space],
-      contextMenuGroupId: 'ai',
+      contextMenuGroupId: "ai",
       contextMenuOrder: 1,
       run: async () => {
         const selection = editor.getSelection();
         if (selection) {
-          const selectedText = editor.getModel()?.getValueInRange(selection) || '';
+          const selectedText =
+            editor.getModel()?.getValueInRange(selection) || "";
           await getAISuggestions(selectedText, selection);
         }
       },
@@ -64,9 +67,8 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
 
     // Add command for saving
     if (onSave) {
-      editor.addCommand(
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
-        () => onSave()
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () =>
+        onSave(),
       );
     }
   };
@@ -77,18 +79,18 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
       // Call your AI API here
       // const response = await fetchAICompletion(selectedText);
       // setSuggestions(response.suggestions);
-      
+
       // Mock response for now
       setTimeout(() => {
         setSuggestions([
-          { id: '1', text: '// TODO: Implement this function' },
-          { id: '2', text: '// FIXME: Handle edge cases' },
-          { id: '3', text: '// OPTIMIZE: Improve performance' },
+          { id: "1", text: "// TODO: Implement this function" },
+          { id: "2", text: "// FIXME: Handle edge cases" },
+          { id: "3", text: "// OPTIMIZE: Improve performance" },
         ]);
         setIsLoading(false);
       }, 500);
     } catch (error) {
-      console.error('Error getting AI suggestions:', error);
+      console.error("Error getting AI suggestions:", error);
       setIsLoading(false);
     }
   };
@@ -96,7 +98,7 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
   const applySuggestion = (suggestion: string) => {
     if (editorRef.current) {
       const selection = editorRef.current.getSelection();
-      editorRef.current.executeEdits('ai-suggestion', [
+      editorRef.current.executeEdits("ai-suggestion", [
         {
           range: selection,
           text: suggestion,
@@ -113,14 +115,14 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
         height="100%"
         defaultLanguage={language}
         value={value}
-        onChange={(value) => onChange(value || '')}
+        onChange={(value) => onChange(value || "")}
         onMount={handleEditorDidMount}
-        theme={theme.colors.background === '#0f172a' ? 'vs-dark' : 'light'}
+        theme={theme.colors.background === "#0f172a" ? "vs-dark" : "light"}
         path={path}
         options={{
           minimap: { enabled: true },
           fontSize: 14,
-          wordWrap: 'on',
+          wordWrap: "on",
           automaticLayout: true,
           tabSize: 2,
           suggestOnTriggerCharacters: true,
@@ -131,14 +133,14 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
           },
         }}
       />
-      
+
       {/* AI Suggestions Panel */}
       {suggestions.length > 0 && (
         <div className="absolute bottom-4 right-4 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center">
             <FiZap className="text-yellow-500 mr-2" />
             <span className="font-medium">AI Suggestions</span>
-            <button 
+            <button
               onClick={() => setSuggestions([])}
               className="ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
@@ -147,18 +149,20 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
           </div>
           <div className="max-h-60 overflow-y-auto">
             {suggestions.map((suggestion) => (
-              <div 
+              <div
                 key={suggestion.id}
                 className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700"
                 onClick={() => applySuggestion(suggestion.text)}
               >
                 <div className="flex items-start">
                   <div className="flex-1 font-mono text-sm">
-                    {suggestion.text.split('\n').map((line, i) => (
-                      <div key={i} className="whitespace-pre">{line}</div>
+                    {suggestion.text.split("\n").map((line, i) => (
+                      <div key={i} className="whitespace-pre">
+                        {line}
+                      </div>
                     ))}
                   </div>
-                  <button 
+                  <button
                     className="text-green-500 hover:text-green-600 ml-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -173,7 +177,7 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
           </div>
         </div>
       )}
-      
+
       {/* Loading Indicator */}
       {isLoading && (
         <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md flex items-center">
@@ -184,3 +188,6 @@ export const AICodeEditor: React.FC<AICodeEditorProps> = ({
     </div>
   );
 };
+
+// Exports
+export { AICodeEditor };

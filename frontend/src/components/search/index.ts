@@ -1,5 +1,6 @@
-// Re-export all search-related components
+// Auto-generated file - DO NOT EDIT
+
 export * from './FileSearchModal';
-export * from './SearchModal';
 export * from './ProjectSearch';
+export * from './SearchModal';
 export * from './SearchReplace';

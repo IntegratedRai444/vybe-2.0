@@ -64,13 +64,25 @@ export const ThemeToggle: React.FC = () => {
 
     // Apply CSS variables
     document.documentElement.style.setProperty("--color-bg", colors.bg);
-    document.documentElement.style.setProperty("--color-bg-secondary", colors.bgSecondary);
-    document.documentElement.style.setProperty("--color-bg-tertiary", colors.bgTertiary);
+    document.documentElement.style.setProperty(
+      "--color-bg-secondary",
+      colors.bgSecondary,
+    );
+    document.documentElement.style.setProperty(
+      "--color-bg-tertiary",
+      colors.bgTertiary,
+    );
     document.documentElement.style.setProperty("--color-text", colors.text);
-    document.documentElement.style.setProperty("--color-text-secondary", colors.textSecondary);
+    document.documentElement.style.setProperty(
+      "--color-text-secondary",
+      colors.textSecondary,
+    );
     document.documentElement.style.setProperty("--color-border", colors.border);
     document.documentElement.style.setProperty("--color-accent", colors.accent);
-    document.documentElement.style.setProperty("--color-accent-hover", colors.accentHover);
+    document.documentElement.style.setProperty(
+      "--color-accent-hover",
+      colors.accentHover,
+    );
 
     // Save to localStorage
     localStorage.setItem("vybe-theme", theme);
@@ -91,7 +103,12 @@ export const ThemeToggle: React.FC = () => {
   const getIcon = () => {
     if (theme === "dark") {
       return (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -103,7 +120,12 @@ export const ThemeToggle: React.FC = () => {
     }
     if (theme === "light") {
       return (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -114,7 +136,12 @@ export const ThemeToggle: React.FC = () => {
       );
     }
     return (
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -141,14 +168,18 @@ export const ThemeToggle: React.FC = () => {
         <div className="relative">
           {getIcon()}
           {/* Theme indicator dot */}
-          <div className={`absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-200 ${
-            theme === "dark" ? "bg-blue-500" : 
-            theme === "light" ? "bg-yellow-500" : 
-            "bg-purple-500"
-          }`}></div>
+          <div
+            className={`absolute -top-1 -right-1 w-2 h-2 rounded-full transition-all duration-200 ${
+              theme === "dark"
+                ? "bg-blue-500"
+                : theme === "light"
+                  ? "bg-yellow-500"
+                  : "bg-purple-500"
+            }`}
+          ></div>
         </div>
       </button>
-      
+
       {/* Tooltip */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-slate-200 text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap">
         {getLabel()} Theme
@@ -193,3 +224,6 @@ export const useTheme = () => {
     colors: themes[activeTheme],
   };
 };
+
+// Exports
+export { ThemeToggle };

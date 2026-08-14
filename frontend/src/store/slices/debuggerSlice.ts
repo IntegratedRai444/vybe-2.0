@@ -1,5 +1,5 @@
 // frontend/src/store/slices/debuggerSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Types
 export interface Breakpoint {
@@ -40,13 +40,13 @@ export interface DebugSession {
   id: string;
   name: string;
   type: string;
-  request: 'launch' | 'attach' | 'attachForSuspendedLaunch';
+  request: "launch" | "attach" | "attachForSuspendedLaunch";
   program?: string;
   args?: string[];
   cwd?: string;
   env?: Record<string, string>;
   stopOnEntry?: boolean;
-  console?: 'internalConsole' | 'integratedTerminal' | 'externalTerminal';
+  console?: "internalConsole" | "integratedTerminal" | "externalTerminal";
 }
 
 export interface DebuggerState {
@@ -56,14 +56,14 @@ export interface DebuggerState {
   isPaused: boolean;
   currentSessionId: string | null;
   sessions: Record<string, DebugSession>;
-  
+
   // Debug data
   breakpoints: Record<string, Breakpoint[]>;
   callStack: StackFrame[];
   variables: Record<number, Variable[]>;
   currentThreadId: number | null;
   currentFrameId: number | null;
-  
+
   // Output and errors
   output: string[];
   error: string | null;
@@ -87,7 +87,7 @@ const initialState: DebuggerState = {
 };
 
 const debuggerSlice = createSlice({
-  name: 'debugger',
+  name: "debugger",
   initialState,
   reducers: {
     // Session Management
@@ -100,15 +100,15 @@ const debuggerSlice = createSlice({
       state.isPaused = false;
       state.error = null;
     },
-    
+
     stopDebugSession: (state, action: PayloadAction<string>) => {
       const sessionId = action.payload;
       delete state.sessions[sessionId];
-      
+
       if (state.currentSessionId === sessionId) {
         state.currentSessionId = Object.keys(state.sessions)[0] || null;
       }
-      
+
       if (Object.keys(state.sessions).length === 0) {
         state.isActive = false;
         state.isRunning = false;
@@ -116,16 +116,16 @@ const debuggerSlice = createSlice({
         state.currentSessionId = null;
       }
     },
-    
+
     // Breakpoints
     setBreakpoints: (
       state,
-      action: PayloadAction<{ filePath: string; breakpoints: Breakpoint[] }>
+      action: PayloadAction<{ filePath: string; breakpoints: Breakpoint[] }>,
     ) => {
       const { filePath, breakpoints } = action.payload;
       state.breakpoints[filePath] = breakpoints;
     },
-    
+
     // Execution Control
     continueExecution: (state) => {
       state.isPaused = false;
@@ -134,30 +134,30 @@ const debuggerSlice = createSlice({
       state.callStack = [];
       state.variables = {};
     },
-    
+
     pauseExecution: (state) => {
       state.isPaused = true;
       state.isRunning = false;
     },
-    
+
     stepOver: (state) => {
       // The actual step over logic is handled by the debugger service
       state.isRunning = true;
       state.isPaused = false;
     },
-    
+
     stepInto: (state) => {
       // The actual step into logic is handled by the debugger service
       state.isRunning = true;
       state.isPaused = false;
     },
-    
+
     stepOut: (state) => {
       // The actual step out logic is handled by the debugger service
       state.isRunning = true;
       state.isPaused = false;
     },
-    
+
     // Call Stack and Variables
     updateCallStack: (state, action: PayloadAction<StackFrame[]>) => {
       state.callStack = action.payload;
@@ -165,16 +165,19 @@ const debuggerSlice = createSlice({
         state.currentFrameId = action.payload[0].id;
       }
     },
-    
+
     setCurrentFrame: (state, action: PayloadAction<number | null>) => {
       state.currentFrameId = action.payload;
     },
-    
-    updateVariables: (state, action: PayloadAction<{ reference: number; variables: Variable[] }>) => {
+
+    updateVariables: (
+      state,
+      action: PayloadAction<{ reference: number; variables: Variable[] }>,
+    ) => {
       const { reference, variables } = action.payload;
       state.variables[reference] = variables;
     },
-    
+
     // Output and Errors
     appendOutput: (state, action: PayloadAction<string>) => {
       state.output.push(action.payload);
@@ -183,16 +186,16 @@ const debuggerSlice = createSlice({
         state.output = state.output.slice(-1000);
       }
     },
-    
+
     clearOutput: (state) => {
       state.output = [];
     },
-    
+
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
       state.loading = false;
     },
-    
+
     // Loading State
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

@@ -4,6 +4,92 @@
 
 Vybe is a complete AI-powered development environment built with React, FastAPI, and Ollama. It combines the power of local AI models with advanced code analysis and auto-debugging capabilities.
 
+## 📁 Project Structure
+
+```
+vybe-2.0/
+├── backend/               # Backend services and API
+│   ├── ai/               # AI model integrations
+│   ├── api/              # API endpoints
+│   ├── services/         # Business logic
+│   └── ...
+├── frontend/             # Frontend application
+│   ├── public/           # Static files
+│   └── src/              # Source code
+│       ├── components/   # Reusable UI components
+│       ├── pages/        # Page components
+│       └── ...
+├── config/               # Configuration files
+│   ├── alembic.ini       # Database migrations
+│   └── ...
+├── docs/                 # Documentation
+│   ├── architecture/     # Architecture decisions
+│   └── guides/           # How-to guides
+├── scripts/              # Utility scripts
+│   └── deployment/       # Deployment scripts
+└── ...
+```
+
+## 📚 Documentation
+
+- [Getting Started](/docs/QUICK_START.md)
+- [Architecture Overview](/docs/ARCHITECTURE.md)
+- [API Documentation](/docs/API.md)
+- [Development Guide](/docs/DEVELOPMENT.md)
+- [Deployment Guide](/docs/DEPLOYMENT.md)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.9+
+- Node.js 16+
+- Docker (optional)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/vybe-2.0.git
+   cd vybe-2.0
+   ```
+
+2. Set up the backend:
+   ```bash
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+3. Set up the frontend:
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+
+4. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Update the .env file with your configuration
+   ```
+
+5. Start the development servers:
+   ```bash
+   # In the backend directory
+   uvicorn main:app --reload
+   
+   # In the frontend directory
+   npm run dev
+   ```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ---
 
 ## ✨ **Features**

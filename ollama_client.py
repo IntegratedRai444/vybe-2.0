@@ -1,6 +1,8 @@
 # ollama_client.py
 import json
+
 import requests
+
 from config import OLLAMA_HOST
 
 _HEADERS = {"Content-Type": "application/json"}
@@ -18,7 +20,9 @@ def _post(endpoint: str, payload: dict):
         raise Exception("Ollama request timed out. The model might be loading.")
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 404:
-            raise Exception(f"Model not found. Please run: ollama pull {payload.get('model', 'llama2')}")
+            raise Exception(
+                f"Model not found. Please run: ollama pull {payload.get('model', 'llama2')}"
+            )
         else:
             raise Exception(f"Ollama error: {e.response.text}")
     except Exception as e:

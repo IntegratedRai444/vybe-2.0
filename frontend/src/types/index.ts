@@ -1,5 +1,5 @@
 // File system types
-export type FileType = 'file' | 'directory';
+export type FileType = "file" | "directory";
 
 export interface FileSystemItem {
   type: FileType;
@@ -58,9 +58,9 @@ export interface LayoutState {
   };
   editor: {
     splitView: boolean;
-    lineNumbers: 'on' | 'off' | 'relative';
+    lineNumbers: "on" | "off" | "relative";
     zoomLevel: number;
-    renderWhitespace: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
+    renderWhitespace: "none" | "boundary" | "selection" | "trailing" | "all";
     theme: string;
   };
 }
@@ -124,17 +124,25 @@ export interface EditorSettings {
   lineHeight: number;
   tabSize: number;
   insertSpaces: boolean;
-  wordWrap: 'on' | 'off' | 'wordWrapColumn' | 'bounded';
+  wordWrap: "on" | "off" | "wordWrapColumn" | "bounded";
   minimap: {
     enabled: boolean;
-    showSlider: 'always' | 'mouseover';
+    showSlider: "always" | "mouseover";
   };
-  lineNumbers: 'on' | 'off' | 'relative';
-  renderWhitespace: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
-  renderLineHighlight: 'all' | 'line' | 'none' | 'gutter';
-  autoClosingBrackets: 'always' | 'languageDefined' | 'beforeWhitespace' | 'never';
-  autoClosingQuotes: 'always' | 'languageDefined' | 'beforeWhitespace' | 'never';
-  autoIndent: 'none' | 'keep' | 'brackets' | 'advanced' | 'full';
+  lineNumbers: "on" | "off" | "relative";
+  renderWhitespace: "none" | "boundary" | "selection" | "trailing" | "all";
+  renderLineHighlight: "all" | "line" | "none" | "gutter";
+  autoClosingBrackets:
+    | "always"
+    | "languageDefined"
+    | "beforeWhitespace"
+    | "never";
+  autoClosingQuotes:
+    | "always"
+    | "languageDefined"
+    | "beforeWhitespace"
+    | "never";
+  autoIndent: "none" | "keep" | "brackets" | "advanced" | "full";
   formatOnPaste: boolean;
   formatOnType: boolean;
   formatOnSave: boolean;
@@ -173,14 +181,14 @@ export interface TerminalSettings {
   fontFamily: string;
   lineHeight: number;
   cursorBlink: boolean;
-  cursorStyle: 'block' | 'underline' | 'bar';
+  cursorStyle: "block" | "underline" | "bar";
   cursorWidth: number;
   drawBoldTextInBrightColors: boolean;
   fastScrollSensitivity: number;
   fontLigatures: boolean;
   letterSpacing: number;
   lineHeight: number;
-  rendererType: 'canvas' | 'dom';
+  rendererType: "canvas" | "dom";
   scrollback: number;
   scrollSensitivity: number;
   theme: {
@@ -212,7 +220,7 @@ export interface TerminalSettings {
 export interface ProjectSettings {
   name: string;
   rootPath: string;
-  type: 'web' | 'node' | 'python' | 'go' | 'rust' | 'other';
+  type: "web" | "node" | "python" | "go" | "rust" | "other";
   buildCommand?: string;
   startCommand?: string;
   testCommand?: string;
@@ -229,37 +237,48 @@ export interface ProjectSettings {
 // User settings
 export interface UserSettings {
   appearance: {
-    theme: 'system' | 'light' | 'dark';
-    colorScheme: 'system' | 'light' | 'dark';
+    theme: "system" | "light" | "dark";
+    colorScheme: "system" | "light" | "dark";
     fontSize: number;
     fontFamily: string;
     lineHeight: number;
     tabSize: number;
     insertSpaces: boolean;
-    wordWrap: 'on' | 'off' | 'wordWrapColumn' | 'bounded';
+    wordWrap: "on" | "off" | "wordWrapColumn" | "bounded";
     minimap: {
       enabled: boolean;
-      showSlider: 'always' | 'mouseover';
+      showSlider: "always" | "mouseover";
     };
   };
   editor: EditorSettings;
   terminal: TerminalSettings;
   files: {
-    autoSave: 'off' | 'afterDelay' | 'onFocusChange' | 'onWindowChange';
+    autoSave: "off" | "afterDelay" | "onFocusChange" | "onWindowChange";
     autoSaveDelay: number;
-    hotExit: 'off' | 'onExit' | 'onExitAndWindowClose';
+    hotExit: "off" | "onExit" | "onExitAndWindowClose";
     restoreWindows: boolean;
     restoreWindowsCount: number;
     defaultFileEncoding: string;
-    encoding: 'utf8' | 'utf16le' | 'latin1' | 'ascii' | 'base64' | 'hex' | 'binary';
-    eol: '\n' | '\r\n';
+    encoding:
+      | "utf8"
+      | "utf16le"
+      | "latin1"
+      | "ascii"
+      | "base64"
+      | "hex"
+      | "binary";
+    eol: "\n" | "\r\n";
     trimTrailingWhitespace: boolean;
     insertFinalNewline: boolean;
     trimFinalNewlines: boolean;
     autoGuessEncoding: boolean;
   };
   workbench: {
-    startupEditor: 'welcomePage' | 'newUntitledFile' | 'welcomePageInEmptyWorkbench' | 'none';
+    startupEditor:
+      | "welcomePage"
+      | "newUntitledFile"
+      | "welcomePageInEmptyWorkbench"
+      | "none";
     enablePreview: boolean;
     enablePreviewFromQuickOpen: boolean;
     enablePreviewFromCodeNavigation: boolean;
@@ -270,7 +289,7 @@ export interface UserSettings {
     };
     tree: {
       indent: number;
-      renderIndentGuides: 'none' | 'onHover' | 'always';
+      renderIndentGuides: "none" | "onHover" | "always";
       showIcons: boolean;
       showDecorations: boolean;
       showErrors: boolean;
@@ -299,14 +318,17 @@ export interface UserSettings {
       wordWrap: boolean;
       scrollback: number;
     };
-    openDebug: 'neverOpen' | 'openOnSessionStart' | 'openOnFirstSessionStart';
-    showInStatusBar: 'never' | 'always' | 'onFirstSessionStart';
+    openDebug: "neverOpen" | "openOnSessionStart" | "openOnFirstSessionStart";
+    showInStatusBar: "never" | "always" | "onFirstSessionStart";
     allowBreakpointsEverywhere: boolean;
     showSubSessionsInToolBar: boolean;
     showInlineBreakpointCandidates: boolean;
     showBreakpointsInOverviewRuler: boolean;
     showInlineValues: boolean;
-    internalConsoleOptions: 'neverOpen' | 'openOnSessionStart' | 'openOnFirstSessionStart';
+    internalConsoleOptions:
+      | "neverOpen"
+      | "openOnSessionStart"
+      | "openOnFirstSessionStart";
     console: {
       closeOnEnd: boolean;
       fontSize: number;
@@ -317,47 +339,101 @@ export interface UserSettings {
     };
     toolbar: {
       show: boolean;
-      location: 'floating' | 'docked' | 'hidden';
+      location: "floating" | "docked" | "hidden";
     };
   };
   terminal: {
     integrated: {
       fontFamily: string;
       fontSize: number;
-      fontWeight: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-      fontWeightBold: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+      fontWeight:
+        | "normal"
+        | "bold"
+        | "100"
+        | "200"
+        | "300"
+        | "400"
+        | "500"
+        | "600"
+        | "700"
+        | "800"
+        | "900";
+      fontWeightBold:
+        | "normal"
+        | "bold"
+        | "100"
+        | "200"
+        | "300"
+        | "400"
+        | "500"
+        | "600"
+        | "700"
+        | "800"
+        | "900";
       lineHeight: number;
       letterSpacing: number;
       cursorBlinking: boolean;
-      cursorStyle: 'block' | 'underline' | 'bar' | 'line';
+      cursorStyle: "block" | "underline" | "bar" | "line";
       cursorWidth: number;
       drawBoldTextInBrightColors: boolean;
       fastScrollSensitivity: number;
       fontLigatures: boolean;
-      rendererType: 'canvas' | 'dom' | 'experimentalWebgl';
+      rendererType: "canvas" | "dom" | "experimentalWebgl";
       scrollback: number;
       wordSeparator: string;
-      rightClickBehavior: 'default' | 'copyPaste' | 'selectWord' | 'selectWordAndCopy';
+      rightClickBehavior:
+        | "default"
+        | "copyPaste"
+        | "selectWord"
+        | "selectWordAndCopy";
       copyOnSelection: boolean;
-      cursorInactiveStyle: 'outline' | 'block' | 'bar' | 'underline' | 'line' | 'none';
+      cursorInactiveStyle:
+        | "outline"
+        | "block"
+        | "bar"
+        | "underline"
+        | "line"
+        | "none";
       cursorInactiveBackground: string;
       cursorInactiveForeground: string;
       cursorInactiveOpacity: number;
-      cursorStyleInactive: 'outline' | 'block' | 'bar' | 'underline' | 'line' | 'none';
+      cursorStyleInactive:
+        | "outline"
+        | "block"
+        | "bar"
+        | "underline"
+        | "line"
+        | "none";
       cursorWidthInactive: number;
       drawBoldTextInBrightColors: boolean;
       fastScrollSensitivity: number;
       fontLigatures: boolean;
-      rendererType: 'canvas' | 'dom' | 'experimentalWebgl';
+      rendererType: "canvas" | "dom" | "experimentalWebgl";
       scrollback: number;
       wordSeparator: string;
-      rightClickBehavior: 'default' | 'copyPaste' | 'selectWord' | 'selectWordAndCopy';
+      rightClickBehavior:
+        | "default"
+        | "copyPaste"
+        | "selectWord"
+        | "selectWordAndCopy";
       copyOnSelection: boolean;
-      cursorInactiveStyle: 'outline' | 'block' | 'bar' | 'underline' | 'line' | 'none';
+      cursorInactiveStyle:
+        | "outline"
+        | "block"
+        | "bar"
+        | "underline"
+        | "line"
+        | "none";
       cursorInactiveBackground: string;
       cursorInactiveForeground: string;
       cursorInactiveOpacity: number;
-      cursorStyleInactive: 'outline' | 'block' | 'bar' | 'underline' | 'line' | 'none';
+      cursorStyleInactive:
+        | "outline"
+        | "block"
+        | "bar"
+        | "underline"
+        | "line"
+        | "none";
       cursorWidthInactive: number;
     };
   };
@@ -374,7 +450,7 @@ export interface UserSettings {
     showRecommendationsOnlyOnDemand: boolean;
   };
   update: {
-    mode: 'none' | 'manual' | 'start' | 'default';
+    mode: "none" | "manual" | "start" | "default";
     enableWindowsBackgroundUpdates: boolean;
     showReleaseNotes: boolean;
   };
@@ -404,7 +480,7 @@ export interface UserSettings {
   };
   window: {
     title: string;
-    titleBarStyle: 'native' | 'custom';
+    titleBarStyle: "native" | "custom";
     nativeTabs: boolean;
     nativeFullScreen: boolean;
     autoLockCommandPalette: boolean;
@@ -412,7 +488,7 @@ export interface UserSettings {
     closeWhenEmpty: boolean;
     commandPalettePreserveInput: boolean;
     customMenuBarAltFocus: boolean;
-    dialogStyle: 'native' | 'custom';
+    dialogStyle: "native" | "custom";
     doubleClickIconToClose: boolean;
     enableMenuBarMnemonics: boolean;
     fullscreen: {
@@ -437,12 +513,12 @@ export interface UserSettings {
       hideZenModeBreadcrumbs: boolean;
     };
     fullscreenWarning: boolean;
-    menuBarVisibility: 'default' | 'visible' | 'toggle' | 'hidden';
+    menuBarVisibility: "default" | "visible" | "toggle" | "hidden";
     nativeFullScreen: boolean;
-    openFilesInNewWindow: 'on' | 'off' | 'default';
-    openFoldersInNewWindow: 'on' | 'off' | 'default';
-    openWithoutArgumentsInNewWindow: 'on' | 'off';
-    restoreWindows: 'all' | 'folders' | 'one' | 'none';
+    openFilesInNewWindow: "on" | "off" | "default";
+    openFoldersInNewWindow: "on" | "off" | "default";
+    openWithoutArgumentsInNewWindow: "on" | "off";
+    restoreWindows: "all" | "folders" | "one" | "none";
     restoreFullscreen: boolean;
     showDevToolsOnStart: boolean;
     showFullPathInTitle: boolean;
@@ -452,7 +528,7 @@ export interface UserSettings {
     showWindowControls: boolean;
     smoothScrollingWorkaround: boolean;
     title: string;
-    titleBarStyle: 'native' | 'custom';
+    titleBarStyle: "native" | "custom";
     zoomLevel: number;
   };
   workbench: {
@@ -470,18 +546,42 @@ export interface UserSettings {
     autoDetectTheme: boolean;
     colorCustomizations: Record<string, any>;
     editor: {
-      autoSave: 'off' | 'afterDelay' | 'onFocusChange' | 'onWindowChange';
+      autoSave: "off" | "afterDelay" | "onFocusChange" | "onWindowChange";
       autoSaveDelay: number;
-      cursorBlinking: 'blink' | 'smooth' | 'phase' | 'expand' | 'solid';
+      cursorBlinking: "blink" | "smooth" | "phase" | "expand" | "solid";
       cursorSmoothCaretAnimation: boolean;
-      cursorStyle: 'line' | 'block' | 'underline' | 'line-thin' | 'block-outline' | 'underline-thin' | 'block-outline' | 'underline-thin';
+      cursorStyle:
+        | "line"
+        | "block"
+        | "underline"
+        | "line-thin"
+        | "block-outline"
+        | "underline-thin"
+        | "block-outline"
+        | "underline-thin";
       cursorWidth: number;
       fontFamily: string;
       fontSize: number;
-      fontWeight: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+      fontWeight:
+        | "normal"
+        | "bold"
+        | "100"
+        | "200"
+        | "300"
+        | "400"
+        | "500"
+        | "600"
+        | "700"
+        | "800"
+        | "900";
       letterSpacing: number;
       lineHeight: number;
-      lineNumbers: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
+      lineNumbers:
+        | "on"
+        | "off"
+        | "relative"
+        | "interval"
+        | ((lineNumber: number) => string);
       lineNumbersMinChars: number;
       linkedEditing: boolean;
       matchBrackets: boolean;
@@ -490,13 +590,13 @@ export interface UserSettings {
         maxColumn: number;
         renderCharacters: boolean;
         scale: number;
-        showSlider: 'always' | 'mouseover';
-        side: 'right' | 'left';
-        size: 'proportional' | 'fill' | 'fit';
+        showSlider: "always" | "mouseover";
+        side: "right" | "left";
+        size: "proportional" | "fill" | "fit";
       };
       mouseWheelScrollSensitivity: number;
       mouseWheelZoom: boolean;
-      multiCursorModifier: 'altKey' | 'ctrlKey' | 'metaKey';
+      multiCursorModifier: "altKey" | "ctrlKey" | "metaKey";
       occurrencesHighlight: boolean;
       overviewRulerBorder: boolean;
       padding: {
@@ -504,14 +604,14 @@ export interface UserSettings {
         bottom: number;
       };
       quickSuggestions: {
-        comments: boolean | 'inline' | 'above' | 'below';
-        strings: boolean | 'inline' | 'above' | 'below';
-        other: boolean | 'inline' | 'above' | 'below';
+        comments: boolean | "inline" | "above" | "below";
+        strings: boolean | "inline" | "above" | "below";
+        other: boolean | "inline" | "above" | "below";
       };
       renderControlCharacters: boolean;
       renderIndentGuides: boolean;
-      renderLineHighlight: 'all' | 'line' | 'none' | 'gutter';
-      renderWhitespace: 'none' | 'boundary' | 'selection' | 'trailing' | 'all';
+      renderLineHighlight: "all" | "line" | "none" | "gutter";
+      renderWhitespace: "none" | "boundary" | "selection" | "trailing" | "all";
       roundedSelection: boolean;
       scrollBeyondLastColumn: number;
       scrollBeyondLastLine: boolean;
@@ -519,23 +619,23 @@ export interface UserSettings {
         alwaysConsumeMouseWheel: boolean;
         arrowSize: number;
         handleMouseWheel: boolean;
-        horizontal: 'auto' | 'visible' | 'hidden' | 'auto';
+        horizontal: "auto" | "visible" | "hidden" | "auto";
         horizontalScrollbarSize: number;
         scrollByPage: boolean;
         useShadows: boolean;
-        vertical: 'auto' | 'visible' | 'hidden' | 'auto';
+        vertical: "auto" | "visible" | "hidden" | "auto";
         verticalScrollbarSize: number;
       };
       selectOnLineNumbers: boolean;
       selectionClipboard: boolean;
       selectionHighlight: boolean;
-      showFoldingControls: 'always' | 'mouseover';
+      showFoldingControls: "always" | "mouseover";
       showUnused: boolean;
       smoothScrolling: boolean;
       suggest: {
         filterGraceful: boolean;
         hideIcons: boolean;
-        insertMode: 'insert' | 'replace';
+        insertMode: "insert" | "replace";
         localityBonus: boolean;
         maxVisibleSuggestions: number;
         onTriggerCharacters: boolean;
@@ -571,14 +671,19 @@ export interface UserSettings {
         snippetsPreventQuickSuggestions: boolean;
       };
       suggestOnTriggerCharacters: boolean;
-      tabCompletion: 'on' | 'off' | 'onlySnippets';
+      tabCompletion: "on" | "off" | "onlySnippets";
       tabSize: number;
       useTabStops: boolean;
-      wordBasedSuggestions: 'off' | 'matchingDocuments' | 'matchingDocumentSymbols' | 'allDocuments' | 'allDocumentSymbols';
+      wordBasedSuggestions:
+        | "off"
+        | "matchingDocuments"
+        | "matchingDocumentSymbols"
+        | "allDocuments"
+        | "allDocumentSymbols";
       wordSeparators: string;
-      wordWrap: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
+      wordWrap: "off" | "on" | "wordWrapColumn" | "bounded";
       wordWrapColumn: number;
-      wrappingIndent: 'none' | 'same' | 'indent' | 'deepIndent';
+      wrappingIndent: "none" | "same" | "indent" | "deepIndent";
     };
   };
 }

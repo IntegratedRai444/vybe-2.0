@@ -15,10 +15,9 @@ NVIDIA_MODEL_CONFIGS = {
             "temperature": 0.2,
             "top_p": 0.7,
             "max_tokens": 1024,
-            "stream": True
-        }
+            "stream": True,
+        },
     },
-    
     # Kimi K2 Instruct
     "moonshotai/kimi-k2-instruct-0905": {
         "api_key_env": "NVIDIA_KIMI_API_KEY",  # Environment variable name
@@ -27,10 +26,9 @@ NVIDIA_MODEL_CONFIGS = {
             "temperature": 0.6,
             "top_p": 0.9,
             "max_tokens": 4096,
-            "stream": True
-        }
+            "stream": True,
+        },
     },
-    
     # Add more models as needed
     "nv-ai-foundation/mistral-7b-instruct": {
         "api_key_env": "NVIDIA_MISTRAL7B_API_KEY",
@@ -39,9 +37,9 @@ NVIDIA_MODEL_CONFIGS = {
             "temperature": 0.7,
             "top_p": 0.8,
             "max_tokens": 2048,
-            "stream": True
-        }
-    }
+            "stream": True,
+        },
+    },
 }
 
 # Default model to use when none is specified

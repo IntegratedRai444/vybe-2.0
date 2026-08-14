@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface EditorState {
   activeFile: string | null;
@@ -8,7 +8,7 @@ export interface EditorState {
   isSaving: boolean;
   lastSaved: number | null;
   error: string | null;
-  viewState: 'editor' | 'split' | 'terminal';
+  viewState: "editor" | "split" | "terminal";
   terminalHeight: number;
   sidebarWidth: number;
   isSidebarCollapsed: boolean;
@@ -22,14 +22,14 @@ const initialState: EditorState = {
   isSaving: false,
   lastSaved: null,
   error: null,
-  viewState: 'editor',
+  viewState: "editor",
   terminalHeight: 200,
   sidebarWidth: 250,
   isSidebarCollapsed: false,
 };
 
 export const editorSlice = createSlice({
-  name: 'editor',
+  name: "editor",
   initialState,
   reducers: {
     setActiveFile: (state, action: PayloadAction<string>) => {
@@ -40,7 +40,9 @@ export const editorSlice = createSlice({
       state.activeTab = action.payload;
     },
     closeFile: (state, action: PayloadAction<string>) => {
-      state.openFiles = state.openFiles.filter(file => file !== action.payload);
+      state.openFiles = state.openFiles.filter(
+        (file) => file !== action.payload,
+      );
       if (state.activeFile === action.payload) {
         state.activeFile = state.openFiles[0] || null;
         state.activeTab = state.activeFile;
@@ -62,7 +64,7 @@ export const editorSlice = createSlice({
       state.isSaving = false;
       state.error = action.payload;
     },
-    setViewState: (state, action: PayloadAction<EditorState['viewState']>) => {
+    setViewState: (state, action: PayloadAction<EditorState["viewState"]>) => {
       state.viewState = action.payload;
     },
     setTerminalHeight: (state, action: PayloadAction<number>) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 type Props = {
   code: string;
@@ -7,8 +7,13 @@ type Props = {
   onAccept: (completion: string) => void;
 };
 
-export const InlineCompletion: React.FC<Props> = ({ code, cursorPosition, filePath, onAccept }) => {
-  const [completion, setCompletion] = useState('');
+export const InlineCompletion: React.FC<Props> = ({
+  code,
+  cursorPosition,
+  filePath,
+  onAccept,
+}) => {
+  const [completion, setCompletion] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,38 +29,38 @@ export const InlineCompletion: React.FC<Props> = ({ code, cursorPosition, filePa
   const fetchCompletion = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://127.0.0.1:8000/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code,
           cursor_pos: cursorPosition,
-          file_path: filePath
-        })
+          file_path: filePath,
+        }),
       });
-      
+
       const data = await response.json();
-      setCompletion(data.completion || '');
+      setCompletion(data.completion || "");
     } catch (error) {
-      setCompletion('');
+      setCompletion("");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Tab' && completion) {
+    if (e.key === "Tab" && completion) {
       e.preventDefault();
       onAccept(completion);
-      setCompletion('');
-    } else if (e.key === 'Escape') {
-      setCompletion('');
+      setCompletion("");
+    } else if (e.key === "Escape") {
+      setCompletion("");
     }
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [completion]);
 
   if (!completion || loading) return null;
@@ -69,3 +74,6 @@ export const InlineCompletion: React.FC<Props> = ({ code, cursorPosition, filePa
     </div>
   );
 };
+
+// Exports
+export { InlineCompletion };

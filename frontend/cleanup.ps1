@@ -26,7 +26,7 @@ foreach ($file in $filesToRemove) {
         $backupPath = Join-Path $backupDir (Split-Path $file -Leaf)
         Write-Host "Backing up $file to $backupPath"
         Copy-Item -Path $file -Destination $backupPath -Recurse -Force
-        
+
         Write-Host "Removing $file"
         Remove-Item -Path $file -Recurse -Force -ErrorAction SilentlyContinue
     } else {

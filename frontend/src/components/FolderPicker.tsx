@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface FolderPickerProps {
   isOpen: boolean;
@@ -7,29 +7,33 @@ interface FolderPickerProps {
   selectedFolderName?: string;
 }
 
-export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onSelectFolder }) => {
-  const [selectedPath, setSelectedPath] = useState('');
-  const [error, setError] = useState('');
+export const FolderPicker: React.FC<FolderPickerProps> = ({
+  isOpen,
+  onClose,
+  onSelectFolder,
+}) => {
+  const [selectedPath, setSelectedPath] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Clear error when path changes
   React.useEffect(() => {
     if (selectedPath) {
-      setError('');
+      setError("");
     }
   }, [selectedPath]);
 
   const handleBrowseFolder = async () => {
     try {
       setIsLoading(true);
-      setError('');
+      setError("");
 
       // Create file input for folder selection
-      const input = document.createElement('input');
-      input.type = 'file';
+      const input = document.createElement("input");
+      input.type = "file";
       input.webkitdirectory = true;
       input.multiple = true;
-      input.style.display = 'none';
+      input.style.display = "none";
 
       document.body.appendChild(input);
 
@@ -42,9 +46,9 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
         }
 
         const firstFile = files[0];
-        const pathParts = firstFile.webkitRelativePath.split('/');
+        const pathParts = firstFile.webkitRelativePath.split("/");
         const folderName = pathParts[0];
-        
+
         // Set the folder path
         setSelectedPath(`./${folderName}`);
         document.body.removeChild(input);
@@ -58,28 +62,28 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
 
       input.click();
     } catch (err) {
-      console.error('Error opening folder picker:', err);
-      setError('Failed to open folder picker');
+      console.error("Error opening folder picker:", err);
+      setError("Failed to open folder picker");
       setIsLoading(false);
     }
   };
 
   const handleManualPath = () => {
     const path = selectedPath.trim();
-    
+
     if (!path) {
-      setError('Please enter a folder path');
+      setError("Please enter a folder path");
       return;
     }
-    
+
     // Validate that it's not a placeholder message
-    if (path.includes('Please enter the full path')) {
-      setError('Please enter the actual folder path, not the placeholder text');
+    if (path.includes("Please enter the full path")) {
+      setError("Please enter the actual folder path, not the placeholder text");
       return;
     }
-    
+
     // Normalize path separators for cross-platform compatibility
-    const normalizedPath = path.replace(/\\/g, '/');
+    const normalizedPath = path.replace(/\\/g, "/");
     onSelectFolder(normalizedPath);
     onClose();
   };
@@ -108,8 +112,18 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
               onClick={onClose}
               className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-400 hover:text-slate-200 transition-all duration-150"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -119,7 +133,9 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
         <div className="p-6 space-y-6">
           {/* Browse Button */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-3">Browse for Folder</label>
+            <label className="block text-sm font-medium text-slate-300 mb-3">
+              Browse for Folder
+            </label>
             <button
               onClick={handleBrowseFolder}
               disabled={isLoading}
@@ -127,17 +143,47 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
             >
               {isLoading ? (
                 <>
-                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <svg
+                    className="w-5 h-5 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Opening Folder Picker...
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 1v6m8-6v6" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 1v6m8-6v6"
+                    />
                   </svg>
                   Browse Folders
                 </>
@@ -154,14 +200,36 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
 
           {/* Manual Path Input */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-3">Enter Folder Path</label>
+            <label className="block text-sm font-medium text-slate-300 mb-3">
+              Enter Folder Path
+            </label>
             <div className="mb-3 p-3 bg-slate-700/30 rounded-lg border border-slate-600/30">
-              <p className="text-xs text-slate-400 mb-2">Examples of valid paths:</p>
+              <p className="text-xs text-slate-400 mb-2">
+                Examples of valid paths:
+              </p>
               <div className="space-y-1 text-xs text-slate-300 font-mono">
-                <div>• <span className="text-green-400">.</span> (current directory)</div>
-                <div>• <span className="text-green-400">./my-project</span> (relative path)</div>
-                <div>• <span className="text-green-400">C:/Users/YourName/Documents/MyProject</span> (Windows)</div>
-                <div>• <span className="text-green-400">/home/username/projects/myproject</span> (Linux/Mac)</div>
+                <div>
+                  • <span className="text-green-400">.</span> (current
+                  directory)
+                </div>
+                <div>
+                  • <span className="text-green-400">./my-project</span>{" "}
+                  (relative path)
+                </div>
+                <div>
+                  •{" "}
+                  <span className="text-green-400">
+                    C:/Users/YourName/Documents/MyProject
+                  </span>{" "}
+                  (Windows)
+                </div>
+                <div>
+                  •{" "}
+                  <span className="text-green-400">
+                    /home/username/projects/myproject
+                  </span>{" "}
+                  (Linux/Mac)
+                </div>
               </div>
             </div>
             <div className="space-y-3">
@@ -170,12 +238,24 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
                 value={selectedPath}
                 onChange={(e) => setSelectedPath(e.target.value)}
                 placeholder="Enter folder path (e.g., ./my-project or C:/Users/YourName/Documents/MyProject)"
-                className={`w-full bg-slate-700/50 text-slate-100 rounded-lg px-4 py-3 border ${error ? 'border-red-500' : 'border-slate-600/50'} focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all duration-150 placeholder:text-slate-400`}
+                className={`w-full bg-slate-700/50 text-slate-100 rounded-lg px-4 py-3 border ${
+                  error ? "border-red-500" : "border-slate-600/50"
+                } focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all duration-150 placeholder:text-slate-400`}
               />
               {error && (
                 <div className="text-red-400 text-sm mt-2 flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   {error}
                 </div>
@@ -184,37 +264,37 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
               {/* Quick Path Buttons */}
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => handleQuickPath('.')}
+                  onClick={() => handleQuickPath(".")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   Current Directory
                 </button>
                 <button
-                  onClick={() => handleQuickPath('./projects')}
+                  onClick={() => handleQuickPath("./projects")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   ./projects
                 </button>
                 <button
-                  onClick={() => handleQuickPath('../')}
+                  onClick={() => handleQuickPath("../")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   Parent Directory
                 </button>
                 <button
-                  onClick={() => handleQuickPath('C:/Users')}
+                  onClick={() => handleQuickPath("C:/Users")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   C:/Users
                 </button>
                 <button
-                  onClick={() => handleQuickPath('C:/Projects')}
+                  onClick={() => handleQuickPath("C:/Projects")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   C:/Projects
                 </button>
                 <button
-                  onClick={() => handleQuickPath('D:/')}
+                  onClick={() => handleQuickPath("D:/")}
                   className="px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 text-xs rounded-lg transition-all duration-150"
                 >
                   D:/
@@ -234,12 +314,26 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
           </button>
           <button
             onClick={handleManualPath}
-            disabled={!selectedPath.trim() || selectedPath.includes('Please enter the full path') || !!error}
+            disabled={
+              !selectedPath.trim() ||
+              selectedPath.includes("Please enter the full path") ||
+              !!error
+            }
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white rounded-lg transition-all duration-150 font-medium"
           >
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2z"
+                />
               </svg>
               Open Project
             </div>
@@ -249,3 +343,6 @@ export const FolderPicker: React.FC<FolderPickerProps> = ({ isOpen, onClose, onS
     </div>
   );
 };
+
+// Exports
+export { FolderPicker };

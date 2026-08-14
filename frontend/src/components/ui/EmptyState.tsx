@@ -1,10 +1,24 @@
-import { ComponentProps } from 'react';
-import { FileText, Search, AlertCircle, FolderX, Inbox, Plus } from 'lucide-react';
-import { cn } from '../../utils/cn';
+import { ComponentProps } from "react";
+import {
+  FileText,
+  Search,
+  AlertCircle,
+  FolderX,
+  Inbox,
+  Plus,
+} from "lucide-react";
+import { cn } from "../../utils/cn";
 
-type IconType = 'file' | 'search' | 'error' | 'folder' | 'inbox' | 'add' | React.ComponentType<{ className?: string }>;
+type IconType =
+  | "file"
+  | "search"
+  | "error"
+  | "folder"
+  | "inbox"
+  | "add"
+  | React.ComponentType<{ className?: string }>;
 
-interface EmptyStateProps extends ComponentProps<'div'> {
+interface EmptyStateProps extends ComponentProps<"div"> {
   title: string;
   description?: string;
   icon?: IconType;
@@ -23,19 +37,19 @@ const defaultIcons = {
 export function EmptyState({
   title,
   description,
-  icon: Icon = 'file',
+  icon: Icon = "file",
   action,
   className,
   iconClassName,
   ...props
 }: EmptyStateProps) {
-  const IconComponent = typeof Icon === 'string' ? defaultIcons[Icon] : Icon;
+  const IconComponent = typeof Icon === "string" ? defaultIcons[Icon] : Icon;
 
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center p-8 text-center',
-        className
+        "flex flex-col items-center justify-center p-8 text-center",
+        className,
       )}
       {...props}
     >
@@ -43,8 +57,8 @@ export function EmptyState({
         {IconComponent && (
           <IconComponent
             className={cn(
-              'h-8 w-8 text-gray-400 dark:text-gray-500',
-              iconClassName
+              "h-8 w-8 text-gray-400 dark:text-gray-500",
+              iconClassName,
             )}
             aria-hidden="true"
           />
@@ -77,3 +91,6 @@ export function EmptyState({
   }
 />
 */
+
+// Exports
+export { EmptyState };

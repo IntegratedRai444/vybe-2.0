@@ -1,7 +1,7 @@
 // File system item with package management support
 export interface FileSystemItem {
   name: string;
-  type: 'file' | 'folder' | 'package' | 'dependency';
+  type: "file" | "folder" | "package" | "dependency";
   path: string;
   children?: FileSystemItem[];
   size?: number;
@@ -33,7 +33,7 @@ export interface PackageDependency {
 
 export interface Vulnerability {
   id: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   patchedIn?: string;
@@ -48,17 +48,17 @@ export interface FileSystemState {
   loading: boolean;
   error: string | null;
   currentPath: string;
-  packageManager: 'npm' | 'yarn' | 'pnpm' | null;
+  packageManager: "npm" | "yarn" | "pnpm" | null;
   deployment: {
     targets: DeploymentTarget[];
     currentTarget: string | null;
-    status: 'idle' | 'deploying' | 'success' | 'error';
+    status: "idle" | "deploying" | "success" | "error";
     lastDeployed?: string;
     deploymentLogs: string[];
   };
   git: {
     branch: string;
-    status: 'clean' | 'dirty' | 'uncommitted' | 'conflict';
+    status: "clean" | "dirty" | "uncommitted" | "conflict";
     lastCommit?: {
       hash: string;
       message: string;
@@ -76,10 +76,10 @@ export interface FileSystemState {
 export interface DeploymentTarget {
   id: string;
   name: string;
-  type: 'vercel' | 'netlify' | 'aws' | 'custom';
+  type: "vercel" | "netlify" | "aws" | "custom";
   url?: string;
   lastDeployed?: string;
-  status?: 'success' | 'failed' | 'in-progress';
+  status?: "success" | "failed" | "in-progress";
   environment?: Record<string, string>;
 }
 
@@ -97,7 +97,7 @@ export interface FileContentResponse {
 export interface FileExplorerProps {
   onFileSelect?: (file: FileSystemItem) => void;
   onFileOpen?: (file: FileSystemItem) => void;
-  onFileCreate?: (path: string, type: 'file' | 'folder') => void;
+  onFileCreate?: (path: string, type: "file" | "folder") => void;
   onFileRename?: (oldPath: string, newName: string) => void;
   onFileDelete?: (path: string) => void;
   onFileMove?: (source: string, destination: string) => void;
@@ -114,7 +114,7 @@ export interface FileExplorerProps {
   acceptedFileTypes?: string[];
   maxFileSize?: number;
   readOnly?: boolean;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   icons?: {
     file?: React.ReactNode;
     folder?: React.ReactNode;

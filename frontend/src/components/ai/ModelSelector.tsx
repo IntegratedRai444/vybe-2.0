@@ -27,3 +27,6 @@ export const ModelSelector: React.FC<Props> = ({ value, onChange }) => {
     </select>
   );
 };
+
+// Exports
+export { ModelSelector };

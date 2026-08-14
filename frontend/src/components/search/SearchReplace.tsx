@@ -14,12 +14,12 @@ type SearchOptions = {
   regex: boolean;
 };
 
-export const SearchReplace: React.FC<Props> = ({ 
-  isOpen, 
-  onClose, 
-  onFind, 
-  onReplace, 
-  onReplaceAll 
+export const SearchReplace: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onFind,
+  onReplace,
+  onReplaceAll,
 }) => {
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
@@ -27,7 +27,7 @@ export const SearchReplace: React.FC<Props> = ({
   const [options, setOptions] = useState<SearchOptions>({
     caseSensitive: false,
     wholeWord: false,
-    regex: false
+    regex: false,
   });
 
   useEffect(() => {
@@ -62,10 +62,7 @@ export const SearchReplace: React.FC<Props> = ({
           >
             {showReplace ? "🔍" : "🔄"}
           </button>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
             ✕
           </button>
         </div>
@@ -99,7 +96,12 @@ export const SearchReplace: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.caseSensitive}
-              onChange={(e) => setOptions(prev => ({ ...prev, caseSensitive: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({
+                  ...prev,
+                  caseSensitive: e.target.checked,
+                }))
+              }
               className="mr-1"
             />
             <span title="Match Case">Aa</span>
@@ -108,7 +110,9 @@ export const SearchReplace: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.wholeWord}
-              onChange={(e) => setOptions(prev => ({ ...prev, wholeWord: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, wholeWord: e.target.checked }))
+              }
               className="mr-1"
             />
             <span title="Whole Word">Ab</span>
@@ -117,7 +121,9 @@ export const SearchReplace: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.regex}
-              onChange={(e) => setOptions(prev => ({ ...prev, regex: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, regex: e.target.checked }))
+              }
               className="mr-1"
             />
             <span title="Regular Expression">.*</span>
@@ -133,7 +139,7 @@ export const SearchReplace: React.FC<Props> = ({
           >
             Find Next
           </button>
-          
+
           {showReplace && (
             <>
               <button
@@ -157,3 +163,6 @@ export const SearchReplace: React.FC<Props> = ({
     </div>
   );
 };
+
+// Exports
+export { SearchReplace };

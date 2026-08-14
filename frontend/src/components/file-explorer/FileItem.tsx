@@ -1,6 +1,6 @@
-import React from 'react';
-import { FaFolder, FaFile } from 'react-icons/fa';
-import type { FileItem as FileItemType } from './types';
+import React from "react";
+import { FaFolder, FaFile } from "react-icons/fa";
+import type { FileItem as FileItemType } from "./types";
 
 type FileItemProps = {
   file: FileItemType;
@@ -34,13 +34,21 @@ export const FileItem: React.FC<FileItemProps> = ({
 
   return (
     <div
-      className={`flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer ${isSelected ? 'bg-blue-900 bg-opacity-50' : ''}`}
+      className={`flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer ${
+        isSelected ? "bg-blue-900 bg-opacity-50" : ""
+      }`}
       onClick={handleClick}
       onDoubleClick={() => onDoubleClick(file)}
       onContextMenu={handleContextMenu}
     >
       <div className="w-4 flex-shrink-0">
-        {getFileIcon ? getFileIcon(file.name) : file.type === 'folder' ? <FaFolder className="text-yellow-400" /> : <FaFile className="text-blue-400" />}
+        {getFileIcon ? (
+          getFileIcon(file.name)
+        ) : file.type === "folder" ? (
+          <FaFolder className="text-yellow-400" />
+        ) : (
+          <FaFile className="text-blue-400" />
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="truncate">{file.name}</div>
@@ -59,3 +67,6 @@ export const FileItem: React.FC<FileItemProps> = ({
     </div>
   );
 };
+
+// Exports
+export { FileItem };

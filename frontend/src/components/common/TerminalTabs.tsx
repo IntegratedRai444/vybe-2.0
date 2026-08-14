@@ -1,266 +1,549 @@
-import React, { useState, useCallback } from "react";
-import { TerminalPane } from "./TerminalPane";
-import { FiTerminal } from 'react-icons/fi';
+import React, { useState, useEffect, useRef, useCallback, FC, memo } from 'react';
+import { ITheme } from '@xterm/xterm';
+import { FiTerminal, FiPlus, FiX, FiRefreshCw, FiCopy } from 'react-icons/fi';
 
-type TerminalStatus = 'running' | 'stopped' | 'terminated' | 'error';
+// Simple TerminalPane component - replace with your actual implementation
+const TerminalPane: FC<{ cwd: string; onExit: () => void; onTitleChange: (title: string) => void }> = ({ 
+  cwd, 
+  onExit, 
+  onTitleChange 
+}) => {
+  return (
+    <div className="terminal-pane">
+      <div className="terminal-header">
+        <span>Terminal - {cwd}</span>
+        <button onClick={onExit}>
+          <FiX />
+        </button>
+      </div>
+      <div className="terminal-content">
+        {/* Terminal content will be rendered here */}
+        $ _
+      </div>
+    </div>
+  );
+};
 
-interface TerminalSession {
-  id: string;
-  name: string;
-  title: string;
-  cwd: string;
-  shell: string;
-  status: TerminalStatus;
-  splitDirection?: 'horizontal' | 'vertical';
-  parentId?: string;
-  children?: string[];
-  lastActivity?: string;
+// Define the theme interface without the 'selection' property
+interface TerminalTheme extends Omit<ITheme, 'selection'> {
+  selection?: string; // Make selection optional if needed
 }
 
-interface Theme {
-  background: string;
-  foreground: string;
-  cursor: string;
-  cursorAccent: string;
-  selection: string;
-  black?: string;
-  red?: string;
-  green?: string;
-  yellow?: string;
-  blue?: string;
-  magenta?: string;
-  cyan?: string;
-  white?: string;
-  brightBlack?: string;
-  brightRed?: string;
-  brightGreen?: string;
-  brightYellow?: string;
-  brightBlue?: string;
-  brightMagenta?: string;
-  brightCyan?: string;
-  brightWhite?: string;
-}
-
-interface TerminalTabsProps {
-  projectRoot: string;
-  className?: string;
-}
-
-const defaultTheme: Theme = {
+// Default theme for terminals
+const defaultTheme: TerminalTheme = {
   background: '#1e1e1e',
   foreground: '#d4d4d4',
   cursor: '#ffffff',
   cursorAccent: '#000000',
-  selection: '#264f78',
+  black: '#000000',
+  red: '#cd3131',
+  green: '#0dbc79',
+  yellow: '#e5e510',
+  blue: '#2472c8',
+  magenta: '#bc3fbc',
+  cyan: '#11a8cd',
+  white: '#e5e5e5',
+  brightBlack: '#666666',
+  brightRed: '#f14c4c',
+  brightGreen: '#23d18b',
+  brightYellow: '#f5f543',
+  brightBlue: '#3b8eea',
+  brightMagenta: '#d670d6',
+  brightCyan: '#29b8db',
+  brightWhite: '#e5e5e5',
 };
 
-export const TerminalTabs: React.FC<TerminalTabsProps> = ({ projectRoot, className = '' }) => {
-  const [sessions, setSessions] = useState<TerminalSession[]>([
-    { 
-      id: "1", 
-      name: "Terminal 1", 
-      title: "Terminal 1",
-      cwd: projectRoot, 
-      shell: "cmd.exe", 
-      status: 'running',
-      lastActivity: new Date().toISOString()
-    }
-  ]);
-  const [activeSessionId, setActiveSessionId] = useState<string>("1");
-  const [showShellSelector, setShowShellSelector] = useState(false);
-  const [availableShells] = useState<string[]>(['cmd.exe', 'powershell.exe', 'bash', 'zsh']);
-  const [terminalBookmarks, setTerminalBookmarks] = useState<Record<string, string>>({});
+// Available themes
+const themes: Record<string, TerminalTheme> = {
+  'Default Dark': defaultTheme,
+  'Solarized Dark': {
+    background: '#002b36',
+    foreground: '#93a1a1',
+    cursor: '#93a1a1',
+    cursorAccent: '#002b36',
+    black: '#073642',
+    red: '#dc322f',
+    green: '#859900',
+    yellow: "#b58900",
+    blue: "#268bd2",
+    magenta: "#d33682",
+    cyan: "#2aa198",
+    white: "#eee8d5",
+    brightBlack: "#586e75",
+    brightRed: "#cb4b16",
+    brightGreen: "#859900",
+    brightYellow: "#b58900",
+    brightBlue: "#268bd2",
+    brightMagenta: "#6c71c4",
+    brightCyan: "#2aa198",
+    brightWhite: "#fdf6e3",
+  },
+  "High Contrast": {
+    background: "#000000",
+    foreground: "#ffffff",
+    cursor: "#ffffff",
+    cursorAccent: "#000000",
+    black: "#000000",
+    red: "#ff0000",
+    green: "#00ff00",
+    yellow: "#ffff00",
+    blue: "#0000ff",
+    magenta: "#ff00ff",
+    cyan: "#00ffff",
+    white: "#ffffff",
+    brightBlack: "#666666",
+    brightRed: "#ff6666",
+    brightGreen: "#66ff66",
+    brightYellow: '#b58900',
+    brightBlue: '#268bd2',
+    brightMagenta: '#6c71c4',
+    brightCyan: '#2aa198',
+    brightWhite: '#fdf6e3',
+  },
+};
+
+interface TerminalSession {
+  id: string;
+  title: string;
+  cwd: string;
+  shell: string;
+  theme: string;
+  status: 'active' | 'terminated';
+  lastActivity: Date;
+}
+
+interface TerminalTabsProps {
+  initialCwd?: string;
+  className?: string;
+  onActiveTerminalChange?: (terminalId: string | null) => void;
+}
+
+const TerminalTabs: FC<TerminalTabsProps> = ({
+  initialCwd = process.cwd(),
+  className = "",
+  onActiveTerminalChange,
+}) => {
+  // State for terminal sessions and active session
+  const [sessions, setSessions] = useState<TerminalSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [themeName, setThemeName] = useState<string>('Default Dark');
+  const [showThemeSelector, setShowThemeSelector] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
   
-  // Theme state
-  const [themeName, setThemeName] = useState<string>('default-dark');
-  const [themes] = useState<Record<string, Theme>>({
-    'default-dark': defaultTheme,
-    'solarized-dark': {
-      background: '#002b36',
-      foreground: '#839496',
-      cursor: '#93a1a1',
-      cursorAccent: '#000000',
-      selection: '#073642',
-      black: '#073642',
-      red: '#dc322f',
-      green: '#859900',
-      yellow: '#b58900',
-      blue: '#268bd2',
-      magenta: '#d33682',
-      cyan: '#2aa198',
-      white: '#eee8d5',
-      brightBlack: '#002b36',
-      brightRed: '#cb4b16',
-      brightGreen: '#586e75',
-      brightYellow: '#657b83',
-      brightBlue: '#839496',
-      brightMagenta: '#6c71c4',
-      brightCyan: '#93a1a1',
-      brightWhite: '#fdf6e3'
-    },
-    'one-dark': {
-      background: '#282c34',
-      foreground: '#abb2bf',
-      cursor: '#528bff',
-      cursorAccent: '#000000',
-      selection: '#3e4451',
-      black: '#282c34',
-      red: '#e06c75',
-      green: '#98c379',
-      yellow: '#e5c07b',
-      blue: '#61afef',
-      magenta: '#c678dd',
-      cyan: '#56b6c2',
-      white: '#abb2bf',
-      brightBlack: '#5c6370',
-      brightRed: '#e06c75',
-      brightGreen: '#98c379',
-      brightYellow: '#e5c07b',
-      brightBlue: '#61afef',
-      brightMagenta: '#c678dd',
-      brightCyan: '#56b6c2',
-      brightWhite: '#ffffff'
+  // Refs
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const themeSelectorRef = useRef<HTMLDivElement>(null);
+
+  // Initialize with one terminal
+  useEffect(() => {
+    if (sessions.length === 0) {
+      const initialSession: TerminalSession = {
+        id: `terminal-${Date.now()}`,
+        title: 'Terminal',
+        cwd: initialCwd,
+        shell: process.env.SHELL || (process.platform === 'win32' ? 'powershell.exe' : 'bash'),
+        theme: 'Default Dark',
+        status: 'active',
+        lastActivity: new Date(),
+      };
+      
+      setSessions([initialSession]);
+      setActiveSessionId(initialSession.id);
     }
-  });
+  }, [initialCwd, sessions.length]);
 
-  const addTerminal = useCallback((shell: string = 'cmd.exe') => {
-    const newId = Date.now().toString();
-    const newTerminal: TerminalSession = {
-      id: newId,
-      name: `Terminal ${sessions.length + 1}`,
-      title: `Terminal ${sessions.length + 1}`,
-      cwd: projectRoot,
-      shell,
-      status: 'running',
-      lastActivity: new Date().toISOString()
+  // Notify parent when active terminal changes
+  useEffect(() => {
+    if (onActiveTerminalChange) {
+      onActiveTerminalChange(activeSessionId);
+    }
+  }, [activeSessionId, onActiveTerminalChange]);
+
+  // Close theme selector when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (themeSelectorRef.current && !themeSelectorRef.current.contains(event.target as Node)) {
+        setShowThemeSelector(false);
+      }
     };
-    setSessions(prev => [...prev, newTerminal]);
-    setActiveSessionId(newId);
-    setShowShellSelector(false);
-  }, [projectRoot, sessions.length]);
 
-  const closeTerminal = useCallback((id: string) => {
-    if (sessions.length === 1) return; // Keep at least one terminal
-    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const createNewTerminal = useCallback(() => {
+    const newSession: TerminalSession = {
+      id: `terminal-${Date.now()}`,
+      title: `Terminal ${sessions.length + 1}`,
+      cwd: activeSessionId 
+        ? sessions.find(s => s.id === activeSessionId)?.cwd || initialCwd
+        : initialCwd,
+      shell: process.env.SHELL || (process.platform === 'win32' ? 'powershell.exe' : 'bash'),
+      theme: themeName,
+      status: 'active',
+      lastActivity: new Date(),
+    };
+
+    setSessions(prev => [...prev, newSession]);
+    setActiveSessionId(newSession.id);
+  }, [sessions, activeSessionId, initialCwd, themeName]);
+
+  const closeTerminal = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSessions(prev => {
-      const newSessions = prev.filter(t => t.id !== id);
-      if (activeSessionId === id && newSessions.length > 0) {
-        setActiveSessionId(newSessions[0].id);
+      const newSessions = prev.filter(session => session.id !== id);
+      if (newSessions.length === 0) {
+        createNewTerminal();
+      } else if (activeSessionId === id) {
+        const currentIndex = prev.findIndex(s => s.id === id);
+        const newActiveIndex = Math.min(currentIndex, newSessions.length - 1);
+        setActiveSessionId(newSessions[newActiveIndex]?.id || null);
       }
       return newSessions;
     });
-  }, [activeSessionId, sessions.length]);
+  }, [activeSessionId, createNewTerminal]);
 
-  const splitTerminal = useCallback((id: string, direction: 'horizontal' | 'vertical') => {
-    const terminal = sessions.find(t => t.id === id);
-    if (!terminal) return;
+  const refreshTerminal = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // TODO: Implement terminal refresh logic
+    console.log('Refreshing terminal:', id);
+  }, []);
 
-    const newId = Date.now().toString();
-    const newTerminal: TerminalSession = {
-      id: newId,
-      name: `Terminal ${sessions.length + 1}`,
-      title: `Terminal ${sessions.length + 1}`,
-      cwd: terminal.cwd,
-      shell: terminal.shell,
-      status: 'running',
-      splitDirection: direction,
-      parentId: id,
-      lastActivity: new Date().toISOString()
-    };
-
-    setSessions(prev => [...prev, newTerminal]);
-    setActiveSessionId(newId);
+  const copyTerminal = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const session = sessions.find(s => s.id === id);
+    if (session) {
+      const newSession: TerminalSession = {
+        ...session,
+        id: `terminal-${Date.now()}`,
+        title: `${session.title} (Copy)`,
+        lastActivity: new Date(),
+      };
+      setSessions(prev => [...prev, newSession]);
+      setActiveSessionId(newSession.id);
+    }
   }, [sessions]);
 
+  const toggleSearch = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowSearch(prev => !prev);
+    if (!showSearch && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    }
+  }, [showSearch]);
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    // TODO: Implement search functionality in terminal
+  }, []);
+
+  const changeTheme = useCallback((theme: string) => {
+    setThemeName(theme);
+    setShowThemeSelector(false);
+  }, []);
+
+  // Get active session and theme (moved to the end of the component)
+  const generateSessionId = useCallback(() => `terminal-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, []);
+
+  // Add a new terminal
+  const addTerminal = useCallback((cwd: string = initialCwd, shell: string = '') => {
+    const newSession: TerminalSession = {
+      id: `terminal-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      title: `Terminal ${sessions.length + 1}`,
+      cwd,
+      shell,
+      theme: themeName,
+      status: 'active',
+      lastActivity: new Date(),
+    };
+
+    setSessions(prev => [...prev, newSession]);
+    setActiveSessionId(newSession.id);
+  }, [initialCwd, sessions.length, themeName]);
+
+  // Close a terminal
+  const closeTerminal = useCallback((id: string) => {
+    setSessions(prev => {
+      const newSessions = prev.filter(session => session.id !== id);
+      
+      // If we're closing the active session, select another one
+      if (id === activeSessionId) {
+        const remainingSessions = newSessions.filter(s => s.id !== id);
+        setActiveSessionId(remainingSessions[0]?.id || null);
+      }
+      
+      return newSessions;
+    });
+  }, [activeSessionId]);
+
+  // Restart a terminal
   const restartTerminal = useCallback((id: string) => {
-    setSessions(prev => prev.map(t => 
-      t.id === id ? { 
-        ...t, 
-        status: 'running',
-        lastActivity: new Date().toISOString() 
-      } : t
-    ));
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { 
+              ...session, 
+              lastActivity: new Date(),
+              status: 'active' as const 
+            } 
+          : session
+      )
+    );
   }, []);
 
-  const stopTerminal = useCallback((id: string) => {
-    setSessions(prev => prev.map(t => 
-      t.id === id ? { 
-        ...t, 
-        status: 'stopped',
-        lastActivity: new Date().toISOString() 
-      } : t
-    ));
+  // Handle terminal exit
+  const handleTerminalExit = useCallback((id: string) => {
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { 
+              ...session, 
+              status: 'terminated' as const,
+              lastActivity: new Date() 
+            } 
+          : session
+      )
+    );
   }, []);
 
-  const copyTerminalOutput = useCallback(async (id: string) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/terminal/copy/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch terminal output');
-      const data = await response.json();
-      await navigator.clipboard.writeText(data.output || '');
-    } catch (error) {
-      console.error('Failed to copy terminal output:', error);
+  // Handle title change
+  const handleTitleChange = useCallback((id: string, title: string) => {
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { ...session, title } 
+          : session
+      )
+    );
+  }, []);
+
+  // Handle theme change
+  const handleThemeChange = useCallback((theme: string) => {
+    setThemeName(theme);
+    setShowThemeSelector(false);
+  }, []);
+
+  // Initialize with one terminal
+  useEffect(() => {
+    if (sessions.length === 0) {
+      addTerminal();
     }
+  }, [addTerminal, sessions.length]);
+
+  // Get active session and theme
+  const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0];
+  const currentTheme = themes[themeName] || defaultTheme;
+
+  return (
+    <div className={`terminal-tabs-container ${className}`}>
+      <div className="terminal-tabs-header">
+        <div className="tabs-container">
+          {sessions.map((session) => (
+            <div
+              key={session.id}
+              className={`tab ${session.id === activeSessionId ? 'active' : ''}`}
+              onClick={() => setActiveSessionId(session.id)}
+            >
+              <FiTerminal className="tab-icon" />
+              <span className="tab-title">{session.title}</span>
+              <button
+                className="tab-close"
+                onClick={(e) => closeTerminal(session.id, e)}
+                title="Close terminal"
+              >
+                <FiX size={14} />
+              </button>
+            </div>
+          ))}
+          <button
+            className="new-terminal-btn"
+            onClick={createNewTerminal}
+            title="New Terminal"
+          >
+            <FiPlus size={16} />
+          </button>
+        </div>
+        
+        <div className="terminal-actions">
+          <button
+            className="action-btn"
+            onClick={(e) => refreshTerminal(activeSessionId!, e)}
+            title="Restart Terminal"
+          >
+            <FiRefreshCw size={14} />
+          </button>
+          <button
+            className="action-btn"
+            onClick={(e) => copyTerminal(activeSessionId!, e)}
+            title="Duplicate Terminal"
+          >
+            <FiCopy size={14} />
+          </button>
+          <div className="theme-selector" ref={themeSelectorRef}>
+            <button
+              className="action-btn"
+              onClick={() => setShowThemeSelector(!showThemeSelector)}
+              title="Change Theme"
+            >
+              <span className="theme-indicator" style={{ backgroundColor: currentTheme.foreground }} />
+            </button>
+            {showThemeSelector && (
+              <div className="theme-dropdown">
+                {Object.keys(themes).map((theme) => (
+                  <div
+                    key={theme}
+                    className={`theme-option ${theme === themeName ? 'active' : ''}`}
+                    onClick={() => changeTheme(theme)}
+                  >
+                    <span className="theme-preview" style={{ backgroundColor: themes[theme].background }} />
+                    <span>{theme}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="terminal-content">
+        {sessions.map((session) => (
+          <div
+            key={session.id}
+            className={`terminal-pane ${session.id === activeSessionId ? 'active' : ''}`}
+          >
+            <TerminalPane
+              sessionId={session.id}
+              cwd={session.cwd}
+              theme={themes[session.theme] || defaultTheme}
+              onExit={() => {
+                setSessions((prev: TerminalSession[]) => prev.filter(s => s.id !== session.id));
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {showSearch && (
+        <div className="terminal-search">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Search in terminal..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="search-input"
+          />
+          <button
+            className="close-search"
+            onClick={() => setShowSearch(false)}
+          >
+            <FiX size={14} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        themeSelectorRef.current &&
+        !themeSelectorRef.current.contains(event.target as Node)
+      ) {
+        setShowThemeSelector(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  const pasteToTerminal = useCallback(async (id: string) => {
-    try {
-      const text = await navigator.clipboard.readText();
-      const response = await fetch(`http://127.0.0.1:8000/terminal/paste/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-      });
-      if (!response.ok) throw new Error('Failed to paste to terminal');
-    } catch (error) {
-      console.error('Failed to paste to terminal:', error);
-    }
-  }, []);
+  const addTerminal = (cwd = initialCwd, shell = "") => {
+    const newSession: TerminalSession = {
+      id: `term-${Date.now()}-${nextSessionId.current++}`,
+      title: "Terminal",
+      cwd,
+      shell:
+        shell ||
+        (navigator.platform.startsWith("Win") ? "powershell.exe" : "/bin/bash"),
+      theme: themeName,
+      status: "active",
+      lastActivity: new Date(),
+    };
 
-  const downloadTerminalOutput = useCallback(async (id: string) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/terminal/download/${id}`);
-      if (!response.ok) throw new Error('Failed to download terminal output');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `terminal-output-${id}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    } catch (error) {
-      console.error('Failed to download terminal output:', error);
-    }
-  }, []);
+    setSessions((prev) => [...prev, newSession]);
+    setActiveSessionId(newSession.id);
+    return newSession.id;
+  };
 
-  const addBookmark = useCallback((id: string, name: string) => {
-    setTerminalBookmarks(prev => ({
-      ...prev,
-      [id]: name
-    }));
-  }, []);
+  const closeTerminal = (id: string) => {
+    setSessions((prev) => {
+      const newSessions = prev.filter((session) => session.id !== id);
+      if (activeSessionId === id) {
+        setActiveSessionId(newSessions.length > 0 ? newSessions[0].id : null);
+      }
+      return newSessions;
+    });
+  };
 
-  const uploadToTerminal = useCallback(async (id: string, event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const restartTerminal = (id: string) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === id
+          ? {
+              ...session,
+              status: "active",
+              lastActivity: new Date(),
+            }
+          : session,
+      ),
+    );
+  };
 
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const response = await fetch(`http://127.0.0.1:8000/terminal/upload/${id}`, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) throw new Error('Failed to upload file');
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
-  }, []);
+  const duplicateTerminal = (session: TerminalSession) => {
+    const newId = addTerminal(session.cwd, session.shell);
+    // Update the new session with the same theme
+    setSessions((prev) =>
+      prev.map((s) => (s.id === newId ? { ...s, theme: session.theme } : s)),
+    );
+  };
+
+  const handleTerminalExit = (id: string) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === id
+          ? {
+              ...session,
+              status: "terminated",
+              lastActivity: new Date(),
+            }
+          : session,
+      ),
+    );
+  };
+
+  const handleTitleChange = (id: string, title: string) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === id ? { ...session, title } : session,
+      ),
+    );
+  };
+
+  const handleThemeChange = (theme: string) => {
+    setThemeName(theme);
+    setShowThemeSelector(false);
+
+    // Update all active terminals with the new theme
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.status === "active" ? { ...session, theme } : session,
+      ),
+    );
+  };
 
   const renderTabLabel = (session: TerminalSession) => {
     return (
@@ -269,18 +552,90 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({ projectRoot, classNa
         <span className="truncate max-w-[120px]" title={session.title}>
           {session.title}
         </span>
-        {session.status === 'terminated' && (
+        {session.status === "terminated" && (
           <span className="text-xs text-red-400">(exited)</span>
         )}
       </div>
     );
   };
 
-  const activeSession = sessions.find(s => s.id === activeSessionId);
+  // Get active session and theme for rendering
+  const activeSession = sessions.length > 0 
+    ? sessions.find((s) => s.id === activeSessionId) || sessions[0]
+    : null;
   const currentTheme = themes[themeName] || defaultTheme;
   
-  // Fallback to first session if active session doesn't exist
-  const activeTab = activeSession || sessions[0];
+  // Toggle search visibility
+  const toggleSearch = useCallback(() => {
+    setIsSearchVisible(prev => !prev);
+    if (!isSearchVisible) {
+      setTimeout(() => searchInputRef.current?.focus(), 0);
+    }
+  }, [isSearchVisible]);
+  
+  // Handle terminal actions
+  const closeTerminal = useCallback((id: string) => {
+    setSessions(prev => {
+      const newSessions = prev.filter(s => s.id !== id);
+      if (activeSessionId === id) {
+        setActiveSessionId(newSessions[0]?.id || null);
+      }
+      return newSessions;
+    });
+  }, [activeSessionId]);
+  
+  const restartTerminal = useCallback((id: string) => {
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { ...session, status: 'active', lastActivity: new Date() }
+          : session
+      )
+    );
+  }, []);
+  
+  const duplicateTerminal = useCallback((session: TerminalSession) => {
+    const newSession = {
+      ...session,
+      id: `terminal-${Date.now()}`,
+      title: `${session.title} (Copy)`,
+      lastActivity: new Date()
+    };
+    setSessions(prev => [...prev, newSession]);
+    setActiveSessionId(newSession.id);
+  }, []);
+  
+  const handleTerminalExit = useCallback((id: string) => {
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { ...session, status: 'terminated' }
+          : session
+      )
+    );
+  }, []);
+  
+  const handleTitleChange = useCallback((id: string, title: string) => {
+    setSessions(prev => 
+      prev.map(session => 
+        session.id === id 
+          ? { ...session, title }
+          : session
+      )
+    );
+  }, []);
+  
+  const handleThemeChange = useCallback((theme: string) => {
+    setThemeName(theme);
+    setShowThemeSelector(false);
+  }, []);
+  
+  const renderTabLabel = useCallback((session: TerminalSession) => (
+    <div className="flex items-center">
+      <FiTerminal className="mr-2" />
+      <span className="truncate">{session.title}</span>
+    </div>
+  ), []);
 
   return (
     <div className={`flex flex-col h-full bg-gray-900 ${className}`}>
@@ -288,269 +643,151 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({ projectRoot, classNa
       <div className="flex items-center bg-gray-800 border-b border-gray-700">
         <div className="flex-1 flex overflow-x-auto hide-scrollbar">
           {sessions.map((session) => (
-            <div key={session.id} className="flex items-center">
-              <div
-                className={`group flex items-center px-3 py-2 text-sm cursor-pointer border-b-2 transition-colors ${
-                  activeSessionId === session.id
-                    ? 'border-blue-500 bg-gray-900 text-white'
-                    : 'border-transparent text-gray-400 hover:bg-gray-750 hover:text-white'
-                } ${session.status === 'terminated' ? 'opacity-70' : ''}`}
-                onClick={() => setActiveSessionId(session.id)}
+            <div
+              key={session.id}
+              className={`group flex items-center px-3 py-2 text-sm cursor-pointer border-b-2 transition-colors ${
+                activeSessionId === session.id
+                  ? "border-blue-500 bg-gray-900 text-white"
+                  : "border-transparent text-gray-400 hover:bg-gray-750 hover:text-white"
+              } ${session.status === "terminated" ? "opacity-70" : ""}`}
+              onClick={() => setActiveSessionId(session.id)}
+            >
+              {renderTabLabel(session)}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeTerminal(session.id);
+                }}
+                className="ml-2 opacity-0 group-hover:opacity-70 hover:opacity-100 text-gray-300 hover:text-white"
+                title="Close Terminal"
               >
-                {renderTabLabel(session)}
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    splitTerminal(session.id, 'horizontal');
-                  }}
-                  className="p-1 hover:bg-slate-700/50 rounded text-slate-500 hover:text-slate-300 transition-colors duration-150"
-                  title="Split Terminal"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    copyTerminalOutput(session.id);
-                  }}
-                  className="p-1 hover:bg-slate-700/50 rounded text-slate-500 hover:text-slate-300 transition-colors duration-150"
-                  title="Copy Output"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </button>
-
-                {session.status === 'running' ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      stopTerminal(session.id);
-                    }}
-                    className="p-1 hover:bg-slate-700/50 rounded text-slate-500 hover:text-red-400 transition-colors duration-150"
-                    title="Stop Terminal"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10h6v4H9z" />
-                    </svg>
-                  </button>
-                ) : (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      restartTerminal(session.id);
-                    }}
-                    className="p-1 hover:bg-slate-700/50 rounded text-slate-500 hover:text-green-400 transition-colors duration-150"
-                    title="Restart Terminal"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              {/* Close Button */}
-              {sessions.length > 1 && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTerminal(session.id);
-                  }}
-                  className="p-1 hover:bg-slate-700/50 rounded text-slate-500 hover:text-slate-300 transition-colors duration-150 ml-1"
-                  title="Close Terminal"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
+                <FiX size={14} />
+              </button>
             </div>
           ))}
         </div>
 
-        {/* Add Terminal Button */}
-        <div className="relative flex items-center">
-          {/* ... */}
-            onClick={() => setShowShellSelector(!showShellSelector)}
-            className="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all duration-150 rounded-lg mx-2"
-            title="Add Terminal"
+        {/* Tab Actions */}
+        <div className="flex items-center px-2 space-x-1 border-l border-gray-700">
+          <button
+            onClick={() => addTerminal()}
+            className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+            title="New Terminal"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            <FiPlus size={16} />
           </button>
-          
-          {/* Shell Selector Dropdown */}
-          {showShellSelector && (
-            <div className="absolute top-full left-2 mt-1 bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-2xl z-20 min-w-48">
-              <div className="p-3">
-                <div className="text-xs font-medium text-slate-300 mb-3 flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3" />
-                  </svg>
-                  Select Shell
+
+          <div className="relative" ref={themeSelectorRef}>
+            <button
+              onClick={() => setShowThemeSelector(!showThemeSelector)}
+              className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+              title="Change Theme"
+            >
+              <div
+                className="w-4 h-4 rounded border"
+                style={{ backgroundColor: currentTheme.background }}
+              />
+            </button>
+
+            {showThemeSelector && (
+              <div className="absolute right-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg z-50 py-1">
+                <div className="px-3 py-1 text-xs text-gray-400 uppercase tracking-wider">
+                  Themes
                 </div>
-                <div className="space-y-1">
-                  {availableShells.map((shell) => (
-                    <button
-                      key={shell}
-                      onClick={() => addTerminal(shell)}
-                      className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-slate-300 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg transition-all duration-150"
-                    >
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      {shell}
-                    </button>
-                  ))}
-                </div>
+                {Object.keys(themes).map((theme) => (
+                  <button
+                    key={theme}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center ${
+                      theme === themeName
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-300 hover:bg-gray-700"
+                    }`}
+                    onClick={() => handleThemeChange(theme)}
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full mr-2 border border-gray-600"
+                      style={{ backgroundColor: themes[theme].background }}
+                    />
+                    {theme}
+                  </button>
+                ))}
               </div>
-            </div>
+            )}
+          </div>
+
+          {activeSession && (
+            <>
+              <button
+                onClick={() => duplicateTerminal(activeSession)}
+                className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded"
+                title="Duplicate Terminal"
+              >
+                <FiCopy size={14} />
+              </button>
+
+              <button
+                onClick={() => restartTerminal(activeSession.id)}
+                className={`p-1.5 rounded ${
+                  activeSession.status === "terminated"
+                    ? "text-green-400 hover:text-green-300 hover:bg-gray-700"
+                    : "text-gray-500 cursor-not-allowed"
+                }`}
+                title="Restart Terminal"
+                disabled={activeSession.status !== "terminated"}
+              >
+                <FiRefreshCw size={14} />
+              </button>
+
+              <div className="relative mx-2">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="bg-gray-700 text-sm text-white px-2 py-1 rounded w-32 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                <FiSearch
+                  className="absolute right-2 top-1.5 text-gray-400"
+                  size={14}
+                />
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Modern Terminal Toolbar */}
-      {activeTab && (
-        <div className="flex items-center justify-between bg-slate-800/30 backdrop-blur-sm px-4 py-2 border-b border-slate-800/60">
-          <div className="flex items-center gap-6 text-xs text-slate-400">
-            <div className="flex items-center gap-2">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3" />
-              </svg>
-              <span className="font-medium">{activeTab.shell}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-              </svg>
-              <span className="font-mono text-xs truncate max-w-48" title={activeTab.cwd}>
-                {activeTab.cwd.split(/[\\/]/).pop() || activeTab.cwd}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${
-                activeTab.status === 'running' ? 'bg-green-400' :
-                activeTab.status === 'stopped' ? 'bg-red-400' :
-                'bg-yellow-400'
-              }`} />
-              <span className="capitalize">{activeTab.status}</span>
-            </div>
+      {/* Terminal Container */}
+      <div className="flex-1 overflow-hidden relative">
+        {activeSession ? (
+          <div className="h-full">
+            <TerminalPane
+              cwd={activeSession.cwd}
+              onExit={() => closeTerminal(activeSession.id, new MouseEvent('click') as any)}
+              onTitleChange={(title) => handleTitleChange(activeSession.id, title)}
+            />
           </div>
-          
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => pasteToTerminal(activeTab.id)}
-              className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-500 hover:text-slate-300 transition-all duration-150"
-              title="Paste from Clipboard"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </button>
-            
-            <button
-              onClick={() => downloadTerminalOutput(activeTab.id)}
-              className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-500 hover:text-slate-300 transition-all duration-150"
-              title="Download Output"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </button>
-            
-            <label className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-500 hover:text-slate-300 transition-all duration-150 cursor-pointer" title="Upload File">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              <input
-                type="file"
-                onChange={(e) => uploadToTerminal(activeTab.id, e)}
-                className="hidden"
-              />
-            </label>
-            
-            <div className="h-4 w-px bg-slate-700 mx-1"></div>
-            
-            <button
-              onClick={() => {
-                const name = prompt('Bookmark name:');
-                if (name) addBookmark(activeTab.id, name);
-              }}
-              className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-500 hover:text-slate-300 transition-all duration-150"
-              title="Add Bookmark"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-              </svg>
-            </button>
+        ) : (
+          <div className="h-full flex items-center justify-center text-gray-500">
+            No active terminals
           </div>
-        </div>
-      )}
-
-      {/* Active Terminal */}
-      <div className="flex-1 overflow-hidden">
-        {activeTab && (
-          <TerminalPane 
-            sessionId={activeTab.id}
-            cwd={activeTab.cwd}
-            shell={activeTab.shell}
-            theme={currentTheme}
-            onTitleChange={(title) => {
-              setSessions(prev => prev.map(t => 
-                t.id === activeTab.id ? { ...t, title, lastActivity: new Date().toISOString() } : t
-              ));
-            }}
-            onExit={(exitCode) => {
-              setSessions(prev => prev.map(t => 
-                t.id === activeTab.id 
-                  ? { ...t, status: 'terminated', lastActivity: new Date().toISOString() }
-                  : t
-              ));
-            }}
-            onData={(data) => {
-              // Update last activity on data
-              setSessions(prev => prev.map(t => 
-                t.id === activeTab.id 
-                  ? { ...t, lastActivity: new Date().toISOString() }
-                  : t
-              ));
-            }}
-            className="h-full w-full"
-          />
         )}
       </div>
-
-      {/* Modern Terminal Bookmarks */}
-      {Object.keys(terminalBookmarks).length > 0 && (
-        <div className="border-t border-slate-800/60 p-3 bg-slate-900/30">
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-300 mb-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            Bookmarks
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(terminalBookmarks).map(([id, name]) => (
-              <button
-                key={id}
-                onClick={() => setActiveSessionId(id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
-                  activeSessionId === id
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 hover:text-slate-200'
-                }`}
-              >
-                {name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
+// Hide scrollbar but keep functionality
+const style = document.createElement("style");
+style.textContent = `
+  .hide-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  .hide-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+  .hide-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+`;
+document.head.appendChild(style);

@@ -6,7 +6,10 @@ interface DebugButtonProps {
   onDebugComplete?: (results: any) => void;
 }
 
-export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugComplete }) => {
+export const DebugButton: React.FC<DebugButtonProps> = ({
+  projectRoot,
+  onDebugComplete,
+}) => {
   const [isDebugging, setIsDebugging] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [debugResults, setDebugResults] = useState<any>(null);
@@ -27,7 +30,11 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
       }
     } catch (error) {
       console.error("Debug failed:", error);
-      alert(`Debug failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+      alert(
+        `Debug failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
     } finally {
       setIsDebugging(false);
     }
@@ -35,10 +42,14 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "error": return "text-red-500";
-      case "warning": return "text-yellow-500";
-      case "info": return "text-blue-500";
-      default: return "text-gray-500";
+      case "error":
+        return "text-red-500";
+      case "warning":
+        return "text-yellow-500";
+      case "info":
+        return "text-blue-500";
+      default:
+        return "text-gray-500";
     }
   };
 
@@ -55,15 +66,37 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
           {isDebugging ? (
             <>
               <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               Scanning...
             </>
           ) : (
             <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               Debug
             </>
@@ -87,8 +120,18 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-6 h-6 text-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 Debug Results
               </h2>
@@ -96,8 +139,18 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
                 onClick={() => setShowResults(false)}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -106,19 +159,27 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
             <div className="p-4 bg-gray-750 border-b border-gray-700">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{debugResults.summary?.total_files || 0}</div>
+                  <div className="text-2xl font-bold text-white">
+                    {debugResults.summary?.total_files || 0}
+                  </div>
                   <div className="text-sm text-gray-400">Files Scanned</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-500">{debugResults.summary?.by_severity?.error || 0}</div>
+                  <div className="text-2xl font-bold text-red-500">
+                    {debugResults.summary?.by_severity?.error || 0}
+                  </div>
                   <div className="text-sm text-gray-400">Errors</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-500">{debugResults.summary?.by_severity?.warning || 0}</div>
+                  <div className="text-2xl font-bold text-yellow-500">
+                    {debugResults.summary?.by_severity?.warning || 0}
+                  </div>
                   <div className="text-sm text-gray-400">Warnings</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-500">{debugResults.summary?.by_severity?.info || 0}</div>
+                  <div className="text-2xl font-bold text-blue-500">
+                    {debugResults.summary?.by_severity?.info || 0}
+                  </div>
                   <div className="text-sm text-gray-400">Info</div>
                 </div>
               </div>
@@ -126,7 +187,8 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
               {debugResults.fixes && (
                 <div className="mt-4 p-3 bg-green-900 bg-opacity-30 border border-green-700 rounded">
                   <div className="text-green-400 font-medium">
-                    ✓ Fixed {debugResults.fixes.fixed_issues} / {debugResults.fixes.total_issues} issues
+                    ✓ Fixed {debugResults.fixes.fixed_issues} /{" "}
+                    {debugResults.fixes.total_issues} issues
                   </div>
                 </div>
               )}
@@ -134,34 +196,59 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
 
             {/* Issues List */}
             <div className="flex-1 overflow-y-auto p-4">
-              <h3 className="text-lg font-semibold text-white mb-3">Top Issues</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">
+                Top Issues
+              </h3>
               {debugResults.summary?.top_issues?.length > 0 ? (
                 <div className="space-y-2">
-                  {debugResults.summary.top_issues.map((issue: any, idx: number) => (
-                    <div key={idx} className="bg-gray-750 p-3 rounded border border-gray-700 hover:border-gray-600 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className={`font-mono text-xs px-2 py-1 rounded ${getSeverityColor(issue.severity)} bg-opacity-20`}>
-                          {issue.severity.toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm text-gray-300 font-medium truncate">
-                            {issue.file}:{issue.line}
+                  {debugResults.summary.top_issues.map(
+                    (issue: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="bg-gray-750 p-3 rounded border border-gray-700 hover:border-gray-600 transition-colors"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div
+                            className={`font-mono text-xs px-2 py-1 rounded ${getSeverityColor(
+                              issue.severity,
+                            )} bg-opacity-20`}
+                          >
+                            {issue.severity.toUpperCase()}
                           </div>
-                          <div className="text-sm text-gray-400 mt-1">{issue.message}</div>
-                          <div className="text-xs text-gray-500 mt-1">
-                            Category: {issue.category}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm text-gray-300 font-medium truncate">
+                              {issue.file}:{issue.line}
+                            </div>
+                            <div className="text-sm text-gray-400 mt-1">
+                              {issue.message}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              Category: {issue.category}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-400">
-                  <svg className="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-16 h-16 mx-auto mb-4 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
-                  <p className="text-lg font-medium text-white">No issues found!</p>
+                  <p className="text-lg font-medium text-white">
+                    No issues found!
+                  </p>
                   <p className="text-sm">Your code looks great 🎉</p>
                 </div>
               )}
@@ -185,3 +272,6 @@ export const DebugButton: React.FC<DebugButtonProps> = ({ projectRoot, onDebugCo
     </>
   );
 };
+
+// Exports
+export { DebugButton };

@@ -1,0 +1,184 @@
+# Frontend File Usage Analysis
+
+## Summary
+
+- Total files analyzed: 316
+- Used files: 156
+- Unused files: 160
+- Potentially unused files: 1
+
+## Entry Points
+
+- `c:\Users\OMEN\OneDrive\Documents\vybe 2.0\frontend\src\index.tsx`
+- `c:\Users\OMEN\OneDrive\Documents\vybe 2.0\frontend\index.html`
+- `c:\Users\OMEN\OneDrive\Documents\vybe 2.0\frontend\vite.config.ts`
+- `c:\Users\OMEN\OneDrive\Documents\vybe 2.0\frontend\src\main.tsx`
+
+## Unused Files
+
+- `find-unused-files.js`
+- `index.html`
+- `jest.config.js`
+- `package-lock.json`
+- `package.json`
+- `postcss.config.js`
+- `scripts\analyze-imports.ts`
+- `src\AppWrapper.tsx`
+- `src\components\CommandPalette\index.tsx`
+- `src\components\DeploymentPanel\index.tsx`
+- `src\components\EnhancedErrorBoundary.tsx`
+- `src\components\EnhancedFileTree.tsx`
+- `src\components\ErrorBoundary.tsx`
+- `src\components\FileContextMenu.tsx`
+- `src\components\FileTabs.tsx`
+- `src\components\FolderPicker.tsx`
+- `src\components\Header\index.tsx`
+- `src\components\PackageManager\PackageManager.tsx`
+- `src\components\PackageManager\index.tsx`
+- `src\components\Settings\SettingsButton.tsx`
+- `src\components\Settings\SettingsModal.tsx`
+- `src\components\Settings\WorkspaceConfig.tsx`
+- `src\components\Settings\index.ts`
+- `src\components\Toast\Toast.test.tsx`
+- `src\components\Toast\__tests__\test-utils.tsx`
+- `src\components\Toast\index.ts`
+- `src\components\ai\AIDashboard.tsx`
+- `src\components\ai\index.ts`
+- `src\components\common\ConnectionStatus.tsx`
+- `src\components\common\ErrorBoundary.tsx`
+- `src\components\common\PanelContainer.tsx`
+- `src\components\common\PanelSwitcher.tsx`
+- `src\components\common\TerminalTabs.new.tsx`
+- `src\components\common\TerminalTabs.tsx`
+- `src\components\common\index.ts`
+- `src\components\debug\DebugButton.tsx`
+- `src\components\debug\Debugger.tsx`
+- `src\components\debug\DebuggerPanel.tsx`
+- `src\components\editor\CodeEditor.tsx`
+- `src\components\editor\DebugMonacoEditor.tsx`
+- `src\components\editor\EditorSettings.tsx`
+- `src\components\editor\FormatSettings.tsx`
+- `src\components\editor\InlineCompletion.tsx`
+- `src\components\editor\MonacoCodeEditor.tsx`
+- `src\components\editor\MonacoEditor.tsx`
+- `src\components\editor\index.ts`
+- `src\components\file-explorer\FileExplorer.tsx`
+- `src\components\file-explorer\FileList.tsx`
+- `src\components\file-explorer\SearchPanel.tsx`
+- `src\components\file-explorer\index.ts`
+- `src\components\file-system\index.ts`
+- `src\components\forms\FormField.tsx`
+- `src\components\git\GitSettings.tsx`
+- `src\components\git\GitStatusBar.tsx`
+- `src\components\git\gitpanel.tsx`
+- `src\components\git\index.tsx`
+- `src\components\layout\Layout.tsx`
+- `src\components\layout\RightSidebar.tsx`
+- `src\components\layout\VSModernSidebar.tsx`
+- `src\components\mcp\MCPFileTree.tsx`
+- `src\components\mcp\MCPFixPanel.tsx`
+- `src\components\mcp\MCPIssuesList.tsx`
+- `src\components\mcp\MCPSettings.tsx`
+- `src\components\project\FileOperations.tsx`
+- `src\components\project\ProjectExplorer.tsx`
+- `src\components\project\ProjectManager.tsx`
+- `src\components\project\ProjectSettings.tsx`
+- `src\components\project\ProjectStatusBar.tsx`
+- `src\components\search\FileSearchModal.tsx`
+- `src\components\search\ProjectSearch.tsx`
+- `src\components\search\SearchModal.tsx`
+- `src\components\search\SearchReplace.tsx`
+- `src\components\search\index.ts`
+- `src\components\sidebar\Sidebar.tsx`
+- `src\components\ui\Breadcrumb.tsx`
+- `src\components\ui\Button.tsx`
+- `src\components\ui\Button\Button.tsx`
+- `src\components\ui\ChatPane.tsx`
+- `src\components\ui\EmptyState.tsx`
+- `src\components\ui\EnhancedErrorBoundary.tsx`
+- `src\components\ui\Input.tsx`
+- `src\components\ui\LoadingSkeleton.tsx`
+- `src\components\ui\ModernFileTree.tsx`
+- `src\components\ui\NotificationSystem.tsx`
+- `src\components\ui\Skeleton.tsx`
+- `src\components\ui\ThemeCustomizer.tsx`
+- `src\components\ui\ThemeToggle.tsx`
+- `src\components\ui\badge.tsx`
+- `src\components\ui\checkbox.tsx`
+- `src\components\ui\design-system.tsx`
+- `src\components\ui\design-system\Button.tsx`
+- `src\components\ui\design-system\Card.tsx`
+- `src\components\ui\design-system\Input.tsx`
+- `src\components\ui\index.ts`
+- `src\components\ui\label.tsx`
+- `src\components\ui\scroll-area.tsx`
+- `src\components\ui\select.tsx`
+- `src\components\ui\tabs.tsx`
+- `src\env.d.ts`
+- `src\features\layout\Layout.tsx`
+- `src\features\topbar\TopBar.tsx`
+- `src\hooks\useAI.new.ts`
+- `src\hooks\useAI.ts`
+- `src\hooks\useAuth.ts`
+- `src\hooks\useChat.ts`
+- `src\hooks\useDebounce.ts`
+- `src\hooks\useDeployment.ts`
+- `src\hooks\useEditorDebugger.ts`
+- `src\hooks\useFileWatcher.ts`
+- `src\hooks\useGit.ts`
+- `src\hooks\useGitWebSocket.ts`
+- `src\hooks\usePackageManager.ts`
+- `src\hooks\useProject.ts`
+- `src\hooks\useWebSocket.ts`
+- `src\main.tsx`
+- `src\pages\AIPage.tsx`
+- `src\pages\LoginPage.tsx`
+- `src\providers\AppProvider.tsx`
+- `src\providers\AppProviders.tsx`
+- `src\services\aiService.ts`
+- `src\services\apiClient.ts`
+- `src\services\api\base.ts`
+- `src\services\api\debuggerApi.ts`
+- `src\services\api\endpoints.ts`
+- `src\services\api\exampleService.ts`
+- `src\services\debuggerService.ts`
+- `src\services\debugger\DebuggerWebSocket.ts`
+- `src\services\gitWebSocketService.ts`
+- `src\services\index.ts`
+- `src\setupTests.ts`
+- `src\store\aiSettingsSlice.ts`
+- `src\store\aiSettingsStore.ts`
+- `src\store\enhancedStore.ts`
+- `src\store\gitSlice.ts`
+- `src\store\index.ts`
+- `src\store\rootReducer.ts`
+- `src\store\useStore.ts`
+- `src\styles\design-tokens.ts`
+- `src\templates\projectTemplates.ts`
+- `src\test-utils.tsx`
+- `src\theme.ts`
+- `src\theme\GlobalStyles.tsx`
+- `src\theme\theme.d.ts`
+- `src\theme\themeUtils.ts`
+- `src\types.ts`
+- `src\types\ai.ts`
+- `src\types\fileSystem.ts`
+- `src\types\index.ts`
+- `src\types\mcp.ts`
+- `src\utils\api.ts`
+- `src\utils\cn.ts`
+- `src\utils\fileUtils.ts`
+- `src\utils\gitUtils.ts`
+- `src\utils\markdown.ts`
+- `src\utils\performance.ts`
+- `src\utils\toast.ts`
+- `tailwind.config.js`
+- `tsconfig.json`
+- `tsconfig.node.json`
+- `vite.config.ts`
+
+## Potentially Unused Files
+
+These files are only imported in test files or have minimal usage:
+
+- `src\components\Toast\__tests__\..\Toast.tsx`

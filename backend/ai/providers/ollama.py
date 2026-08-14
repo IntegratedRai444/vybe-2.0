@@ -1,17 +1,20 @@
 import json
+from typing import Any, Dict, Generator, List, Optional
+
 import requests
-from typing import List, Optional, Dict, Any, Generator
-from .base import BaseModelProvider
+
 from ....config.model_config import ModelConfig
+from .base import BaseModelProvider
+
 
 class OllamaProvider(BaseModelProvider):
     """Provider for local Ollama models."""
-    
+
     def __init__(self, config: Dict[str, Any]):
         self.base_url = config.get("base_url", "http://localhost:11434")
         self.timeout = config.get("timeout", 300)
         super().__init__(config)
-    
+
     def _check_availability(self) -> bool:
         """Check if Ollama is available and get available models."""
         try:
@@ -24,29 +27,29 @@ class OllamaProvider(BaseModelProvider):
             pass
         self.available_models = []
         return False
-    
+
     def _request(self, endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Make a request to the Ollama API."""
         url = f"{self.base_url}{endpoint}"
         headers = {"Content-Type": "application/json"}
-        
+
         try:
             response = requests.post(
                 url,
                 headers=headers,
                 json=payload,
                 timeout=self.timeout,
-                stream=payload.get("stream", False)
+                stream=payload.get("stream", False),
             )
             response.raise_for_status()
-            
+
             if payload.get("stream", False):
                 return response
-                
+
             return response.json()
         except requests.exceptions.RequestException as e:
             raise Exception(f"Ollama API request failed: {str(e)}")
-    
+
     def generate(
         self,
         prompt: str,
@@ -54,7 +57,7 @@ class OllamaProvider(BaseModelProvider):
         system_prompt: Optional[str] = None,
         temperature: float = 0.2,
         max_tokens: int = 1024,
-        **kwargs
+        **kwargs,
     ) -> str:
         """Generate text completion using Ollama."""
         payload = {
@@ -64,40 +67,37 @@ class OllamaProvider(BaseModelProvider):
             "options": {
                 "temperature": temperature,
                 "num_predict": max_tokens,
-                **kwargs
-            }
+                **kwargs,
+            },
         }
-        
+
         if system_prompt:
             payload["system"] = system_prompt
-        
+
         response = self._request("/api/generate", payload)
         return response.get("response", "")
-    
+
     def stream_generate(
         self,
         prompt: str,
         model: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.2,
-        **kwargs
+        **kwargs,
     ) -> Generator[str, None, None]:
         """Stream text completion using Ollama."""
         payload = {
             "model": model,
             "prompt": prompt,
             "stream": True,
-            "options": {
-                "temperature": temperature,
-                **kwargs
-            }
+            "options": {"temperature": temperature, **kwargs},
         }
-        
+
         if system_prompt:
             payload["system"] = system_prompt
-        
+
         response = self._request("/api/generate", payload)
-        
+
         for line in response.iter_lines():
             if line:
                 try:
@@ -106,13 +106,10 @@ class OllamaProvider(BaseModelProvider):
                         yield data["response"]
                 except json.JSONDecodeError:
                     continue
-    
+
     def embed(self, text: str, model: str) -> List[float]:
         """Generate embeddings using Ollama."""
-        payload = {
-            "model": model,
-            "prompt": text
-        }
-        
+        payload = {"model": model, "prompt": text}
+
         response = self._request("/api/embeddings", payload)
         return response.get("embedding", [])

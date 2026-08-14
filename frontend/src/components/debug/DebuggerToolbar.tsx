@@ -1,11 +1,16 @@
-import React from 'react';
-import { useDebugger } from '../../contexts/DebuggerContext';
-import { Button } from '../ui/button';
-import { 
-  Play, Pause, Square, StepForward, 
-  ChevronDown, ChevronUp, RefreshCw 
-} from 'lucide-react';
-import { cn } from '../../lib/utils';
+import React from "react";
+import { useDebugger } from "../../contexts/DebuggerContext";
+import { Button } from "../ui/button";
+import {
+  Play,
+  Pause,
+  Square,
+  StepForward,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+} from "lucide-react";
+import { cn } from "../../lib/utils";
 
 export const DebuggerToolbar: React.FC = () => {
   const {
@@ -23,7 +28,7 @@ export const DebuggerToolbar: React.FC = () => {
 
   const handleStartDebugging = () => {
     // In a real app, you would get the current file path from the editor
-    const currentFilePath = ''; // Get from editor state
+    const currentFilePath = ""; // Get from editor state
     if (currentFilePath) {
       startDebugging(currentFilePath, true);
     }
@@ -126,7 +131,7 @@ export const DebuggerToolbar: React.FC = () => {
             className="flex items-center space-x-1"
             title="Restart Debugging (Ctrl+Shift+F5)"
           >
-            <RefreshCw className={cn('h-4 w-4', loading && 'animate-spin')} />
+            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             <span>Restart</span>
           </Button>
         </>
@@ -136,19 +141,22 @@ export const DebuggerToolbar: React.FC = () => {
 
       <div className="flex items-center space-x-2">
         <span className="text-xs text-gray-500 dark:text-gray-400">
-          {isDebugging ? (isPaused ? 'Paused' : 'Running') : 'Not Running'}
+          {isDebugging ? (isPaused ? "Paused" : "Running") : "Not Running"}
         </span>
-        <div 
+        <div
           className={cn(
-            'h-3 w-3 rounded-full',
-            isDebugging 
-              ? isPaused 
-                ? 'bg-yellow-500' 
-                : 'bg-green-500 animate-pulse'
-              : 'bg-gray-400'
+            "h-3 w-3 rounded-full",
+            isDebugging
+              ? isPaused
+                ? "bg-yellow-500"
+                : "bg-green-500 animate-pulse"
+              : "bg-gray-400",
           )}
         />
       </div>
     </div>
   );
 };
+
+// Exports
+export { DebuggerToolbar };

@@ -12,7 +12,7 @@ export const MonacoCodeEditor: React.FC<Props> = ({
   filePath,
   onContentChange,
   onCursorChange,
-  theme = "dark"
+  theme = "dark",
 }) => {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("plaintext");
@@ -28,11 +28,15 @@ export const MonacoCodeEditor: React.FC<Props> = ({
   const loadFile = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:8000/file/content?path=${encodeURIComponent(filePath)}`);
+      const response = await fetch(
+        `http://127.0.0.1:8000/file/content?path=${encodeURIComponent(
+          filePath,
+        )}`,
+      );
       const data = await response.json();
       setCode(data.content || "");
 
-      const ext = filePath.split('.').pop()?.toLowerCase() || "";
+      const ext = filePath.split(".").pop()?.toLowerCase() || "";
       setLanguage(getLanguageFromExtension(ext));
     } catch (error) {
       console.error("Failed to load file:", error);
@@ -43,14 +47,34 @@ export const MonacoCodeEditor: React.FC<Props> = ({
 
   const getLanguageFromExtension = (ext: string): string => {
     const langMap: Record<string, string> = {
-      'js': 'javascript', 'jsx': 'javascript', 'ts': 'typescript', 'tsx': 'typescript',
-      'py': 'python', 'java': 'java', 'cpp': 'cpp', 'c': 'c', 'cs': 'csharp',
-      'css': 'css', 'scss': 'scss', 'html': 'html', 'json': 'json',
-      'md': 'markdown', 'yml': 'yaml', 'yaml': 'yaml', 'xml': 'xml',
-      'sql': 'sql', 'sh': 'shell', 'bash': 'shell', 'go': 'go', 'rs': 'rust',
-      'php': 'php', 'rb': 'ruby', 'kt': 'kotlin', 'swift': 'swift'
+      js: "javascript",
+      jsx: "javascript",
+      ts: "typescript",
+      tsx: "typescript",
+      py: "python",
+      java: "java",
+      cpp: "cpp",
+      c: "c",
+      cs: "csharp",
+      css: "css",
+      scss: "scss",
+      html: "html",
+      json: "json",
+      md: "markdown",
+      yml: "yaml",
+      yaml: "yaml",
+      xml: "xml",
+      sql: "sql",
+      sh: "shell",
+      bash: "shell",
+      go: "go",
+      rs: "rust",
+      php: "php",
+      rb: "ruby",
+      kt: "kotlin",
+      swift: "swift",
     };
-    return langMap[ext] || 'plaintext';
+    return langMap[ext] || "plaintext";
   };
 
   const handleEditorDidMount = (editor: any, monaco: any) => {
@@ -62,11 +86,11 @@ export const MonacoCodeEditor: React.FC<Props> = ({
     });
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
-      editor.getAction('actions.find').run();
+      editor.getAction("actions.find").run();
     });
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyH, () => {
-      editor.getAction('editor.action.startFindReplaceAction').run();
+      editor.getAction("editor.action.startFindReplaceAction").run();
     });
 
     editor.onDidChangeCursorPosition((e: any) => {
@@ -80,7 +104,7 @@ export const MonacoCodeEditor: React.FC<Props> = ({
           startLineNumber: position.lineNumber,
           endLineNumber: position.lineNumber,
           startColumn: word.startColumn,
-          endColumn: word.endColumn
+          endColumn: word.endColumn,
         };
 
         try {
@@ -88,25 +112,29 @@ export const MonacoCodeEditor: React.FC<Props> = ({
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              prompt: `Complete this code: ${model.getLineContent(position.lineNumber)}`,
+              prompt: `Complete this code: ${model.getLineContent(
+                position.lineNumber,
+              )}`,
               file_path: filePath,
-              top_k: 3
+              top_k: 3,
             }),
           });
           const data = await response.json();
 
           return {
-            suggestions: [{
-              label: 'AI Suggestion',
-              kind: monaco.languages.CompletionItemKind.Text,
-              insertText: data.answer,
-              range: range
-            }]
+            suggestions: [
+              {
+                label: "AI Suggestion",
+                kind: monaco.languages.CompletionItemKind.Text,
+                insertText: data.answer,
+                range: range,
+              },
+            ],
           };
         } catch (error) {
           return { suggestions: [] };
         }
-      }
+      },
     });
 
     updateDiagnostics();
@@ -116,7 +144,9 @@ export const MonacoCodeEditor: React.FC<Props> = ({
     if (!editorRef.current || !monacoRef.current) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/lint?path=${encodeURIComponent(filePath)}`);
+      const response = await fetch(
+        `http://127.0.0.1:8000/lint?path=${encodeURIComponent(filePath)}`,
+      );
       const data = await response.json();
 
       const markers = data.diagnostics.map((d: any) => ({
@@ -131,7 +161,7 @@ export const MonacoCodeEditor: React.FC<Props> = ({
       monacoRef.current.editor.setModelMarkers(
         editorRef.current.getModel(),
         "diagnostics",
-        markers
+        markers,
       );
     } catch (error) {
       console.error("Failed to get diagnostics:", error);
@@ -209,9 +239,12 @@ export const MonacoCodeEditor: React.FC<Props> = ({
           // highlightActiveIndentGuide: true, // Not supported in this Monaco version
           rulers: [80, 120],
           scrollBeyondLastLine: false,
-          fixedOverflowWidgets: true
+          fixedOverflowWidgets: true,
         }}
       />
     </div>
   );
 };
+
+// Exports
+export { MonacoCodeEditor };

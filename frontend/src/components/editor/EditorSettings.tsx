@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FaSave, FaEye, FaFolderOpen, FaCog } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { FaSave, FaEye, FaFolderOpen, FaCog } from "react-icons/fa";
 
 interface EditorSettings {
   autoSave: boolean;
@@ -19,11 +19,11 @@ interface Props {
   onSettingsChange: (settings: EditorSettings) => void;
 }
 
-export const EditorSettings: React.FC<Props> = ({ 
-  isOpen, 
-  onClose, 
-  settings, 
-  onSettingsChange 
+export const EditorSettings: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  settings,
+  onSettingsChange,
 }) => {
   const [localSettings, setLocalSettings] = useState<EditorSettings>(settings);
 
@@ -31,7 +31,10 @@ export const EditorSettings: React.FC<Props> = ({
     setLocalSettings(settings);
   }, [settings]);
 
-  const handleSettingChange = (key: keyof EditorSettings, value: boolean | number) => {
+  const handleSettingChange = (
+    key: keyof EditorSettings,
+    value: boolean | number,
+  ) => {
     const newSettings = { ...localSettings, [key]: value };
     setLocalSettings(newSettings);
   };
@@ -50,7 +53,7 @@ export const EditorSettings: React.FC<Props> = ({
       codeFolding: true,
       wordWrap: true,
       lineNumbers: true,
-      renderWhitespace: false
+      renderWhitespace: false,
     };
     setLocalSettings(defaultSettings);
   };
@@ -66,10 +69,7 @@ export const EditorSettings: React.FC<Props> = ({
             <FaCog className="w-5 h-5 text-blue-400" />
             Editor Settings
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-          >
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
             ✕
           </button>
         </div>
@@ -88,7 +88,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.autoSave}
-                  onChange={(e) => handleSettingChange('autoSave', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("autoSave", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -103,7 +105,12 @@ export const EditorSettings: React.FC<Props> = ({
                     max="10000"
                     step="500"
                     value={localSettings.autoSaveInterval}
-                    onChange={(e) => handleSettingChange('autoSaveInterval', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "autoSaveInterval",
+                        parseInt(e.target.value),
+                      )
+                    }
                     className="w-full"
                     aria-label="Auto-save interval"
                     title="Auto-save interval in milliseconds"
@@ -125,7 +132,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.minimap}
-                  onChange={(e) => handleSettingChange('minimap', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("minimap", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -134,7 +143,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.lineNumbers}
-                  onChange={(e) => handleSettingChange('lineNumbers', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("lineNumbers", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -143,7 +154,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.wordWrap}
-                  onChange={(e) => handleSettingChange('wordWrap', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("wordWrap", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -152,7 +165,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.codeFolding}
-                  onChange={(e) => handleSettingChange('codeFolding', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("codeFolding", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -161,7 +176,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.renderWhitespace}
-                  onChange={(e) => handleSettingChange('renderWhitespace', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("renderWhitespace", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -180,7 +197,9 @@ export const EditorSettings: React.FC<Props> = ({
                 <input
                   type="checkbox"
                   checked={localSettings.fileWatcher}
-                  onChange={(e) => handleSettingChange('fileWatcher', e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("fileWatcher", e.target.checked)
+                  }
                   className="w-4 h-4"
                 />
               </label>
@@ -218,3 +237,6 @@ export const EditorSettings: React.FC<Props> = ({
     </div>
   );
 };
+
+// Exports
+export { EditorSettings };

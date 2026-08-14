@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api/ai';
+const API_BASE_URL = "http://localhost:5000/api/ai";
 
 interface Message {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
 }
 
@@ -19,20 +19,20 @@ interface ChatCompletionOptions {
 
 export const aiService = {
   async chatCompletion({
-    provider = 'ollama',
-    model = 'llama3:latest',
+    provider = "ollama",
+    model = "llama3:latest",
     messages,
     temperature = 0.7,
     maxTokens = 1000,
     fileContent,
-    language = 'typescript',
+    language = "typescript",
   }: ChatCompletionOptions) {
     try {
       // If file content is provided, prepend it to the messages
       const enhancedMessages = fileContent
         ? [
             {
-              role: 'system' as const,
+              role: "system" as const,
               content: `You are a helpful coding assistant. The current file is written in ${language}. Here's the file content:\n\`\`\`${language}\n${fileContent}\n\`\`\``,
             },
             ...messages,
@@ -49,16 +49,16 @@ export const aiService = {
 
       return response.data;
     } catch (error) {
-      console.error('Error in AI chat completion:', error);
+      console.error("Error in AI chat completion:", error);
       throw error;
     }
   },
 
   async analyzeCode({
     code,
-    language = 'typescript',
-    provider = 'ollama',
-    model = 'codellama:7b-instruct',
+    language = "typescript",
+    provider = "ollama",
+    model = "codellama:7b-instruct",
   }: {
     code: string;
     language?: string;
@@ -71,11 +71,11 @@ export const aiService = {
         model,
         messages: [
           {
-            role: 'system' as const,
+            role: "system" as const,
             content: `You are a code analyzer. Analyze the following ${language} code for potential issues, performance improvements, and best practices. Provide a detailed report with code examples.`,
           },
           {
-            role: 'user' as const,
+            role: "user" as const,
             content: `Analyze this ${language} code:\n\`\`\`${language}\n${code}\n\`\`\``,
           },
         ],
@@ -84,7 +84,7 @@ export const aiService = {
 
       return response.data;
     } catch (error) {
-      console.error('Error in code analysis:', error);
+      console.error("Error in code analysis:", error);
       throw error;
     }
   },
@@ -94,7 +94,7 @@ export const aiService = {
       const response = await axios.get(`${API_BASE_URL}/providers`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching AI providers:', error);
+      console.error("Error fetching AI providers:", error);
       return [];
     }
   },

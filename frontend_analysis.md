@@ -1,0 +1,256 @@
+# Frontend Codebase Analysis
+
+## Summary
+
+- **Component**: 138 files
+- **Config**: 9 files
+- **Documentation**: 2 files
+- **Style**: 3 files
+- **Types**: 2 files
+- **Unknown**: 74 files
+
+## Component (138 files)
+
+- `src/App.tsx` (7.63 KB) - UI Component
+- `src/AppWrapper.tsx` (0.33 KB) - UI Component
+- `src/index.tsx` (1.33 KB) - UI Component
+- `src/main.tsx` (0.12 KB) - UI Component
+- `src/test-utils.tsx` (0.63 KB) - UI Component
+- `src/components/EnhancedErrorBoundary.tsx` (2.7 KB) - UI Component
+- `src/components/EnhancedFileTree.tsx` (4.76 KB) - UI Component
+- `src/components/ErrorBoundary.tsx` (4.14 KB) - UI Component
+- `src/components/FileContextMenu.tsx` (4.88 KB) - UI Component
+- `src/components/FileIcon.tsx` (2.76 KB) - UI Component
+- `src/components/FileTabs.tsx` (1.27 KB) - UI Component
+- `src/components/FolderPicker.tsx` (12.03 KB) - UI Component
+- `src/components/ai/AIChatPanel.tsx` (17.1 KB) - UI Component
+- `src/components/ai/AICodeEditor.tsx` (5.96 KB) - UI Component
+- `src/components/ai/AIDashboard.tsx` (5.96 KB) - UI Component
+- `src/components/ai/AILayout.tsx` (0.44 KB) - UI Component
+- `src/components/ai/AIPanel.tsx` (6.8 KB) - UI Component
+- `src/components/ai/AIProvider.tsx` (9.2 KB) - UI Component
+- `src/components/ai/AIProviderSelector.tsx` (9.31 KB) - UI Component
+- `src/components/ai/AISettings.tsx` (12.79 KB) - UI Component
+- `src/components/ai/CompletionBubble.tsx` (0.84 KB) - UI Component
+- `src/components/ai/ModelSelector.tsx` (0.76 KB) - UI Component
+- `src/components/CommandPalette/index.tsx` (7.08 KB) - UI Component
+- `src/components/common/AnalysisButton.tsx` (8.59 KB) - UI Component
+- `src/components/common/CollaborationPanel.tsx` (14.25 KB) - UI Component
+- `src/components/common/ConnectionStatus.tsx` (2.1 KB) - UI Component
+- `src/components/common/DeployPanel.tsx` (2.51 KB) - UI Component
+- `src/components/common/ErrorBoundary.tsx` (4.04 KB) - UI Component
+- `src/components/common/MCPPanel.tsx` (3.91 KB) - UI Component
+- `src/components/common/OutlineView.tsx` (3.79 KB) - UI Component
+- `src/components/common/PanelContainer.tsx` (0.73 KB) - UI Component
+- `src/components/common/PanelSwitcher.tsx` (2.54 KB) - UI Component
+- `src/components/common/ProblemsPanel.tsx` (4.14 KB) - UI Component
+- `src/components/common/SecurityButton.tsx` (16.93 KB) - UI Component
+- `src/components/common/ShortcutsPanel.tsx` (15.02 KB) - UI Component
+- `src/components/common/SnippetLibrary.tsx` (3.46 KB) - UI Component
+- `src/components/common/SyncStatus.tsx` (0.36 KB) - UI Component
+- `src/components/common/TerminalPane.tsx` (9.78 KB) - UI Component
+- `src/components/common/TerminalTabs.new.tsx` (12.45 KB) - UI Component
+- `src/components/common/TerminalTabs.tsx` (20.99 KB) - UI Component
+- `src/components/debug/DebugButton.tsx` (9.88 KB) - UI Component
+- `src/components/debug/Debugger.tsx` (26.0 KB) - UI Component
+- `src/components/debug/DebuggerPanel.tsx` (7.22 KB) - UI Component
+- `src/components/debug/DebuggerToolbar.tsx` (4.3 KB) - UI Component
+- `src/components/debug/ExceptionsPanel.tsx` (4.6 KB) - UI Component
+- `src/components/debug/WatchExpressions.tsx` (4.85 KB) - UI Component
+- `src/components/DeploymentPanel/index.tsx` (12.52 KB) - UI Component
+- `src/components/editor/CodeEditor.tsx` (5.73 KB) - UI Component
+- `src/components/editor/DebugMonacoEditor.tsx` (2.45 KB) - UI Component
+- `src/components/editor/EditorSettings.tsx` (8.08 KB) - UI Component
+- `src/components/editor/EditorTabs.tsx` (2.23 KB) - UI Component
+- `src/components/editor/FormatSettings.tsx` (2.52 KB) - UI Component
+- `src/components/editor/InlineCompletion.tsx` (1.91 KB) - UI Component
+- `src/components/editor/MonacoCodeEditor.tsx` (6.7 KB) - UI Component
+- `src/components/editor/MonacoEditor.tsx` (12.27 KB) - UI Component
+- `src/components/file-explorer/FileExplorer.tsx` (16.3 KB) - UI Component
+- `src/components/file-explorer/FileItem.tsx` (1.8 KB) - UI Component
+- `src/components/file-explorer/FileList.tsx` (2.26 KB) - UI Component
+- `src/components/file-explorer/SearchPanel.tsx` (3.09 KB) - UI Component
+- `src/components/forms/FormField.tsx` (3.51 KB) - UI Component
+- `src/components/git/gitpanel.tsx` (20.29 KB) - UI Component
+- `src/components/git/GitSettings.tsx` (18.74 KB) - UI Component
+- `src/components/git/GitStatusBar.tsx` (0.68 KB) - UI Component
+- `src/components/git/index.tsx` (19.56 KB) - UI Component
+- `src/components/Header/index.tsx` (1.53 KB) - UI Component
+- `src/components/layout/ActivityBar.tsx` (1.74 KB) - UI Component
+- `src/components/layout/Layout.tsx` (1.98 KB) - UI Component
+- `src/components/layout/LayoutManager.tsx` (25.64 KB) - UI Component
+- `src/components/layout/MainLayout.tsx` (4.79 KB) - UI Component
+- `src/components/layout/NavigationBar.tsx` (5.06 KB) - UI Component
+- `src/components/layout/RightSidebar.tsx` (2.14 KB) - UI Component
+- `src/components/layout/StatusBar.tsx` (2.35 KB) - UI Component
+- `src/components/layout/VSModernSidebar.tsx` (13.28 KB) - UI Component
+- `src/components/layout/VSModernSidebar.tsx.new` (18.95 KB) - UI Component
+- `src/components/layout/panels/ExplorerPanel.tsx` (2.63 KB) - UI Component
+- `src/components/mcp/MCPFileTree.tsx` (8.71 KB) - UI Component
+- `src/components/mcp/MCPFixPanel.tsx` (16.46 KB) - UI Component
+- `src/components/mcp/MCPIssuesList.tsx` (3.49 KB) - UI Component
+- `src/components/mcp/MCPSettings.tsx` (49.36 KB) - UI Component
+- `src/components/PackageManager/index.tsx` (12.73 KB) - UI Component
+- `src/components/PackageManager/PackageManager.tsx` (38.21 KB) - UI Component
+- `src/components/project/FileOperations.tsx` (7.96 KB) - UI Component
+- `src/components/project/ProjectExplorer.tsx` (8.32 KB) - UI Component
+- `src/components/project/ProjectManager.tsx` (4.75 KB) - UI Component
+- `src/components/project/ProjectSettings.tsx` (120.32 KB) - UI Component
+- `src/components/project/ProjectStatusBar.tsx` (1.93 KB) - UI Component
+- `src/components/project/ProjectTemplatePicker.tsx` (8.49 KB) - UI Component
+- `src/components/search/FileSearchModal.tsx` (2.89 KB) - UI Component
+- `src/components/search/ProjectSearch.tsx` (6.24 KB) - UI Component
+- `src/components/search/SearchModal.tsx` (4.88 KB) - UI Component
+- `src/components/search/SearchReplace.tsx` (5.11 KB) - UI Component
+- `src/components/Settings/SettingsButton.tsx` (0.62 KB) - UI Component
+- `src/components/Settings/SettingsModal.tsx` (14.38 KB) - UI Component
+- `src/components/Settings/SettingsModal.tsx.new` (7.45 KB) - UI Component
+- `src/components/Settings/WorkspaceConfig.tsx` (9.64 KB) - UI Component
+- `src/components/sidebar/Sidebar.tsx` (1.12 KB) - UI Component
+- `src/components/Toast/Toast.test.tsx` (4.81 KB) - UI Component
+- `src/components/Toast/Toast.tsx` (12.13 KB) - UI Component
+- `src/components/Toast/__tests__/test-utils.tsx` (2.4 KB) - UI Component
+- `src/components/ui/badge.tsx` (1.11 KB) - UI Component
+- `src/components/ui/Breadcrumb.tsx` (1.86 KB) - UI Component
+- `src/components/ui/Button.tsx` (3.35 KB) - UI Component
+- `src/components/ui/ChatPane.tsx` (16.67 KB) - UI Component
+- `src/components/ui/checkbox.tsx` (1.04 KB) - UI Component
+- `src/components/ui/design-system.tsx` (0.54 KB) - UI Component
+- `src/components/ui/EmptyState.tsx` (1.9 KB) - UI Component
+- `src/components/ui/EnhancedErrorBoundary.tsx` (4.18 KB) - UI Component
+- `src/components/ui/Input.tsx` (4.19 KB) - UI Component
+- `src/components/ui/label.tsx` (0.7 KB) - UI Component
+- `src/components/ui/LoadingSkeleton.tsx` (2.19 KB) - UI Component
+- `src/components/ui/ModernFileTree.tsx` (0.05 KB) - UI Component
+- `src/components/ui/NotificationSystem.tsx` (3.0 KB) - UI Component
+- `src/components/ui/scroll-area.tsx` (1.6 KB) - UI Component
+- `src/components/ui/select.tsx` (4.27 KB) - UI Component
+- `src/components/ui/Skeleton.tsx` (1.16 KB) - UI Component
+- `src/components/ui/tabs.tsx` (1.85 KB) - UI Component
+- `src/components/ui/ThemeCustomizer.tsx` (19.35 KB) - UI Component
+- `src/components/ui/ThemeToggle.tsx` (6.33 KB) - UI Component
+- `src/components/ui/Button/Button.tsx` (6.05 KB) - UI Component
+- `src/components/ui/design-system/Button.tsx` (2.52 KB) - UI Component
+- `src/components/ui/design-system/Card.tsx` (1.9 KB) - UI Component
+- `src/components/ui/design-system/Input.tsx` (0.82 KB) - UI Component
+- `src/contexts/AIContext.tsx` (3.35 KB) - UI Component
+- `src/contexts/DebuggerContext.tsx` (18.0 KB) - UI Component
+- `src/contexts/GitContext.tsx` (12.3 KB) - UI Component
+- `src/contexts/MCPContext.tsx` (14.68 KB) - UI Component
+- `src/contexts/ProjectContext.tsx` (10.71 KB) - UI Component
+- `src/contexts/ThemeContext.tsx` (2.39 KB) - UI Component
+- `src/contexts/WebSocketContext.tsx` (4.65 KB) - UI Component
+- `src/features/layout/Layout.tsx` (2.48 KB) - UI Component
+- `src/features/topbar/TopBar.tsx` (1.82 KB) - UI Component
+- `src/pages/AIPage.tsx` (14.41 KB) - UI Component
+- `src/pages/LoginPage.tsx` (7.56 KB) - UI Component
+- `src/providers/AppProvider.tsx` (2.64 KB) - UI Component
+- `src/providers/AppProviders.tsx` (0.73 KB) - UI Component
+- `src/providers/WebSocketProvider.tsx` (0.88 KB) - UI Component
+- `src/theme/GlobalStyles.tsx` (12.12 KB) - UI Component
+- `src/theme/ThemeProvider.tsx` (1.64 KB) - UI Component
+
+## Config (9 files)
+
+- `.eslintrc.cjs` (0.81 KB) - Configuration
+- `jest.config.js` (0.5 KB) - Configuration
+- `package-lock.json` (214.3 KB) - Configuration
+- `package.json` (1.98 KB) - Configuration
+- `postcss.config.js` (0.08 KB) - Configuration
+- `tailwind.config.js` (0.18 KB) - Configuration
+- `tsconfig.json` (0.55 KB) - Configuration
+- `tsconfig.node.json` (0.21 KB) - Configuration
+- `vite.config.ts` (1.03 KB) - Configuration
+
+## Documentation (2 files)
+
+- `SETUP.md` (2.72 KB) - Documentation
+- `src/components/Toast/README.md` (6.13 KB) - Documentation
+
+## Style (3 files)
+
+- `src/index.css` (7.42 KB) - Styling
+- `src/styles/debugger.css` (3.23 KB) - Styling
+- `src/styles/global.css` (6.42 KB) - Styling
+
+## Types (2 files)
+
+- `src/env.d.ts` (0.24 KB) - Type Definitions
+- `src/theme/theme.d.ts` (0.83 KB) - Type Definitions
+
+## Unknown (74 files)
+
+- `.env.local` (0.07 KB) - Unknown
+- `cleanup.ps1` (1.23 KB) - Unknown
+- `find-unused-files.js` (8.04 KB) - Unknown
+- `fix-casing.ps1` (0.64 KB) - Unknown
+- `index.html` (0.35 KB) - Unknown
+- `scripts/analyze-imports.ts` (8.9 KB) - Unknown
+- `src/setupTests.ts` (1.03 KB) - Unknown
+- `src/theme.ts` (0.97 KB) - Unknown
+- `src/types.ts` (3.35 KB) - Unknown
+- `src/components/ai/index.ts` (0.63 KB) - Unknown
+- `src/components/common/index.ts` (0.45 KB) - Unknown
+- `src/components/editor/index.ts` (0.72 KB) - Unknown
+- `src/components/file-explorer/index.ts` (0.19 KB) - Unknown
+- `src/components/file-explorer/types.ts` (0.77 KB) - Unknown
+- `src/components/file-system/index.ts` (0.25 KB) - Unknown
+- `src/components/search/index.ts` (0.17 KB) - Unknown
+- `src/components/Settings/index.ts` (0.12 KB) - Unknown
+- `src/components/Toast/index.ts` (0.83 KB) - Unknown
+- `src/components/Toast/types.ts` (3.2 KB) - Unknown
+- `src/components/ui/index.ts` (0.13 KB) - Unknown
+- `src/hooks/useAI.new.ts` (12.6 KB) - Unknown
+- `src/hooks/useAI.ts` (6.15 KB) - Unknown
+- `src/hooks/useAuth.ts` (3.92 KB) - Unknown
+- `src/hooks/useChat.ts` (2.17 KB) - Unknown
+- `src/hooks/useDebounce.ts` (0.93 KB) - Unknown
+- `src/hooks/useDeployment.ts` (8.24 KB) - Unknown
+- `src/hooks/useEditorDebugger.ts` (6.45 KB) - Unknown
+- `src/hooks/useFileWatcher.ts` (2.51 KB) - Unknown
+- `src/hooks/useGit.ts` (3.66 KB) - Unknown
+- `src/hooks/useGitWebSocket.ts` (0.34 KB) - Unknown
+- `src/hooks/usePackageManager.ts` (8.2 KB) - Unknown
+- `src/hooks/useProject.ts` (0.01 KB) - Unknown
+- `src/hooks/useWebSocket.ts` (3.4 KB) - Unknown
+- `src/services/aiService.ts` (2.93 KB) - Unknown
+- `src/services/apiClient.ts` (9.33 KB) - Unknown
+- `src/services/auth.ts` (1.46 KB) - Unknown
+- `src/services/debuggerService.ts` (4.2 KB) - Unknown
+- `src/services/gitWebSocketService.ts` (3.89 KB) - Unknown
+- `src/services/index.ts` (0.76 KB) - Unknown
+- `src/services/websocket.ts` (18.05 KB) - Unknown
+- `src/services/api/base.ts` (1.61 KB) - Unknown
+- `src/services/api/config.ts` (1.69 KB) - Unknown
+- `src/services/api/debuggerApi.ts` (13.0 KB) - Unknown
+- `src/services/api/endpoints.ts` (1.55 KB) - Unknown
+- `src/services/api/errorHandler.ts` (1.26 KB) - Unknown
+- `src/services/api/exampleService.ts` (1.69 KB) - Unknown
+- `src/services/api/serviceFactory.ts` (2.17 KB) - Unknown
+- `src/services/debugger/DebuggerWebSocket.ts` (6.13 KB) - Unknown
+- `src/store/aiSettingsSlice.ts` (3.48 KB) - Unknown
+- `src/store/aiSettingsStore.ts` (4.31 KB) - Unknown
+- `src/store/enhancedStore.ts` (18.62 KB) - Unknown
+- `src/store/gitSlice.ts` (2.92 KB) - Unknown
+- `src/store/index.ts` (1.0 KB) - Unknown
+- `src/store/rootReducer.ts` (0.39 KB) - Unknown
+- `src/store/store.ts` (1.32 KB) - Unknown
+- `src/store/useStore.ts` (8.48 KB) - Unknown
+- `src/store/slices/authSlice.ts` (6.69 KB) - Unknown
+- `src/store/slices/debuggerSlice.ts` (5.24 KB) - Unknown
+- `src/store/slices/editorSlice.ts` (2.46 KB) - Unknown
+- `src/styles/design-tokens.ts` (6.39 KB) - Unknown
+- `src/templates/projectTemplates.ts` (11.51 KB) - Unknown
+- `src/theme/theme.ts` (8.82 KB) - Unknown
+- `src/theme/themeUtils.ts` (17.22 KB) - Unknown
+- `src/types/ai.ts` (1.35 KB) - Unknown
+- `src/types/fileSystem.ts` (3.4 KB) - Unknown
+- `src/types/index.ts` (18.25 KB) - Unknown
+- `src/types/mcp.ts` (2.09 KB) - Unknown
+- `src/utils/api.ts` (23.4 KB) - Unknown
+- `src/utils/cn.ts` (0.17 KB) - Unknown
+- `src/utils/fileUtils.ts` (5.28 KB) - Unknown
+- `src/utils/gitUtils.ts` (3.98 KB) - Unknown
+- `src/utils/markdown.ts` (1.78 KB) - Unknown
+- `src/utils/performance.ts` (2.76 KB) - Unknown
+- `src/utils/toast.ts` (0.58 KB) - Unknown

@@ -28,10 +28,10 @@ class CompletionResponse(BaseModel):
 async def get_completions(request: CompletionRequest):
     """
     Get code completion suggestions for the given code and cursor position
-    
+
     Args:
         request: Completion request with code, cursor position, and context
-        
+
     Returns:
         List of completion items with metadata
     """
@@ -43,12 +43,12 @@ async def get_completions(request: CompletionRequest):
             language=request.language,
             context=request.context or {}
         )
-        
+
         return CompletionResponse(
             completions=completions,
             is_incomplete=len(completions) >= 50  # Indicate if there are more results
         )
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -1,9 +1,9 @@
-import { webSocketClient } from './websocket';
-import { useGitStore } from '../store/gitSlice';
+import { webSocketClient } from "./websocket";
+import { useGitStore } from "../store/gitSlice";
 
 class GitWebSocketService {
   private static instance: GitWebSocketService;
-  private channel: string = 'git';
+  private channel: string = "git";
   private unsubscribeCallbacks: (() => void)[] = [];
 
   private constructor() {
@@ -29,7 +29,7 @@ class GitWebSocketService {
         const { branch, branches } = event.data;
         useGitStore.getState().actions.setBranch(branch);
         useGitStore.getState().actions.setBranches(branches);
-      }
+      },
     );
 
     // Status updates
@@ -40,7 +40,7 @@ class GitWebSocketService {
         useGitStore.getState().actions.setStatus(status);
         useGitStore.getState().actions.setStagedFiles(staged);
         useGitStore.getState().actions.setUnstagedFiles(unstaged);
-      }
+      },
     );
 
     // Commit history
@@ -50,22 +50,24 @@ class GitWebSocketService {
         const { commits, current } = event.data;
         useGitStore.getState().actions.setCommits(commits);
         useGitStore.getState().actions.setCurrentCommit(current);
-      }
+      },
     );
 
     // Connection status
     const connectionUnsubscribe = webSocketClient.subscribe(
-      'connection',
+      "connection",
       (event) => {
-        useGitStore.getState().actions.setConnected(event.status === 'connected');
-      }
+        useGitStore
+          .getState()
+          .actions.setConnected(event.status === "connected");
+      },
     );
 
     this.unsubscribeCallbacks.push(
       branchUnsubscribe,
       statusUnsubscribe,
       commitsUnsubscribe,
-      connectionUnsubscribe
+      connectionUnsubscribe,
     );
   }
 
@@ -73,12 +75,14 @@ class GitWebSocketService {
     try {
       useGitStore.getState().actions.setLoading(true);
       await webSocketClient.send({
-        type: 'git:init',
-        data: { path }
+        type: "git:init",
+        data: { path },
       });
     } catch (error) {
-      useGitStore.getState().actions.setError('Failed to initialize repository');
-      console.error('Git initialization error:', error);
+      useGitStore
+        .getState()
+        .actions.setError("Failed to initialize repository");
+      console.error("Git initialization error:", error);
     } finally {
       useGitStore.getState().actions.setLoading(false);
     }
@@ -88,12 +92,12 @@ class GitWebSocketService {
     try {
       useGitStore.getState().actions.setLoading(true);
       await webSocketClient.send({
-        type: 'git:stage',
-        data: { paths }
+        type: "git:stage",
+        data: { paths },
       });
     } catch (error) {
-      useGitStore.getState().actions.setError('Failed to stage files');
-      console.error('Stage files error:', error);
+      useGitStore.getState().actions.setError("Failed to stage files");
+      console.error("Stage files error:", error);
     } finally {
       useGitStore.getState().actions.setLoading(false);
     }
@@ -103,12 +107,12 @@ class GitWebSocketService {
     try {
       useGitStore.getState().actions.setLoading(true);
       await webSocketClient.send({
-        type: 'git:commit',
-        data: { message }
+        type: "git:commit",
+        data: { message },
       });
     } catch (error) {
-      useGitStore.getState().actions.setError('Failed to create commit');
-      console.error('Commit error:', error);
+      useGitStore.getState().actions.setError("Failed to create commit");
+      console.error("Commit error:", error);
     } finally {
       useGitStore.getState().actions.setLoading(false);
     }
@@ -118,18 +122,18 @@ class GitWebSocketService {
     try {
       useGitStore.getState().actions.setLoading(true);
       await webSocketClient.send({
-        type: 'git:push'
+        type: "git:push",
       });
     } catch (error) {
-      useGitStore.getState().actions.setError('Failed to push changes');
-      console.error('Push error:', error);
+      useGitStore.getState().actions.setError("Failed to push changes");
+      console.error("Push error:", error);
     } finally {
       useGitStore.getState().actions.setLoading(false);
     }
   }
 
   public cleanup() {
-    this.unsubscribeCallbacks.forEach(unsubscribe => unsubscribe());
+    this.unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe());
     this.unsubscribeCallbacks = [];
   }
 }

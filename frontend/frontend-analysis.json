@@ -1,0 +1,151 @@
+{
+  "generatedAt": "2025-11-05T13:23:31.797Z",
+  "stats": {
+    "totalFiles": 233,
+    "totalSize": 1458066,
+    "byExtension": {
+      ".tsx": {
+        "count": 148,
+        "size": 1065156
+      },
+      ".ts": {
+        "count": 81,
+        "size": 368045
+      },
+      ".md": {
+        "count": 1,
+        "size": 6280
+      },
+      ".css": {
+        "count": 3,
+        "size": 18585
+      }
+    },
+    "largestFiles": [
+      {
+        "path": "src\\components\\project\\ProjectSettings.tsx",
+        "size": 123209
+      },
+      {
+        "path": "src\\components\\mcp\\MCPSettings.tsx",
+        "size": 50543
+      },
+      {
+        "path": "src\\components\\debug\\Debugger.tsx",
+        "size": 26621
+      },
+      {
+        "path": "src\\components\\layout\\LayoutManager.tsx",
+        "size": 26256
+      },
+      {
+        "path": "src\\utils\\api.ts",
+        "size": 23964
+      },
+      {
+        "path": "src\\components\\common\\TerminalTabs.tsx",
+        "size": 21485
+      },
+      {
+        "path": "src\\components\\mcp\\MCPFixPanel.tsx",
+        "size": 21141
+      },
+      {
+        "path": "src\\components\\PackageManager\\PackageManager.tsx",
+        "size": 20966
+      },
+      {
+        "path": "src\\components\\git\\gitpanel.tsx",
+        "size": 20777
+      },
+      {
+        "path": "src\\components\\git\\index.tsx",
+        "size": 20028
+      }
+    ],
+    "oldestFiles": [
+      {
+        "path": "src\\components\\FileTabs.tsx",
+        "date": "2025-10-09T13:13:27.702Z"
+      },
+      {
+        "path": "src\\components\\FileIcon.tsx",
+        "date": "2025-10-09T13:33:12.417Z"
+      },
+      {
+        "path": "src\\components\\EnhancedFileTree.tsx",
+        "date": "2025-10-10T10:03:49.444Z"
+      },
+      {
+        "path": "src\\theme\\themeUtils.ts",
+        "date": "2025-10-30T18:33:22.212Z"
+      },
+      {
+        "path": "src\\components\\project\\ProjectSettings.tsx",
+        "date": "2025-10-30T18:33:22.229Z"
+      },
+      {
+        "path": "src\\setupTests.ts",
+        "date": "2025-10-30T18:33:22.267Z"
+      },
+      {
+        "path": "src\\components\\ui\\badge.tsx",
+        "date": "2025-10-30T18:33:56.144Z"
+      },
+      {
+        "path": "src\\components\\file-system\\index.ts",
+        "date": "2025-10-30T18:33:56.181Z"
+      },
+      {
+        "path": "src\\components\\common\\DeployPanel.tsx",
+        "date": "2025-10-30T18:33:56.194Z"
+      },
+      {
+        "path": "src\\components\\ai\\CompletionBubble.tsx",
+        "date": "2025-10-30T18:33:56.223Z"
+      }
+    ],
+    "newestFiles": [
+      {
+        "path": "scripts\\analyze-frontend.ts",
+        "date": "2025-11-05T13:21:28.332Z"
+      },
+      {
+        "path": "src\\hooks\\useProject.ts",
+        "date": "2025-11-05T13:14:03.248Z"
+      },
+      {
+        "path": "src\\hooks\\useEditorState.ts",
+        "date": "2025-11-05T13:13:09.796Z"
+      },
+      {
+        "path": "src\\hooks\\useGit.ts",
+        "date": "2025-11-05T13:12:04.447Z"
+      },
+      {
+        "path": "src\\hooks\\useTerminal.ts",
+        "date": "2025-11-05T13:11:55.951Z"
+      },
+      {
+        "path": "src\\hooks\\useFileSystem.ts",
+        "date": "2025-11-05T13:11:05.844Z"
+      },
+      {
+        "path": "src\\hooks\\useDebounce.ts",
+        "date": "2025-11-05T12:57:28.345Z"
+      },
+      {
+        "path": "src\\hooks\\useWebSocket.ts",
+        "date": "2025-11-05T12:54:17.042Z"
+      },
+      {
+        "path": "src\\hooks\\useAuth.ts",
+        "date": "2025-11-05T12:53:58.210Z"
+      },
+      {
+        "path": "src\\hooks\\useAI.ts",
+        "date": "2025-11-05T12:53:41.925Z"
+      }
+    ]
+  }
+}

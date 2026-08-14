@@ -5,6 +5,7 @@ This document provides instructions for setting up the Kubernetes infrastructure
 ## Prerequisites
 
 1. **Local Development**
+
    - [Docker Desktop](https://www.docker.com/products/docker-desktop)
    - [kubectl](https://kubernetes.io/docs/tasks/tools/)
    - [k3d](https://k3d.io/v5.4.6/#installation) (for local development)
@@ -51,6 +52,7 @@ kubectl port-forward -n monitoring svc/kube-prometheus-stack-alertmanager 9093
 ### 1. Set Up Cluster
 
 For production, use a managed Kubernetes service:
+
 - [Amazon EKS](https://aws.amazon.com/eks/)
 - [Google GKE](https://cloud.google.com/kubernetes-engine)
 - [Azure AKS](https://azure.microsoft.com/en-us/services/kubernetes-service/)
@@ -81,11 +83,13 @@ chmod +x scripts/setup-github-secrets.sh
 ## 3. Monitoring and Logging
 
 ### Metrics Collection
+
 - Prometheus collects metrics from all services
 - Grafana dashboards for visualization
 - AlertManager for notifications
 
 ### Logging
+
 - Loki for log aggregation
 - Promtail for log collection
 - Grafana for log visualization
@@ -93,12 +97,14 @@ chmod +x scripts/setup-github-secrets.sh
 ## 4. Backup and Recovery
 
 ### Database Backups
+
 ```bash
 # Example backup command
 kubectl exec -n production <postgres-pod> -- pg_dump -U postgres vybe > backup.sql
 ```
 
 ### Velero for Cluster Backup
+
 1. Install Velero
 2. Configure backup location (S3, GCS, etc.)
 3. Set up scheduled backups
@@ -106,6 +112,7 @@ kubectl exec -n production <postgres-pod> -- pg_dump -U postgres vybe > backup.s
 ## 5. Scaling
 
 ### Horizontal Pod Autoscaling
+
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -120,12 +127,12 @@ spec:
   minReplicas: 2
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
 ```
 
 ## 6. Security
@@ -138,11 +145,13 @@ spec:
 ## 7. Maintenance
 
 ### Upgrading
+
 1. Check for new versions of dependencies
 2. Test in staging
 3. Deploy to production
 
 ### Monitoring
+
 - Set up alerts for critical metrics
 - Regular log reviews
 - Performance monitoring

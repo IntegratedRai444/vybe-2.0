@@ -1,7 +1,7 @@
-import React from 'react';
-import { ThemeProvider } from '../theme/ThemeProvider';
-import { WebSocketProvider } from './WebSocketProvider';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import React from "react";
+import { ThemeProvider } from "../theme/ThemeProvider";
+import { WebSocketProvider } from "./WebSocketProvider";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 // Create a client for react-query
 const queryClient = new QueryClient({
@@ -21,9 +21,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <WebSocketProvider>
-          {children}
-        </WebSocketProvider>
+        <WebSocketProvider>{children}</WebSocketProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

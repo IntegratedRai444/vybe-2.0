@@ -1,197 +1,217 @@
-import React, { useState } from 'react';
-import { useGit } from '../../contexts/GitContext';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { GitBranch, GitCommit, Plus, RefreshCw, X, Upload, Download, ArrowUp, ArrowDown } from 'lucide-react';
+import React, { useState } from "react";
+import { useGit } from "../../contexts/GitContext";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import {
+  GitBranch,
+  GitCommit,
+  Plus,
+  RefreshCw,
+  X,
+  Upload,
+  Download,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 
 const GitSettings: React.FC = () => {
-  const { 
-    status = { 
-      changes: { 
-        staged: [], 
-        unstaged: [], 
-        untracked: [] 
-      }, 
-      ahead: 0, 
-      behind: 0 
-    }, 
-    isLoading, 
+  const {
+    status = {
+      changes: {
+        staged: [],
+        unstaged: [],
+        untracked: [],
+      },
+      ahead: 0,
+      behind: 0,
+    },
+    isLoading,
     error,
-    refreshStatus, 
-    stageFiles, 
-    unstageFiles, 
+    refreshStatus,
+    stageFiles,
+    unstageFiles,
     commit: commitChanges,
     pull,
     push,
     createBranch,
     checkoutBranch,
     fetchBranches,
-    currentBranch = '',
+    currentBranch = "",
     branches = [],
     lastUpdated,
-    isInitialized = false
+    isInitialized = false,
   } = useGit();
-  
-  const [commitMessage, setCommitMessage] = useState('');
-  const [newBranchName, setNewBranchName] = useState('');
+
+  const [commitMessage, setCommitMessage] = useState("");
+  const [newBranchName, setNewBranchName] = useState("");
   const [isCommitting, setIsCommitting] = useState(false);
   const [showNewBranchInput, setShowNewBranchInput] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCreatingBranch, setIsCreatingBranch] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<Record<string, 'staged' | 'unstaged'>>({});
-  
+  const [selectedFiles, setSelectedFiles] = useState<
+    Record<string, "staged" | "unstaged">
+  >({});
+
   // Format last updated time
-  const lastUpdatedText = lastUpdated ? `Last updated: ${new Date(lastUpdated).toLocaleTimeString()}` : 'Never updated';
+  const lastUpdatedText = lastUpdated
+    ? `Last updated: ${new Date(lastUpdated).toLocaleTimeString()}`
+    : "Never updated";
 
   // Handle file selection
   const toggleFileSelection = (filePath: string, isStaged: boolean) => {
-    setSelectedFiles(prev => ({
+    setSelectedFiles((prev) => ({
       ...prev,
-      [filePath]: isStaged ? 'unstaged' : 'staged'
+      [filePath]: isStaged ? "unstaged" : "staged",
     }));
   };
-  
+
   // Handle stage/unstage all
   const handleStageAll = async () => {
     try {
       if (!status) return;
       const filesToStage = [
         ...status.changes.unstaged,
-        ...status.changes.untracked
+        ...status.changes.untracked,
       ];
       await stageFiles(filesToStage);
       setSelectedFiles({});
     } catch (error) {
-      console.error('Failed to stage all files:', error);
+      console.error("Failed to stage all files:", error);
     }
   };
-  
+
   // Handle commit
   const handleCommit = async () => {
     if (!commitMessage.trim() || !status?.changes.staged.length) return;
-    
+
     try {
       setIsCommitting(true);
       const success = await commitChanges(commitMessage);
       if (success) {
-        setCommitMessage('');
+        setCommitMessage("");
       }
     } catch (error) {
-      console.error('Failed to commit:', error);
+      console.error("Failed to commit:", error);
     } finally {
       setIsCommitting(false);
     }
   };
-  
+
   // Handle pull
   const handlePull = async () => {
     try {
       setIsSubmitting(true);
       await pull();
     } catch (error) {
-      console.error('Failed to pull:', error);
+      console.error("Failed to pull:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   // Handle push
   const handlePush = async () => {
     try {
       setIsSubmitting(true);
       await push();
     } catch (error) {
-      console.error('Failed to push:', error);
+      console.error("Failed to push:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   // Handle create branch
   const handleCreateBranch = async () => {
     if (!newBranchName.trim()) return;
-    
+
     try {
       setIsCreatingBranch(true);
       setIsSubmitting(true);
       const success = await createBranch(newBranchName);
       if (success) {
-        setNewBranchName('');
+        setNewBranchName("");
         setShowNewBranchInput(false);
         await fetchBranches();
       }
     } catch (error) {
-      console.error('Failed to create branch:', error);
+      console.error("Failed to create branch:", error);
     } finally {
       setIsCreatingBranch(false);
       setIsSubmitting(false);
     }
   };
-  
+
   // Handle branch selection
   const handleBranchChange = async (branchName: string) => {
     if (branchName === currentBranch) return;
-    
+
     try {
       setIsSubmitting(true);
       await checkoutBranch(branchName);
     } catch (error) {
-      console.error('Failed to checkout branch:', error);
+      console.error("Failed to checkout branch:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   // Apply selected changes
   const applySelectedChanges = async () => {
     const filesToStage = [];
     const filesToUnstage = [];
-    
+
     for (const [filePath, action] of Object.entries(selectedFiles)) {
-      if (action === 'staged') {
+      if (action === "staged") {
         filesToStage.push(filePath);
       } else {
         filesToUnstage.push(filePath);
       }
     }
-    
+
     try {
       if (filesToStage.length > 0) {
         await stageFiles(filesToStage);
       }
-      
+
       if (filesToUnstage.length > 0) {
         await unstageFiles(filesToUnstage);
       }
-      
+
       setSelectedFiles({});
     } catch (error) {
-      console.error('Failed to apply changes:', error);
+      console.error("Failed to apply changes:", error);
     }
   };
-  
+
   // Toggle all files in a section
   const toggleAllFiles = (files: string[], isStaged: boolean) => {
     const newSelection = { ...selectedFiles };
-    
+
     // Check if all files are already selected
-    const allSelected = files.every(file => 
-      selectedFiles[file] === (isStaged ? 'staged' : 'unstaged')
+    const allSelected = files.every(
+      (file) => selectedFiles[file] === (isStaged ? "staged" : "unstaged"),
     );
-    
+
     if (allSelected) {
       // Deselect all
-      files.forEach(file => {
+      files.forEach((file) => {
         delete newSelection[file];
       });
     } else {
       // Select all
-      files.forEach(file => {
-        newSelection[file] = isStaged ? 'staged' : 'unstaged';
+      files.forEach((file) => {
+        newSelection[file] = isStaged ? "staged" : "unstaged";
       });
     }
-    
+
     setSelectedFiles(newSelection);
   };
 
@@ -202,15 +222,15 @@ const GitSettings: React.FC = () => {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300">
         <h3 className="font-medium">Error loading Git repository</h3>
         <p className="text-sm mt-1">{error}</p>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           className="mt-3"
           onClick={refreshStatus}
         >
@@ -236,13 +256,15 @@ const GitSettings: React.FC = () => {
           )}
         </div>
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={refreshStatus}
             disabled={isLoading}
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+            />
             Refresh
           </Button>
         </div>
@@ -257,7 +279,7 @@ const GitSettings: React.FC = () => {
             </label>
             <div className="flex space-x-2">
               <Select
-                value={currentBranch || ''}
+                value={currentBranch || ""}
                 onValueChange={checkoutBranch}
                 disabled={isLoading}
               >
@@ -275,9 +297,9 @@ const GitSettings: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <Button 
-                variant="secondary" 
-                size="sm" 
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => setShowNewBranchInput(true)}
                 disabled={isSubmitting || isCreatingBranch}
               >
@@ -286,7 +308,7 @@ const GitSettings: React.FC = () => {
               </Button>
             </div>
           </div>
-          
+
           {showNewBranchInput && (
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -303,7 +325,7 @@ const GitSettings: React.FC = () => {
                   onClick={handleCreateBranch}
                   disabled={!newBranchName.trim() || isCreatingBranch}
                 >
-                  {isCreatingBranch ? 'Creating...' : 'Create'}
+                  {isCreatingBranch ? "Creating..." : "Create"}
                 </Button>
               </div>
             </div>
@@ -315,11 +337,14 @@ const GitSettings: React.FC = () => {
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-gray-300">Changes</h4>
             <div className="flex space-x-2">
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 size="sm"
                 onClick={handleStageAll}
-                disabled={!status?.changes.unstaged?.length && !status?.changes.untracked?.length}
+                disabled={
+                  !status?.changes.unstaged?.length &&
+                  !status?.changes.untracked?.length
+                }
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Stage All
@@ -337,21 +362,23 @@ const GitSettings: React.FC = () => {
                 {status.changes.staged.map((file) => (
                   <div
                     key={file}
-                    className={`flex items-center p-2 hover:bg-gray-800/50 ${selectedFiles[file] === 'staged' ? 'bg-blue-500/10' : ''}`}
+                    className={`flex items-center p-2 hover:bg-gray-800/50 ${
+                      selectedFiles[file] === "staged" ? "bg-blue-500/10" : ""
+                    }`}
                     onClick={() => toggleFileSelection(file, true)}
                   >
                     <input
                       type="checkbox"
-                      checked={selectedFiles[file] === 'staged'}
+                      checked={selectedFiles[file] === "staged"}
                       onChange={() => toggleFileSelection(file, true)}
                       className="h-4 w-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 mr-3"
                       onClick={(e) => e.stopPropagation()}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-200 truncate">{file}</p>
-                      <p className="text-xs text-gray-400">
-                        Staged
+                      <p className="text-sm font-medium text-gray-200 truncate">
+                        {file}
                       </p>
+                      <p className="text-xs text-gray-400">Staged</p>
                     </div>
                     <div className="flex space-x-2">
                       <button
@@ -375,43 +402,60 @@ const GitSettings: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-sm font-medium">Unstaged Changes</h4>
-            {(status?.changes.unstaged.length > 0 || status?.changes.untracked.length > 0) && (
+            {(status?.changes.unstaged.length > 0 ||
+              status?.changes.untracked.length > 0) && (
               <div className="flex space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     const allFiles = [
                       ...(status?.changes.unstaged || []),
-                      ...(status?.changes.untracked || [])
+                      ...(status?.changes.untracked || []),
                     ];
                     toggleAllFiles(allFiles, true);
                   }}
                   className="h-7 text-xs"
                 >
-                  {[...(status?.changes.unstaged || []), ...(status?.changes.untracked || [])]
-                    .every(f => selectedFiles[f] === 'staged') 
-                    ? 'Deselect All' 
-                    : 'Select All'}
+                  {[
+                    ...(status?.changes.unstaged || []),
+                    ...(status?.changes.untracked || []),
+                  ].every((f) => selectedFiles[f] === "staged")
+                    ? "Deselect All"
+                    : "Select All"}
                 </Button>
               </div>
             )}
           </div>
-          <div className={`border rounded-md overflow-hidden ${(status?.changes.unstaged.length || status?.changes.untracked.length) ? 'border-amber-200 dark:border-amber-900/50' : 'border-gray-200 dark:border-gray-800'}`}>
-            {(status?.changes.unstaged.length || status?.changes.untracked.length) ? (
+          <div
+            className={`border rounded-md overflow-hidden ${
+              status?.changes.unstaged.length ||
+              status?.changes.untracked.length
+                ? "border-amber-200 dark:border-amber-900/50"
+                : "border-gray-200 dark:border-gray-800"
+            }`}
+          >
+            {status?.changes.unstaged.length ||
+            status?.changes.untracked.length ? (
               <ul className="divide-y divide-gray-100 dark:divide-gray-800">
                 {status.changes.unstaged.map((file) => (
-                  <li 
-                    key={file} 
-                    className={`flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 ${selectedFiles[file] === 'staged' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                  <li
+                    key={file}
+                    className={`flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 ${
+                      selectedFiles[file] === "staged"
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : ""
+                    }`}
                     onClick={() => toggleFileSelection(file, false)}
                   >
                     <div className="flex items-center space-x-2">
                       <GitCommit className="w-4 h-4 text-amber-500" />
-                      <span className="text-sm font-mono truncate max-w-xs">{file}</span>
+                      <span className="text-sm font-mono truncate max-w-xs">
+                        {file}
+                      </span>
                     </div>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0"
                       onClick={(e) => {
@@ -424,20 +468,26 @@ const GitSettings: React.FC = () => {
                   </li>
                 ))}
                 {status.changes.untracked.map((file) => (
-                  <li 
-                    key={file} 
-                    className={`flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 ${selectedFiles[file] === 'staged' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                  <li
+                    key={file}
+                    className={`flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 ${
+                      selectedFiles[file] === "staged"
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : ""
+                    }`}
                     onClick={() => toggleFileSelection(file, false)}
                   >
                     <div className="flex items-center space-x-2">
                       <Plus className="w-4 h-4 text-blue-500" />
                       <span className="text-sm font-mono truncate max-w-xs">
                         {file}
-                        <span className="ml-2 text-xs text-muted-foreground">(untracked)</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          (untracked)
+                        </span>
                       </span>
                     </div>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0"
                       onClick={(e) => {
@@ -457,21 +507,18 @@ const GitSettings: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         {/* Selected Changes Actions */}
         {Object.keys(selectedFiles).length > 0 && (
           <div className="flex justify-end space-x-2 pt-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => setSelectedFiles({})}
             >
               Cancel
             </Button>
-            <Button 
-              size="sm"
-              onClick={applySelectedChanges}
-            >
+            <Button size="sm" onClick={applySelectedChanges}>
               Apply Changes
             </Button>
           </div>
@@ -491,7 +538,11 @@ const GitSettings: React.FC = () => {
             />
             <Button
               onClick={handleCommit}
-              disabled={!commitMessage.trim() || isCommitting || !status?.changes.staged.length}
+              disabled={
+                !commitMessage.trim() ||
+                isCommitting ||
+                !status?.changes.staged.length
+              }
               className="bg-blue-600 hover:bg-blue-700"
             >
               {isCommitting ? (
@@ -500,7 +551,7 @@ const GitSettings: React.FC = () => {
                   Committing...
                 </>
               ) : (
-                'Commit'
+                "Commit"
               )}
             </Button>
           </div>
@@ -508,8 +559,8 @@ const GitSettings: React.FC = () => {
 
         {/* Actions */}
         <div className="mt-4 flex space-x-2">
-          <Button 
-            variant="secondary" 
+          <Button
+            variant="secondary"
             size="sm"
             onClick={handlePull}
             disabled={isSubmitting || isLoading}
@@ -518,15 +569,15 @@ const GitSettings: React.FC = () => {
             <Download className="w-4 h-4 mr-2" />
             Pull
           </Button>
-          <Button 
-            variant="secondary" 
+          <Button
+            variant="secondary"
             size="sm"
             onClick={handlePush}
             disabled={isSubmitting || isLoading || !status?.ahead}
             className="flex-1"
           >
             <Upload className="w-4 h-4 mr-2" />
-            Push {status?.ahead ? `(${status.ahead}↑)` : ''}
+            Push {status?.ahead ? `(${status.ahead}↑)` : ""}
           </Button>
           {status && (status.behind > 0 || status.ahead > 0) && (
             <div className="flex items-center text-sm text-muted-foreground">

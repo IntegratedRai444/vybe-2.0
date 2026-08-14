@@ -91,3 +91,6 @@ export const FileIcon: React.FC<Props> = ({
     </span>
   );
 };
+
+// Exports
+export { FileIcon };

@@ -1,16 +1,13 @@
-// Core editor components
-export { MonacoCodeEditor } from './MonacoCodeEditor';
-export { DebugMonacoEditor } from './DebugMonacoEditor';
-export { default as CodeEditor } from './CodeEditor';
+// Auto-generated file - DO NOT EDIT
 
-// Editor utilities and settings
-export { default as EditorSettings } from './EditorSettings';
-export { default as EditorTabs } from './EditorTabs';
-export { default as FormatSettings } from './FormatSettings';
-export { default as InlineCompletion } from './InlineCompletion';
-
-// Re-export Monaco editor types for convenience
-export type { OnMount as EditorMountHandler, OnChange as EditorChangeHandler } from '@monaco-editor/react';
-
-// Re-export the main Monaco editor as default
-export { default as MonacoEditor } from './MonacoEditor';
+export * from './CodeEditor';
+export * from './DebugMonacoEditor';
+export * from './EditorLayout';
+export * from './EditorSettings';
+export * from './EditorTabs';
+export * from './EditorToolbar';
+export * from './FormatSettings';
+export * from './InlineCompletion';
+export * from './MonacoCodeEditor';
+export * from './MonacoEditor';
+export * from './SplitPane';

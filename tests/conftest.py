@@ -1,12 +1,14 @@
 """
 Pytest configuration and fixtures for testing the Vybe AI backend.
 """
-import pytest
 import os
+
+import pytest
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
+
 
 # Fixture to provide a test API key for AI providers
 @pytest.fixture

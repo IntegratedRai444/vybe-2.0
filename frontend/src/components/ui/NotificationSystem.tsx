@@ -17,9 +17,12 @@ type Props = {
   onDismiss: (id: string) => void;
 };
 
-export const NotificationSystem: React.FC<Props> = ({ notifications, onDismiss }) => {
+export const NotificationSystem: React.FC<Props> = ({
+  notifications,
+  onDismiss,
+}) => {
   useEffect(() => {
-    notifications.forEach(notification => {
+    notifications.forEach((notification) => {
       if (notification.duration !== 0) {
         const timer = setTimeout(() => {
           onDismiss(notification.id);
@@ -47,11 +50,16 @@ export const NotificationSystem: React.FC<Props> = ({ notifications, onDismiss }
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "success": return "✅";
-      case "error": return "❌";
-      case "warning": return "⚠️";
-      case "info": return "ℹ️";
-      default: return "📢";
+      case "success":
+        return "✅";
+      case "error":
+        return "❌";
+      case "warning":
+        return "⚠️";
+      case "info":
+        return "ℹ️";
+      default:
+        return "📢";
     }
   };
 
@@ -62,15 +70,21 @@ export const NotificationSystem: React.FC<Props> = ({ notifications, onDismiss }
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`p-3 rounded-lg border shadow-lg ${getNotificationStyle(notification.type)} animate-slide-in`}
+          className={`p-3 rounded-lg border shadow-lg ${getNotificationStyle(
+            notification.type,
+          )} animate-slide-in`}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-2 flex-1">
-              <span className="text-sm">{getNotificationIcon(notification.type)}</span>
+              <span className="text-sm">
+                {getNotificationIcon(notification.type)}
+              </span>
               <div className="flex-1">
                 <div className="font-medium text-sm">{notification.title}</div>
                 {notification.message && (
-                  <div className="text-xs mt-1 opacity-90">{notification.message}</div>
+                  <div className="text-xs mt-1 opacity-90">
+                    {notification.message}
+                  </div>
                 )}
                 {notification.action && (
                   <button
@@ -94,3 +108,6 @@ export const NotificationSystem: React.FC<Props> = ({ notifications, onDismiss }
     </div>
   );
 };
+
+// Exports
+export { NotificationSystem };

@@ -1,8 +1,20 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaSave, FaDownload, FaUpload, FaTrash, FaPlus, FaEye } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import {
+  FaSave,
+  FaDownload,
+  FaUpload,
+  FaTrash,
+  FaPlus,
+  FaEye,
+} from "react-icons/fa";
 
 // Layout preset types
-export type LayoutPreset = 'default' | 'coding' | 'debugging' | 'reviewing' | 'minimal';
+export type LayoutPreset =
+  | "default"
+  | "coding"
+  | "debugging"
+  | "reviewing"
+  | "minimal";
 
 export interface PanelSizes {
   sidebar: number;
@@ -37,7 +49,7 @@ export interface CustomArrangement {
 // Default layout configurations
 const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
   default: {
-    preset: 'default',
+    preset: "default",
     sizes: {
       sidebar: 256,
       rightPanel: 384,
@@ -53,7 +65,7 @@ const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
     showTerminal: true,
   },
   coding: {
-    preset: 'coding',
+    preset: "coding",
     sizes: {
       sidebar: 200,
       rightPanel: 320,
@@ -69,7 +81,7 @@ const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
     showTerminal: true,
   },
   debugging: {
-    preset: 'debugging',
+    preset: "debugging",
     sizes: {
       sidebar: 200,
       rightPanel: 450,
@@ -85,7 +97,7 @@ const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
     showTerminal: true,
   },
   reviewing: {
-    preset: 'reviewing',
+    preset: "reviewing",
     sizes: {
       sidebar: 300,
       rightPanel: 400,
@@ -101,7 +113,7 @@ const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
     showTerminal: true,
   },
   minimal: {
-    preset: 'minimal',
+    preset: "minimal",
     sizes: {
       sidebar: 0,
       rightPanel: 0,
@@ -118,7 +130,7 @@ const LAYOUT_PRESETS: Record<LayoutPreset, LayoutConfig> = {
   },
 };
 
-const STORAGE_KEY = 'vybe-layout-config';
+const STORAGE_KEY = "vybe-layout-config";
 
 interface LayoutManagerProps {
   isOpen: boolean;
@@ -133,12 +145,18 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
   currentLayout,
   onLayoutChange,
 }) => {
-  const [selectedPreset, setSelectedPreset] = useState<LayoutPreset>(currentLayout.preset);
+  const [selectedPreset, setSelectedPreset] = useState<LayoutPreset>(
+    currentLayout.preset,
+  );
   const [customLayout, setCustomLayout] = useState<LayoutConfig>(currentLayout);
-  const [customArrangements, setCustomArrangements] = useState<CustomArrangement[]>(currentLayout.customArrangements || []);
-  const [activeTab, setActiveTab] = useState<'presets' | 'custom' | 'arrangements'>('presets');
-  const [newArrangementName, setNewArrangementName] = useState('');
-  const [newArrangementDesc, setNewArrangementDesc] = useState('');
+  const [customArrangements, setCustomArrangements] = useState<
+    CustomArrangement[]
+  >(currentLayout.customArrangements || []);
+  const [activeTab, setActiveTab] = useState<
+    "presets" | "custom" | "arrangements"
+  >("presets");
+  const [newArrangementName, setNewArrangementName] = useState("");
+  const [newArrangementDesc, setNewArrangementDesc] = useState("");
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -154,11 +172,11 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
     onLayoutChange(newLayout);
   };
 
-  const togglePanel = (panel: keyof Omit<LayoutConfig, 'preset' | 'sizes'>) => {
+  const togglePanel = (panel: keyof Omit<LayoutConfig, "preset" | "sizes">) => {
     const newLayout = {
       ...customLayout,
       [panel]: !customLayout[panel],
-      preset: 'default' as LayoutPreset, // Mark as custom
+      preset: "default" as LayoutPreset, // Mark as custom
     };
     setCustomLayout(newLayout);
     onLayoutChange(newLayout);
@@ -171,19 +189,19 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
         ...customLayout.sizes,
         [key]: value,
       },
-      preset: 'default' as LayoutPreset,
+      preset: "default" as LayoutPreset,
     };
     setCustomLayout(newLayout);
     onLayoutChange(newLayout);
   };
 
   const resetToDefault = () => {
-    applyPreset('default');
+    applyPreset("default");
   };
 
   const saveCustomArrangement = () => {
     if (!newArrangementName.trim()) return;
-    
+
     const newArrangement: CustomArrangement = {
       id: Date.now().toString(),
       name: newArrangementName,
@@ -191,48 +209,48 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
       config: { ...customLayout },
       createdAt: new Date().toISOString(),
     };
-    
+
     const updatedArrangements = [...customArrangements, newArrangement];
     setCustomArrangements(updatedArrangements);
-    
+
     const updatedLayout = {
       ...customLayout,
       customArrangements: updatedArrangements,
       activeArrangement: newArrangement.id,
     };
-    
+
     setCustomLayout(updatedLayout);
     onLayoutChange(updatedLayout);
     setShowSaveDialog(false);
-    setNewArrangementName('');
-    setNewArrangementDesc('');
+    setNewArrangementName("");
+    setNewArrangementDesc("");
   };
 
   const loadCustomArrangement = (arrangement: CustomArrangement) => {
     setCustomLayout(arrangement.config);
     onLayoutChange(arrangement.config);
-    setActiveTab('custom');
+    setActiveTab("custom");
   };
 
   const deleteCustomArrangement = (id: string) => {
-    const updatedArrangements = customArrangements.filter(a => a.id !== id);
+    const updatedArrangements = customArrangements.filter((a) => a.id !== id);
     setCustomArrangements(updatedArrangements);
-    
+
     const updatedLayout = {
       ...customLayout,
       customArrangements: updatedArrangements,
       activeArrangement: undefined,
     };
-    
+
     setCustomLayout(updatedLayout);
     onLayoutChange(updatedLayout);
   };
 
   const exportLayout = () => {
     const dataStr = JSON.stringify(customLayout, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `vybe-layout-${customLayout.preset}.json`;
     link.click();
@@ -246,11 +264,13 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const importedLayout: LayoutConfig = JSON.parse(e.target?.result as string);
+        const importedLayout: LayoutConfig = JSON.parse(
+          e.target?.result as string,
+        );
         setCustomLayout(importedLayout);
         onLayoutChange(importedLayout);
       } catch (error) {
-        console.error('Failed to import layout:', error);
+        console.error("Failed to import layout:", error);
       }
     };
     reader.readAsText(file);
@@ -280,7 +300,10 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
             >
               <FaDownload className="w-4 h-4" />
             </button>
-            <label className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded cursor-pointer" title="Import Layout">
+            <label
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded cursor-pointer"
+              title="Import Layout"
+            >
               <FaUpload className="w-4 h-4" />
               <input
                 ref={fileInputRef}
@@ -309,17 +332,17 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
         {/* Tab Navigation */}
         <div className="flex border-b border-gray-700">
           {[
-            { id: 'presets', label: 'Presets' },
-            { id: 'custom', label: 'Custom' },
-            { id: 'arrangements', label: 'My Layouts' }
+            { id: "presets", label: "Presets" },
+            { id: "custom", label: "Custom" },
+            { id: "arrangements", label: "My Layouts" },
           ].map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id as any)}
               className={`px-4 py-2 text-sm font-medium ${
                 activeTab === id
-                  ? 'text-blue-400 border-b-2 border-blue-400'
-                  : 'text-gray-400 hover:text-white'
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
               {label}
@@ -330,44 +353,53 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {/* Presets Tab */}
-          {activeTab === 'presets' && (
+          {activeTab === "presets" && (
             <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-3">Layout Presets</h3>
+              <h3 className="text-sm font-medium text-gray-300 mb-3">
+                Layout Presets
+              </h3>
               <div className="grid grid-cols-2 gap-3">
-                {(Object.keys(LAYOUT_PRESETS) as LayoutPreset[]).map((preset) => (
-                  <button
-                    key={preset}
-                    onClick={() => applyPreset(preset)}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      selectedPreset === preset
-                        ? 'border-blue-500 bg-blue-500/10'
-                        : 'border-gray-600 hover:border-gray-500'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium capitalize">{preset}</span>
-                      {selectedPreset === preset && (
-                        <span className="text-blue-400">✓</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-400 text-left">
-                      {preset === 'default' && 'Balanced layout for general use'}
-                      {preset === 'coding' && 'Focus on editor and AI chat'}
-                      {preset === 'debugging' && 'Emphasize problems and terminal'}
-                      {preset === 'reviewing' && 'Git and file comparison focus'}
-                      {preset === 'minimal' && 'Distraction-free editor only'}
-                    </p>
-                  </button>
-                ))}
+                {(Object.keys(LAYOUT_PRESETS) as LayoutPreset[]).map(
+                  (preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => applyPreset(preset)}
+                      className={`p-3 rounded-lg border-2 transition-all ${
+                        selectedPreset === preset
+                          ? "border-blue-500 bg-blue-500/10"
+                          : "border-gray-600 hover:border-gray-500"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium capitalize">{preset}</span>
+                        {selectedPreset === preset && (
+                          <span className="text-blue-400">✓</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-400 text-left">
+                        {preset === "default" &&
+                          "Balanced layout for general use"}
+                        {preset === "coding" && "Focus on editor and AI chat"}
+                        {preset === "debugging" &&
+                          "Emphasize problems and terminal"}
+                        {preset === "reviewing" &&
+                          "Git and file comparison focus"}
+                        {preset === "minimal" && "Distraction-free editor only"}
+                      </p>
+                    </button>
+                  ),
+                )}
               </div>
             </div>
           )}
 
           {/* Custom Tab */}
-          {activeTab === 'custom' && (
+          {activeTab === "custom" && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-gray-300">Custom Layout</h3>
+                <h3 className="text-sm font-medium text-gray-300">
+                  Custom Layout
+                </h3>
                 <button
                   onClick={() => setShowSaveDialog(true)}
                   className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm flex items-center space-x-1"
@@ -379,14 +411,16 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
 
               {/* Panel Visibility */}
               <div>
-                <h3 className="text-sm font-medium text-gray-300 mb-3">Panel Visibility</h3>
+                <h3 className="text-sm font-medium text-gray-300 mb-3">
+                  Panel Visibility
+                </h3>
                 <div className="space-y-2">
                   <label className="flex items-center justify-between p-2 rounded hover:bg-gray-700/50">
                     <span className="text-sm">📁 Sidebar (File Tree)</span>
                     <input
                       type="checkbox"
                       checked={customLayout.showSidebar}
-                      onChange={() => togglePanel('showSidebar')}
+                      onChange={() => togglePanel("showSidebar")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -395,7 +429,7 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     <input
                       type="checkbox"
                       checked={customLayout.showRightPanel}
-                      onChange={() => togglePanel('showRightPanel')}
+                      onChange={() => togglePanel("showRightPanel")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -404,7 +438,7 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     <input
                       type="checkbox"
                       checked={customLayout.showChat}
-                      onChange={() => togglePanel('showChat')}
+                      onChange={() => togglePanel("showChat")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -413,7 +447,7 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     <input
                       type="checkbox"
                       checked={customLayout.showProblems}
-                      onChange={() => togglePanel('showProblems')}
+                      onChange={() => togglePanel("showProblems")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -422,7 +456,7 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     <input
                       type="checkbox"
                       checked={customLayout.showGit}
-                      onChange={() => togglePanel('showGit')}
+                      onChange={() => togglePanel("showGit")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -431,7 +465,7 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     <input
                       type="checkbox"
                       checked={customLayout.showTerminal}
-                      onChange={() => togglePanel('showTerminal')}
+                      onChange={() => togglePanel("showTerminal")}
                       className="w-4 h-4"
                     />
                   </label>
@@ -440,7 +474,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
 
               {/* Panel Sizes */}
               <div>
-                <h3 className="text-sm font-medium text-gray-300 mb-3">Panel Sizes (px)</h3>
+                <h3 className="text-sm font-medium text-gray-300 mb-3">
+                  Panel Sizes (px)
+                </h3>
                 <div className="space-y-3">
                   <div>
                     <label className="text-sm text-gray-400 mb-1 block">
@@ -452,7 +488,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                       max="400"
                       step="10"
                       value={customLayout.sizes.sidebar}
-                      onChange={(e) => updateSize('sidebar', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateSize("sidebar", parseInt(e.target.value))
+                      }
                       className="w-full"
                     />
                   </div>
@@ -466,7 +504,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                       max="600"
                       step="10"
                       value={customLayout.sizes.rightPanel}
-                      onChange={(e) => updateSize('rightPanel', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateSize("rightPanel", parseInt(e.target.value))
+                      }
                       className="w-full"
                     />
                   </div>
@@ -480,7 +520,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                       max="600"
                       step="10"
                       value={customLayout.sizes.chatHeight}
-                      onChange={(e) => updateSize('chatHeight', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateSize("chatHeight", parseInt(e.target.value))
+                      }
                       className="w-full"
                     />
                   </div>
@@ -494,7 +536,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                       max="400"
                       step="10"
                       value={customLayout.sizes.problemsHeight}
-                      onChange={(e) => updateSize('problemsHeight', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateSize("problemsHeight", parseInt(e.target.value))
+                      }
                       className="w-full"
                     />
                   </div>
@@ -508,7 +552,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                       max="400"
                       step="10"
                       value={customLayout.sizes.gitHeight}
-                      onChange={(e) => updateSize('gitHeight', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        updateSize("gitHeight", parseInt(e.target.value))
+                      }
                       className="w-full"
                     />
                   </div>
@@ -518,10 +564,12 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
           )}
 
           {/* Custom Arrangements Tab */}
-          {activeTab === 'arrangements' && (
+          {activeTab === "arrangements" && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-300">My Custom Layouts</h3>
+                <h3 className="text-sm font-medium text-gray-300">
+                  My Custom Layouts
+                </h3>
                 <button
                   onClick={() => setShowSaveDialog(true)}
                   className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm flex items-center space-x-1"
@@ -530,11 +578,14 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                   <span>Create New</span>
                 </button>
               </div>
-              
+
               {customArrangements.length === 0 ? (
                 <div className="text-center py-8 text-gray-400">
                   <p>No custom layouts saved yet.</p>
-                  <p className="text-sm mt-1">Create your first custom layout by adjusting settings and saving it.</p>
+                  <p className="text-sm mt-1">
+                    Create your first custom layout by adjusting settings and
+                    saving it.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -545,10 +596,17 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h4 className="font-medium text-white">{arrangement.name}</h4>
-                          <p className="text-sm text-gray-400">{arrangement.description}</p>
+                          <h4 className="font-medium text-white">
+                            {arrangement.name}
+                          </h4>
+                          <p className="text-sm text-gray-400">
+                            {arrangement.description}
+                          </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            Created: {new Date(arrangement.createdAt).toLocaleDateString()}
+                            Created:{" "}
+                            {new Date(
+                              arrangement.createdAt,
+                            ).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -559,7 +617,9 @@ export const LayoutManager: React.FC<LayoutManagerProps> = ({
                             Load
                           </button>
                           <button
-                            onClick={() => deleteCustomArrangement(arrangement.id)}
+                            onClick={() =>
+                              deleteCustomArrangement(arrangement.id)
+                            }
                             className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm"
                           >
                             <FaTrash className="w-3 h-3" />
@@ -674,7 +734,7 @@ export const useLayout = () => {
 
 // Resizable divider component
 interface ResizableDividerProps {
-  direction: 'horizontal' | 'vertical';
+  direction: "horizontal" | "vertical";
   onResize: (delta: number) => void;
 }
 
@@ -688,7 +748,7 @@ export const ResizableDivider: React.FC<ResizableDividerProps> = ({
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const delta = direction === 'horizontal' ? e.movementX : e.movementY;
+      const delta = direction === "horizontal" ? e.movementX : e.movementY;
       onResize(delta);
     };
 
@@ -696,12 +756,12 @@ export const ResizableDivider: React.FC<ResizableDividerProps> = ({
       setIsDragging(false);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, direction, onResize]);
 
@@ -709,10 +769,13 @@ export const ResizableDivider: React.FC<ResizableDividerProps> = ({
     <div
       onMouseDown={() => setIsDragging(true)}
       className={`${
-        direction === 'horizontal'
-          ? 'w-1 cursor-col-resize hover:bg-blue-500'
-          : 'h-1 cursor-row-resize hover:bg-blue-500'
-      } ${isDragging ? 'bg-blue-500' : 'bg-gray-700'} transition-colors`}
+        direction === "horizontal"
+          ? "w-1 cursor-col-resize hover:bg-blue-500"
+          : "h-1 cursor-row-resize hover:bg-blue-500"
+      } ${isDragging ? "bg-blue-500" : "bg-gray-700"} transition-colors`}
     />
   );
 };
+
+// Exports
+export { LayoutManager };

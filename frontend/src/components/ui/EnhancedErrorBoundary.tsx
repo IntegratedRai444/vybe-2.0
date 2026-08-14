@@ -1,5 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -25,28 +25,28 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { 
-      hasError: false, 
-      error: null, 
+    this.state = {
+      hasError: false,
+      error: null,
       errorInfo: null,
-      showDetails: process.env.NODE_ENV === 'development'
+      showDetails: process.env.NODE_ENV === "development",
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
-    return { 
-      hasError: true, 
+    return {
+      hasError: true,
       error,
-      showDetails: process.env.NODE_ENV === 'development'
+      showDetails: process.env.NODE_ENV === "development",
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Error caught by boundary:", error, errorInfo);
     this.props.onError?.(error, errorInfo);
-    
+
     // In production, you might want to report this to an error tracking service
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Example: Sentry.captureException(error, { extra: errorInfo });
     }
   }
@@ -56,12 +56,12 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-      showDetails: false
+      showDetails: false,
     });
   };
 
   toggleDetails = () => {
-    this.setState(prev => ({ showDetails: !prev.showDetails }));
+    this.setState((prev) => ({ showDetails: !prev.showDetails }));
   };
 
   renderFallback() {
@@ -70,12 +70,14 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
     }
 
     const { error, showDetails } = this.state;
-    const { showReset = true, showReload = true, className = '' } = this.props;
-    const errorMessage = error?.message || 'An unexpected error occurred';
-    const errorStack = error?.stack || 'No stack trace available';
+    const { showReset = true, showReload = true, className = "" } = this.props;
+    const errorMessage = error?.message || "An unexpected error occurred";
+    const errorStack = error?.stack || "No stack trace available";
 
     return (
-      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4 ${className}`}>
+      <div
+        className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4 ${className}`}
+      >
         <div className="w-full max-w-md bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
           <div className="p-6 text-center">
             <div className="flex justify-center mb-4">
@@ -83,12 +85,12 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
                 <AlertTriangle className="w-10 h-10 text-red-400" />
               </div>
             </div>
-            
-            <h2 className="text-2xl font-bold text-white mb-2">Oops! Something went wrong</h2>
-            <p className="text-gray-300 mb-6">
-              {errorMessage}
-            </p>
-            
+
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Oops! Something went wrong
+            </h2>
+            <p className="text-gray-300 mb-6">{errorMessage}</p>
+
             <div className="space-y-3">
               {showReset && (
                 <button
@@ -99,7 +101,7 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
                   Try Again
                 </button>
               )}
-              
+
               {showReload && (
                 <button
                   onClick={() => window.location.reload()}
@@ -108,15 +110,15 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
                   Reload Page
                 </button>
               )}
-              
+
               <button
                 onClick={this.toggleDetails}
                 className="text-sm text-gray-400 hover:text-gray-300 mt-4 inline-flex items-center mx-auto"
               >
-                {showDetails ? 'Hide' : 'Show'} details
+                {showDetails ? "Hide" : "Show"} details
               </button>
             </div>
-            
+
             {showDetails && (
               <div className="mt-6 p-4 bg-gray-700/50 rounded-lg text-left overflow-auto max-h-60">
                 <pre className="text-xs text-red-300 font-mono">
@@ -140,4 +142,9 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
 }
 
 // Export as default for easier imports
+// Default export for backward compatibility
+export const EnhancedErrorBoundary = EnhancedErrorBoundary;
+
+// Named exports
+export { EnhancedErrorBoundary };
 export default EnhancedErrorBoundary;

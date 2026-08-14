@@ -1,11 +1,13 @@
 # backend/terminal.py
 import asyncio
+import logging
 import os
 import sys
-import logging
+
 from fastapi import WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger(__name__)
+
 
 async def reader(ws: WebSocket, proc: asyncio.subprocess.Process):
     """Reads from the process stdout and sends to the websocket."""
@@ -21,6 +23,7 @@ async def reader(ws: WebSocket, proc: asyncio.subprocess.Process):
                 break
     except Exception as e:
         logger.error(f"Reader error: {e}")
+
 
 async def writer(ws: WebSocket, proc: asyncio.subprocess.Process):
     """Reads from the websocket and sends to the process stdin."""
@@ -39,6 +42,7 @@ async def writer(ws: WebSocket, proc: asyncio.subprocess.Process):
                 break
     except Exception as e:
         logger.error(f"Writer task error: {e}")
+
 
 async def terminal_session(ws: WebSocket):
     """Handles a websocket connection for an interactive terminal session."""
@@ -80,7 +84,7 @@ async def terminal_session(ws: WebSocket):
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
             cwd=init_cwd,
-            env=os.environ.copy()
+            env=os.environ.copy(),
         )
 
         logger.info(f"Process started with PID: {proc.pid}")
@@ -91,12 +95,12 @@ async def terminal_session(ws: WebSocket):
 
         # Wait for either task to complete or process to exit
         proc_task = asyncio.create_task(proc.wait())
-        
+
         done, pending = await asyncio.wait(
             {read_task, write_task, proc_task},
             return_when=asyncio.FIRST_COMPLETED,
         )
-        
+
         # Cancel remaining tasks
         for task in pending:
             task.cancel()
@@ -104,9 +108,9 @@ async def terminal_session(ws: WebSocket):
                 await task
             except asyncio.CancelledError:
                 pass
-            
+
         logger.info("Terminal session ended")
-            
+
     except Exception as e:
         logger.error(f"Terminal session error: {e}")
         try:
@@ -125,7 +129,7 @@ async def terminal_session(ws: WebSocket):
                     await proc.wait()
             except Exception as e:
                 logger.error(f"Error cleaning up process: {e}")
-        
+
         # Close WebSocket
         try:
             if ws.client_state.value != 3:  # Not DISCONNECTED

@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import authReducer from './slices/authSlice';
-import editorReducer from './slices/editorSlice';
-import debuggerReducer from './slices/debuggerSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import authReducer from "./slices/authSlice";
+import editorReducer from "./slices/editorSlice";
+import debuggerReducer from "./slices/debuggerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,11 +15,11 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         // Ignore these action types
-        ignoredActions: ['debugger/updateDebuggerState'],
+        ignoredActions: ["debugger/updateDebuggerState"],
         // Ignore these field paths in all actions
-        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
+        ignoredActionPaths: ["meta.arg", "payload.timestamp"],
         // Ignore these paths in the state
-        ignoredPaths: ['debugger.sessions'],
+        ignoredPaths: ["debugger.sessions"],
       },
     }),
 });

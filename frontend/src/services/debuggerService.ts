@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const DEBUGGER_API_URL = 'http://localhost:5000/api/debug';
+const DEBUGGER_API_URL = "http://localhost:5000/api/debug";
 
 interface Breakpoint {
   id?: number;
@@ -20,7 +20,7 @@ export const debuggerService = {
       });
       return response.data;
     } catch (error) {
-      console.error('Error starting debug session:', error);
+      console.error("Error starting debug session:", error);
       throw error;
     }
   },
@@ -29,17 +29,19 @@ export const debuggerService = {
     try {
       await axios.post(`${DEBUGGER_API_URL}/${sessionId}/stop`);
     } catch (error) {
-      console.error('Error stopping debug session:', error);
+      console.error("Error stopping debug session:", error);
       throw error;
     }
   },
 
   async getSessionStatus(sessionId: string) {
     try {
-      const response = await axios.get(`${DEBUGGER_API_URL}/${sessionId}/status`);
+      const response = await axios.get(
+        `${DEBUGGER_API_URL}/${sessionId}/status`,
+      );
       return response.data;
     } catch (error) {
-      console.error('Error getting debug session status:', error);
+      console.error("Error getting debug session status:", error);
       throw error;
     }
   },
@@ -49,11 +51,11 @@ export const debuggerService = {
     try {
       const response = await axios.post(
         `${DEBUGGER_API_URL}/${sessionId}/breakpoints`,
-        { breakpoints }
+        { breakpoints },
       );
       return response.data.breakpoints;
     } catch (error) {
-      console.error('Error setting breakpoints:', error);
+      console.error("Error setting breakpoints:", error);
       throw error;
     }
   },
@@ -62,11 +64,11 @@ export const debuggerService = {
   async continue(sessionId: string) {
     try {
       const response = await axios.post(
-        `${DEBUGGER_API_URL}/${sessionId}/continue`
+        `${DEBUGGER_API_URL}/${sessionId}/continue`,
       );
       return response.data;
     } catch (error) {
-      console.error('Error continuing execution:', error);
+      console.error("Error continuing execution:", error);
       throw error;
     }
   },
@@ -74,11 +76,11 @@ export const debuggerService = {
   async stepOver(sessionId: string) {
     try {
       const response = await axios.post(
-        `${DEBUGGER_API_URL}/${sessionId}/step-over`
+        `${DEBUGGER_API_URL}/${sessionId}/step-over`,
       );
       return response.data;
     } catch (error) {
-      console.error('Error stepping over:', error);
+      console.error("Error stepping over:", error);
       throw error;
     }
   },
@@ -86,11 +88,11 @@ export const debuggerService = {
   async stepInto(sessionId: string) {
     try {
       const response = await axios.post(
-        `${DEBUGGER_API_URL}/${sessionId}/step-into`
+        `${DEBUGGER_API_URL}/${sessionId}/step-into`,
       );
       return response.data;
     } catch (error) {
-      console.error('Error stepping into:', error);
+      console.error("Error stepping into:", error);
       throw error;
     }
   },
@@ -98,11 +100,11 @@ export const debuggerService = {
   async stepOut(sessionId: string) {
     try {
       const response = await axios.post(
-        `${DEBUGGER_API_URL}/${sessionId}/step-out`
+        `${DEBUGGER_API_URL}/${sessionId}/step-out`,
       );
       return response.data;
     } catch (error) {
-      console.error('Error stepping out:', error);
+      console.error("Error stepping out:", error);
       throw error;
     }
   },
@@ -116,7 +118,7 @@ export const debuggerService = {
       const response = await axios.get(url);
       return response.data.variables;
     } catch (error) {
-      console.error('Error getting variables:', error);
+      console.error("Error getting variables:", error);
       throw error;
     }
   },
@@ -124,11 +126,11 @@ export const debuggerService = {
   async getCallStack(sessionId: string) {
     try {
       const response = await axios.get(
-        `${DEBUGGER_API_URL}/${sessionId}/call-stack`
+        `${DEBUGGER_API_URL}/${sessionId}/call-stack`,
       );
       return response.data.stackFrames;
     } catch (error) {
-      console.error('Error getting call stack:', error);
+      console.error("Error getting call stack:", error);
       throw error;
     }
   },
@@ -138,11 +140,11 @@ export const debuggerService = {
     try {
       const response = await axios.post(
         `${DEBUGGER_API_URL}/${sessionId}/evaluate`,
-        { expression }
+        { expression },
       );
       return response.data.result;
     } catch (error) {
-      console.error('Error evaluating expression:', error);
+      console.error("Error evaluating expression:", error);
       throw error;
     }
   },
@@ -156,7 +158,7 @@ export const debuggerService = {
       const response = await axios.get(url);
       return response.data.events;
     } catch (error) {
-      console.error('Error getting debug events:', error);
+      console.error("Error getting debug events:", error);
       throw error;
     }
   },

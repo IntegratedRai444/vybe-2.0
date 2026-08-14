@@ -1,17 +1,18 @@
 """
 Enhanced WebSocket manager with authentication, validation, and error handling
 """
-import json
 import asyncio
+import json
+import logging
 import time
 from datetime import datetime, timedelta
-from typing import Dict, Set, Optional, Any, Callable, Awaitable, Tuple, List
-from fastapi import WebSocket, WebSocketDisconnect, HTTPException, status
-from starlette.websockets import WebSocketState
-from pydantic import BaseModel, ValidationError
-import jwt
-import logging
 from functools import wraps
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Set, Tuple
+
+import jwt
+from fastapi import HTTPException, WebSocket, WebSocketDisconnect, status
+from pydantic import BaseModel, ValidationError
+from starlette.websockets import WebSocketState
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -45,18 +46,18 @@ def requires_auth(f):
                 message = kwargs['message']
                 if isinstance(message, dict) and 'token' in message:
                     token = message['token']
-            
+
             if not token:
                 raise HTTPException(
                     status_code=status.WS_1008_POLICY_VIOLATION,
                     detail="Authentication required"
                 )
-            
+
             # Validate token
             try:
                 payload = jwt.decode(
-                    token, 
-                    JWT_SECRET, 
+                    token,
+                    JWT_SECRET,
                     algorithms=[JWT_ALGORITHM],
                     options={"require": ["exp", "iat", "user_id"]}
                 )
@@ -80,7 +81,7 @@ def requires_auth(f):
 
 class ConnectionManager:
     """Manages WebSocket connections with authentication and validation"""
-    
+
     def __init__(self):
         self.active_connections: Dict[str, Set[WebSocket]] = {}
         self.connection_subscriptions: Dict[str, Set[str]] = {}
@@ -88,16 +89,16 @@ class ConnectionManager:
         self.lock = asyncio.Lock()
         self.last_activity: Dict[WebSocket, float] = {}
         self.heartbeat_task = asyncio.create_task(self._check_timeouts())
-    
+
     async def connect(self, websocket: WebSocket, client_id: str):
         """Handle new WebSocket connection with authentication"""
         try:
             # Accept connection first to send errors back to client
             await websocket.accept()
-            
+
             # Set timeout for authentication
             websocket.client.max_message_size = MAX_MESSAGE_SIZE
-            
+
             # Get token from query parameters
             token = websocket.query_params.get("token")
             if not token:
@@ -106,17 +107,17 @@ class ConnectionManager:
                     reason="Authentication token required"
                 )
                 return False
-                
+
             # Validate token
             try:
                 payload = jwt.decode(
-                    token, 
-                    JWT_SECRET, 
+                    token,
+                    JWT_SECRET,
                     algorithms=[JWT_ALGORITHM],
                     options={"require": ["exp", "iat", "user_id"]}
                 )
                 user_id = payload['user_id']
-                
+
                 async with self.lock:
                     if client_id not in self.active_connections:
                         self.active_connections[client_id] = set()
@@ -129,24 +130,24 @@ class ConnectionManager:
                         'last_activity': time.time()
                     }
                     self.last_activity[websocket] = time.time()
-                
+
                 logger.info(f"Client {client_id} connected as user {user_id}")
                 return True
-                
+
             except jwt.ExpiredSignatureError:
                 await websocket.close(
                     code=status.WS_1008_POLICY_VIOLATION,
                     reason="Authentication token expired"
                 )
                 return False
-                
+
             except jwt.PyJWTError as e:
                 await websocket.close(
                     code=status.WS_1008_POLICY_VIOLATION,
                     reason=f"Invalid authentication token: {str(e)}"
                 )
                 return False
-                
+
         except Exception as e:
             logger.error(f"WebSocket connection error: {str(e)}")
             try:
@@ -154,7 +155,7 @@ class ConnectionManager:
             except:
                 pass
             return False
-    
+
     def disconnect(self, websocket: WebSocket, client_id: str = None):
         """Handle WebSocket disconnection"""
         if not client_id:
@@ -163,7 +164,7 @@ class ConnectionManager:
                 if websocket in connections:
                     client_id = cid
                     break
-        
+
         async with self.lock:
             if client_id and client_id in self.active_connections:
                 self.active_connections[client_id].discard(websocket)
@@ -171,7 +172,7 @@ class ConnectionManager:
                     del self.active_connections[client_id]
                     if client_id in self.connection_subscriptions:
                         del self.connection_subscriptions[client_id]
-            
+
             # Clean up metadata
             if websocket in self.connection_metadata:
                 user_id = self.connection_metadata[websocket].get('user_id', 'unknown')
@@ -179,65 +180,65 @@ class ConnectionManager:
                 del self.connection_metadata[websocket]
             if websocket in self.last_activity:
                 del self.last_activity[websocket]
-    
+
     async def subscribe(self, client_id: str, channel: str):
         """Subscribe client to a channel"""
         async with self.lock:
             if client_id in self.connection_subscriptions:
                 self.connection_subscriptions[client_id].add(channel)
                 logger.info(f"Client {client_id} subscribed to {channel}")
-    
+
     async def unsubscribe(self, client_id: str, channel: str):
         """Unsubscribe client from a channel"""
         async with self.lock:
             if client_id in self.connection_subscriptions:
                 self.connection_subscriptions[client_id].discard(channel)
                 logger.info(f"Client {client_id} unsubscribed from {channel}")
-    
+
     async def _validate_message(self, message: Any) -> Tuple[bool, str]:
         """Validate WebSocket message format and content"""
         if not isinstance(message, (str, bytes, dict)):
             return False, "Message must be a string, bytes, or dict"
-            
+
         try:
             if isinstance(message, (str, bytes)):
                 message_dict = json.loads(message)
             else:
                 message_dict = message
-                
+
             # Basic validation
             if not isinstance(message_dict, dict):
                 return False, "Message must be a JSON object"
-                
+
             # Validate required fields
             if 'type' not in message_dict:
                 return False, "Message must contain 'type' field"
-                
+
             # Size validation
             message_size = len(str(message_dict).encode('utf-8'))
             if message_size > MAX_MESSAGE_SIZE:
                 return False, f"Message size {message_size} exceeds maximum {MAX_MESSAGE_SIZE} bytes"
-                
+
             return True, ""
-            
+
         except json.JSONDecodeError:
             return False, "Invalid JSON format"
         except Exception as e:
             return False, f"Validation error: {str(e)}"
-    
+
     async def _send_message(self, websocket: WebSocket, message: Any) -> bool:
         """Safely send a message with error handling"""
         try:
             if websocket.client_state != WebSocketState.CONNECTED:
                 return False
-                
+
             if not isinstance(message, str):
                 message = json.dumps(message)
-                
+
             await websocket.send_text(message)
             self.last_activity[websocket] = time.time()
             return True
-            
+
         except WebSocketDisconnect:
             self.disconnect(websocket)
             return False
@@ -245,7 +246,7 @@ class ConnectionManager:
             logger.error(f"Error sending WebSocket message: {str(e)}")
             self.disconnect(websocket)
             return False
-    
+
     async def broadcast(self, channel: str, message: Any, validate: bool = True):
         """Broadcast message to all subscribers of a channel with validation"""
         # Validate message if needed
@@ -254,7 +255,7 @@ class ConnectionManager:
             if not is_valid:
                 logger.error(f"Invalid message for broadcast to {channel}: {error}")
                 return
-        
+
         # Convert to string if needed
         if not isinstance(message, str):
             try:
@@ -262,7 +263,7 @@ class ConnectionManager:
             except (TypeError, ValueError) as e:
                 logger.error(f"Failed to serialize message: {str(e)}")
                 return
-        
+
         # Send to all subscribers
         disconnected = []
         async with self.lock:
@@ -271,11 +272,11 @@ class ConnectionManager:
                     for connection in list(self.active_connections[client_id]):
                         if not await self._send_message(connection, message):
                             disconnected.append((connection, client_id))
-        
+
         # Clean up disconnected clients
         for connection, client_id in disconnected:
             self.disconnect(connection, client_id)
-    
+
 async def send_personal_message(self, client_id: str, message: Any, validate: bool = True) -> bool:
         """Send message to a specific client with validation and error handling"""
         if validate:
@@ -283,10 +284,10 @@ async def send_personal_message(self, client_id: str, message: Any, validate: bo
             if not is_valid:
                 logger.error(f"Invalid message for client {client_id}: {error}")
                 return False
-        
+
         success = False
         disconnected = []
-        
+
         async with self.lock:
             if client_id in self.active_connections:
                 for connection in list(self.active_connections[client_id]):
@@ -294,28 +295,28 @@ async def send_personal_message(self, client_id: str, message: Any, validate: bo
                         success = True
                     else:
                         disconnected.append((connection, client_id))
-        
+
         # Clean up disconnected clients
         for connection, cid in disconnected:
             self.disconnect(connection, cid)
-            
+
         return success
-        
+
     async def _check_timeouts(self):
         """Background task to check for inactive connections"""
         while True:
             try:
                 await asyncio.sleep(60)  # Check every minute
-                
+
                 now = time.time()
                 timeout_connections = []
-                
+
                 async with self.lock:
                     for websocket, last_active in list(self.last_activity.items()):
                         if now - last_active > WEBSOCKET_TIMEOUT:
                             client_id = self.connection_metadata.get(websocket, {}).get('client_id')
                             timeout_connections.append((websocket, client_id))
-                
+
                 # Close timed out connections
                 for websocket, client_id in timeout_connections:
                     logger.warning(f"Closing connection {client_id} due to inactivity")
@@ -328,7 +329,7 @@ async def send_personal_message(self, client_id: str, message: Any, validate: bo
                         logger.error(f"Error closing timed out connection: {str(e)}")
                     finally:
                         self.disconnect(websocket, client_id)
-                        
+
             except Exception as e:
                 logger.error(f"Error in WebSocket timeout check: {str(e)}")
                 await asyncio.sleep(5)  # Prevent tight loop on errors
@@ -344,7 +345,7 @@ class WebSocketEvent:
     DEPLOYMENT_LOGS = "deployment:logs"
     DEPLOYMENT_COMPLETED = "deployment:completed"
     DEPLOYMENT_FAILED = "deployment:failed"
-    
+
     # Git events
     GIT_STATUS_UPDATED = "git:status_updated"
     GIT_BRANCH_CHANGED = "git:branch_changed"
@@ -353,13 +354,13 @@ class WebSocketEvent:
     GIT_PULL_COMPLETED = "git:pull_completed"
     GIT_MERGE_COMPLETED = "git:merge_completed"
     GIT_CONFLICT_DETECTED = "git:conflict_detected"
-    
+
     # Package events
     PACKAGE_INSTALL_STARTED = "package:install_started"
     PACKAGE_INSTALL_PROGRESS = "package:install_progress"
     PACKAGE_INSTALL_COMPLETED = "package:install_completed"
     PACKAGE_INSTALL_FAILED = "package:install_failed"
-    
+
     @staticmethod
     def create_event(event_type: str, data: Any = None, metadata: Optional[Dict] = None) -> str:
         """Create a standardized WebSocket event"""
@@ -371,7 +372,7 @@ class WebSocketEvent:
         if metadata:
             event["metadata"] = metadata
         return json.dumps(event)
-    
+
     @staticmethod
     def parse_event(message: str) -> Dict:
         """Parse a WebSocket event message"""

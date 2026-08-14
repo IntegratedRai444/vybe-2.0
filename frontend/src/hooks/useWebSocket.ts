@@ -2,127 +2,148 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 type MessageHandler = (data: any) => void;
 
-interface WebSocketHandlers {
-  [key: string]: Set<MessageHandler>;
+export interface WebSocketMessage<T = any> {
+  type: string;
+  data: T;
 }
 
-export const useWebSocket = (endpoint: string) => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+interface WebSocketOptions {
+  onOpen?: () => void;
+  onClose?: () => void;
+  onError?: (error: Event) => void;
+  reconnectAttempts?: number;
+  reconnectInterval?: number;
+}
+
+const useWebSocket = (
+  url: string,
+  options: WebSocketOptions = {}
+) => {
+  const {
+    onOpen,
+    onClose,
+    onError,
+    reconnectAttempts = 5,
+    reconnectInterval = 5000,
+  } = options;
+
   const [isConnected, setIsConnected] = useState(false);
-  const handlers = useRef<WebSocketHandlers>({});
-  const reconnectAttempts = useRef(0);
-  const reconnectTimer = useRef<NodeJS.Timeout>();
+  const [error, setError] = useState<Event | null>(null);
+  const reconnectCount = useRef(0);
+  const ws = useRef<WebSocket | null>(null);
+  const messageHandlers = useRef<Map<string, MessageHandler>>(new Map());
+  const reconnectTimeout = useRef<number>();
 
   const connect = useCallback(() => {
-    try {
-      // Use wss:// if the current protocol is https://, otherwise use ws://
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.host;
-      const wsUrl = `${protocol}//${host}${endpoint}`;
-      
-      const ws = new WebSocket(wsUrl);
-
-      ws.onopen = () => {
-        console.log('WebSocket connected');
-        setIsConnected(true);
-        reconnectAttempts.current = 0;
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          const messageHandlers = handlers.current[message.type];
-          
-          if (messageHandlers) {
-            messageHandlers.forEach(handler => handler(message.data));
-          }
-        } catch (error) {
-          console.error('Error processing WebSocket message:', error);
-        }
-      };
-
-      ws.onclose = () => {
-        setIsConnected(false);
-        
-        // Attempt to reconnect with exponential backoff
-        const maxReconnectAttempts = 5;
-        const baseDelay = 1000; // 1 second
-        
-        if (reconnectAttempts.current < maxReconnectAttempts) {
-          const delay = Math.min(
-            baseDelay * Math.pow(2, reconnectAttempts.current),
-            30000 // Max 30 seconds
-          );
-          
-          reconnectTimer.current = setTimeout(() => {
-            reconnectAttempts.current += 1;
-            connect();
-          }, delay);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
-
-      setSocket(ws);
-      return ws;
-    } catch (error) {
-      console.error('Failed to create WebSocket:', error);
-      return null;
+    if (ws.current) {
+      ws.current.close();
     }
-  }, [endpoint]);
 
-  useEffect(() => {
-    const ws = connect();
+    const socket = new WebSocket(url);
+    ws.current = socket;
+
+    socket.onopen = (event) => {
+      console.log('WebSocket connected');
+      setIsConnected(true);
+      reconnectCount.current = 0;
+      onOpen?.();
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const { type, data } = JSON.parse(event.data);
+        const handler = messageHandlers.current.get(type);
+        if (handler) {
+          handler(data);
+        }
+      } catch (err) {
+        console.error('Error parsing WebSocket message:', err);
+      }
+    };
+
+    socket.onclose = (event) => {
+      console.log('WebSocket disconnected');
+      setIsConnected(false);
+      onClose?.();
+
+      // Attempt to reconnect
+      if (reconnectCount.current < reconnectAttempts) {
+        reconnectCount.current += 1;
+        console.log(`Reconnecting in ${reconnectInterval}ms... (${reconnectCount.current}/${reconnectAttempts})`);
+        
+        reconnectTimeout.current = window.setTimeout(() => {
+          connect();
+        }, reconnectInterval);
+      } else {
+        console.error('Max reconnection attempts reached');
+      }
+    };
+
+    socket.onerror = (event) => {
+      console.error('WebSocket error:', event);
+      setError(event);
+      onError?.(event);
+    };
 
     return () => {
-      if (ws) {
-        ws.close();
+      socket.close();
+      if (reconnectTimeout.current) {
+        clearTimeout(reconnectTimeout.current);
       }
-      if (reconnectTimer.current) {
-        clearTimeout(reconnectTimer.current);
+    };
+  }, [url, onOpen, onClose, onError, reconnectAttempts, reconnectInterval]);
+
+  // Connect on mount and clean up on unmount
+  useEffect(() => {
+    connect();
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+      if (reconnectTimeout.current) {
+        clearTimeout(reconnectTimeout.current);
       }
     };
   }, [connect]);
 
-  const send = useCallback((type: string, data: any = {}) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      try {
-        const message = JSON.stringify({ type, data });
-        socket.send(message);
-        return true;
-      } catch (error) {
-        console.error('Error sending WebSocket message:', error);
-        return false;
-      }
-    } else {
-      console.warn('WebSocket is not connected');
-      return false;
+  const sendMessage = useCallback((type: string, data: any) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify({ type, data }));
+      return true;
     }
-  }, [socket]);
+    console.error('WebSocket is not connected');
+    return false;
+  }, []);
 
-  const subscribe = useCallback((eventType: string, handler: MessageHandler) => {
-    if (!handlers.current[eventType]) {
-      handlers.current[eventType] = new Set();
-    }
+  const subscribe = useCallback((type: string, handler: MessageHandler) => {
+    messageHandlers.current.set(type, handler);
     
-    handlers.current[eventType].add(handler);
-    
-    // Return unsubscribe function
+    // Return cleanup function
     return () => {
-      if (handlers.current[eventType]) {
-        handlers.current[eventType].delete(handler);
-      }
+      messageHandlers.current.delete(type);
     };
   }, []);
 
+  const close = useCallback(() => {
+    if (ws.current) {
+      ws.current.close();
+    }
+    if (reconnectTimeout.current) {
+      clearTimeout(reconnectTimeout.current);
+    }
+  }, []);
+
   return {
-    socket,
     isConnected,
-    send,
+    error,
+    sendMessage,
     subscribe,
+    close,
+    reconnect: connect,
   };
 };
 
+// Export the WebSocketMessage type separately to avoid TypeScript errors
+export type { WebSocketMessage };
 export default useWebSocket;

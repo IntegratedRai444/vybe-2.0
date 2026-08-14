@@ -1,5 +1,5 @@
-import React from 'react';
-import { FiMenu, FiSave, FiPlay, FiCommand } from 'react-icons/fi';
+import React from "react";
+import { FiMenu, FiSave, FiPlay, FiCommand } from "react-icons/fi";
 
 type HeaderProps = {
   onToggleSidebar: () => void;
@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
         <h1 className="text-xl font-semibold">Vybe 2.0</h1>
       </div>
-      
+
       <div className="flex items-center space-x-4">
         <button
           onClick={onSave}

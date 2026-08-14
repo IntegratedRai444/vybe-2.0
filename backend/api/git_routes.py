@@ -2,22 +2,30 @@
 Git API Endpoints
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from typing import List, Optional, Dict, Any
-from pathlib import Path
-import logging
 import json
+import logging
 import shutil
 import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from ...git.git_service import GitService, GitBranch, GitCommit, GitFile, GitStatus, FileStatus
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from ...git.git_service import (
+    FileStatus,
+    GitBranch,
+    GitCommit,
+    GitFile,
+    GitService,
+    GitStatus,
+)
 from ...models.git_models import (
-    GitRepositoryInfo,
-    GitFileStatus,
-    GitCommitCreate,
     GitBranchCreate,
+    GitCommitCreate,
+    GitConflictResolution,
+    GitFileStatus,
     GitMergeRequest,
-    GitConflictResolution
+    GitRepositoryInfo,
 )
 
 router = APIRouter(prefix="/api/git", tags=["git"])
@@ -40,7 +48,7 @@ async def get_status(repo_path: str):
     try:
         git = get_git_service(repo_path)
         status = git.get_status()
-        
+
         # Convert GitFile objects to dictionaries
         files = [
             {
@@ -52,7 +60,7 @@ async def get_status(repo_path: str):
             }
             for f in status.files
         ]
-        
+
         # Convert GitBranch objects to dictionaries
         branches = [
             {
@@ -66,7 +74,7 @@ async def get_status(repo_path: str):
             }
             for b in status.branches
         ]
-        
+
         # Convert GitRemote objects to dictionaries
         remotes = [
             {
@@ -77,7 +85,7 @@ async def get_status(repo_path: str):
             }
             for r in status.remotes
         ]
-        
+
         return {
             "path": status.path,
             "current_branch": status.current_branch,
@@ -92,7 +100,7 @@ async def get_status(repo_path: str):
             "behind": status.behind,
             "last_commit": status.last_commit.dict() if status.last_commit else None
         }
-        
+
     except Exception as e:
         logger.error(f"Error getting Git status: {str(e)}", exc_info=True)
         raise HTTPException(
@@ -108,15 +116,15 @@ async def init_repository(repo_path: str):
     try:
         git = get_git_service(repo_path)
         success = git.init_repository()
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to initialize Git repository"
             )
-            
+
         return {"status": "success", "message": "Git repository initialized"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -140,29 +148,29 @@ async def clone_repository(
             # If no repo_path is provided, use a temporary directory
             temp_dir = tempfile.mkdtemp()
             repo_path = str(Path(temp_dir) / (target_dir or Path(repo_url).stem))
-        
+
         git = get_git_service(repo_path)
         success = git.clone_repository(repo_url, target_dir)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to clone repository: {repo_url}"
             )
-            
+
         return {
             "status": "success",
             "message": f"Repository cloned to {repo_path}",
             "repo_path": repo_path
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
         # Clean up temporary directory if it was created
         if 'temp_dir' in locals() and Path(temp_dir).exists():
             shutil.rmtree(temp_dir, ignore_errors=True)
-            
+
         logger.error(f"Error cloning repository: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -183,18 +191,18 @@ async def stage_files(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No files specified to stage"
             )
-            
+
         git = get_git_service(repo_path)
         success = git.stage_files(files)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to stage files"
             )
-            
+
         return {"status": "success", "message": "Files staged successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -218,18 +226,18 @@ async def unstage_files(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No files specified to unstage"
             )
-            
+
         git = get_git_service(repo_path)
         success = git.unstage_files(files)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to unstage files"
             )
-            
+
         return {"status": "success", "message": "Files unstaged successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -253,24 +261,24 @@ async def create_commit(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Commit message cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Stage all files if requested
         if commit_data.all_files:
             git.stage_files(["."])
-        
+
         # Create the commit
         success = git.commit(commit_data.message, all_files=commit_data.all_files)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to create commit"
             )
-            
+
         return {"status": "success", "message": "Commit created successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -291,12 +299,12 @@ async def list_branches(
     try:
         git = get_git_service(repo_path)
         status = git.get_status()
-        
+
         branches = []
         for branch in status.branches:
             if not include_remotes and branch.is_remote:
                 continue
-                
+
             branches.append({
                 "name": branch.name,
                 "is_current": branch.is_current,
@@ -306,9 +314,9 @@ async def list_branches(
                 "behind": branch.behind,
                 "last_commit": branch.last_commit.dict() if branch.last_commit else None
             })
-            
+
         return branches
-        
+
     except Exception as e:
         logger.error(f"Error listing branches: {str(e)}", exc_info=True)
         raise HTTPException(
@@ -330,9 +338,9 @@ async def create_branch(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Branch name cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Check if branch already exists
         status = git.get_status()
         if any(b.name == branch_data.name for b in status.branches):
@@ -340,24 +348,24 @@ async def create_branch(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Branch '{branch_data.name}' already exists"
             )
-        
+
         # Create the branch
         success = git.create_branch(
             name=branch_data.name,
             checkout=branch_data.checkout
         )
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to create branch '{branch_data.name}'"
             )
-            
+
         return {
             "status": "success",
             "message": f"Branch '{branch_data.name}' created successfully"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -382,9 +390,9 @@ async def checkout(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Reference cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Check if the reference exists
         status = git.get_status()
         if create and any(b.name == ref for b in status.branches):
@@ -392,21 +400,21 @@ async def checkout(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Branch '{ref}' already exists"
             )
-            
+
         success = git.checkout(ref, create=create)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to checkout '{ref}'"
             )
-            
+
         action = "created and checked out" if create else "checked out"
         return {
             "status": "success",
             "message": f"Successfully {action} '{ref}'"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -430,9 +438,9 @@ async def merge_branch(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Branch name cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Check if the branch exists
         status = git.get_status()
         if not any(b.name == merge_request.branch for b in status.branches):
@@ -440,10 +448,10 @@ async def merge_branch(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Branch '{merge_request.branch}' not found"
             )
-        
+
         # Perform the merge
         result = git.merge(merge_request.branch, no_ff=merge_request.no_ff)
-        
+
         if not result['success']:
             if 'conflicts' in result and result['conflicts']:
                 return {
@@ -456,12 +464,12 @@ async def merge_branch(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=result.get('error', 'Merge failed')
                 )
-            
+
         return {
             "status": "success",
             "message": f"Successfully merged '{merge_request.branch}' into current branch"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -485,28 +493,28 @@ async def resolve_conflict(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="File path cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Write the resolved content to the file
         file_path = Path(repo_path) / resolution.file_path
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.write_text(resolution.content, encoding='utf-8')
-        
+
         # Mark the file as resolved
         success = git.resolve_conflict(resolution.file_path, resolution.content)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to resolve conflict in {resolution.file_path}"
             )
-            
+
         return {
             "status": "success",
             "message": f"Resolved conflict in {resolution.file_path}"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -527,7 +535,7 @@ async def push_changes(
     """
     try:
         git = get_git_service(repo_path)
-        
+
         # Check if the remote exists
         status = git.get_status()
         if not any(r.name == remote for r in status.remotes):
@@ -535,24 +543,24 @@ async def push_changes(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Remote '{remote}' not found"
             )
-        
+
         # If no branch is specified, use the current branch
         if not branch:
             branch = status.current_branch
-            
+
         success = git.push(remote, branch)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to push to {remote}/{branch}"
             )
-            
+
         return {
             "status": "success",
             "message": f"Successfully pushed to {remote}/{branch}"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -573,7 +581,7 @@ async def pull_changes(
     """
     try:
         git = get_git_service(repo_path)
-        
+
         # Check if the remote exists
         status = git.get_status()
         if not any(r.name == remote for r in status.remotes):
@@ -581,13 +589,13 @@ async def pull_changes(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Remote '{remote}' not found"
             )
-        
+
         # If no branch is specified, use the current branch
         if not branch:
             branch = status.current_branch
-            
+
         result = git.pull(remote, branch)
-        
+
         if not result['success']:
             if 'conflicts' in result and result['conflicts']:
                 return {
@@ -600,12 +608,12 @@ async def pull_changes(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=result.get('error', 'Pull failed')
                 )
-            
+
         return {
             "status": "success",
             "message": f"Successfully pulled from {remote}/{branch}"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -626,14 +634,14 @@ async def get_commit_history(
     """
     try:
         git = get_git_service(repo_path)
-        
+
         if path:
             # Get history for a specific file
             commits = git.get_file_history(path)
         else:
             # Get general commit history
             commits = git.get_commit_history(limit)
-        
+
         # Convert GitCommit objects to dictionaries
         return [
             {
@@ -647,7 +655,7 @@ async def get_commit_history(
             }
             for c in commits
         ]
-        
+
     except Exception as e:
         logger.error(f"Error getting commit history: {str(e)}", exc_info=True)
         raise HTTPException(
@@ -670,12 +678,12 @@ async def get_file_history(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="File path cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Get the file history
         history = git.get_file_history(file_path)[:limit]
-        
+
         # Convert to a list of dictionaries
         return [
             {
@@ -689,7 +697,7 @@ async def get_file_history(
             }
             for item in history
         ]
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -714,27 +722,27 @@ async def get_file_at_commit(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="File path cannot be empty"
             }
-            
+
         if not commit_hash:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Commit hash cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
-        
+
         # Get the file content at the specified commit
         content = git.get_file_at_commit(file_path, commit_hash)
-        
+
         if content is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"File '{file_path}' not found at commit {commit_hash}"
             )
-            
+
         # Get commit details
         commit = git._get_commit(commit_hash)
-        
+
         return {
             "commit": {
                 "hash": commit.hash,
@@ -745,7 +753,7 @@ async def get_file_at_commit(
             "file_path": file_path,
             "content": content
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -766,15 +774,15 @@ async def stash_changes(
     try:
         git = get_git_service(repo_path)
         success = git.stash(message)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to stash changes"
             )
-            
+
         return {"status": "success", "message": "Changes stashed successfully"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -792,7 +800,7 @@ async def list_stashes(repo_path: str):
     try:
         git = get_git_service(repo_path)
         stashes = git.stash_list()
-        
+
         return [
             {
                 "index": s["index"],
@@ -801,7 +809,7 @@ async def list_stashes(repo_path: str):
             }
             for s in stashes
         ]
-        
+
     except Exception as e:
         logger.error(f"Error listing stashes: {str(e)}", exc_info=True)
         raise HTTPException(
@@ -820,15 +828,15 @@ async def apply_stash(
     try:
         git = get_git_service(repo_path)
         success = git.stash_apply(stash_ref)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to apply stash {stash_ref}"
             )
-            
+
         return {"status": "success", "message": f"Applied stash {stash_ref}"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -849,15 +857,15 @@ async def drop_stash(
     try:
         git = get_git_service(repo_path)
         success = git.stash_drop(stash_ref)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to drop stash {stash_ref}"
             )
-            
+
         return {"status": "success", "message": f"Dropped stash {stash_ref}"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -879,15 +887,15 @@ async def reset_changes(
     try:
         git = get_git_service(repo_path)
         success = git.reset(commit, mode)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to reset to {commit}"
             )
-            
+
         return {"status": "success", "message": f"Reset to {commit}"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -911,18 +919,18 @@ async def revert_commit(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Commit hash cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
         success = git.revert(commit_hash)
-        
+
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed to revert commit {commit_hash}"
             )
-            
+
         return {"status": "success", "message": f"Reverted commit {commit_hash}"}
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -946,10 +954,10 @@ async def cherry_pick_commit(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Commit hash cannot be empty"
             )
-            
+
         git = get_git_service(repo_path)
         result = git.cherry_pick(commit_hash)
-        
+
         if not result['success']:
             if 'conflicts' in result and result['conflicts']:
                 return {
@@ -962,12 +970,12 @@ async def cherry_pick_commit(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=result.get('error', 'Cherry-pick failed')
                 )
-            
+
         return {
             "status": "success",
             "message": f"Successfully cherry-picked commit {commit_hash}"
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:

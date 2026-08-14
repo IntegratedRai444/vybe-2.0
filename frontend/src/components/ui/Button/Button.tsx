@@ -1,18 +1,18 @@
-import React, { ButtonHTMLAttributes, forwardRef } from 'react';
-import { useTheme } from '../../../theme/EnhancedThemeProvider';
-import { createStyleProps } from '../../../theme/themeUtils';
+import React, { ButtonHTMLAttributes, forwardRef } from "react";
+import { useTheme } from "../../../theme/EnhancedThemeProvider";
+import { createStyleProps } from "../../../theme/themeUtils";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * The variant of the button
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link' | 'danger';
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "link" | "danger";
   /**
    * The size of the button
    * @default 'md'
    */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /**
    * If true, the button will take up the full width of its container
    * @default false
@@ -40,152 +40,152 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
-      variant = 'primary',
-      size = 'md',
+      variant = "primary",
+      size = "md",
       fullWidth = false,
       isLoading = false,
       disabled = false,
       leftIcon,
       rightIcon,
-      className = '',
+      className = "",
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { theme } = useTheme();
 
     // Base styles
     const baseStyles = createStyleProps(
       {
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        border: '1px solid transparent',
-        borderRadius: 'md',
-        fontWeight: 'medium',
-        transition: 'all 150ms ease-in-out',
-        cursor: 'pointer',
-        outline: 'none',
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        border: "1px solid transparent",
+        borderRadius: "md",
+        fontWeight: "medium",
+        transition: "all 150ms ease-in-out",
+        cursor: "pointer",
+        outline: "none",
         _focus: {
-          boxShadow: '0 0 0 3px rgba(66, 153, 225, 0.5)',
+          boxShadow: "0 0 0 3px rgba(66, 153, 225, 0.5)",
         },
         _disabled: {
           opacity: 0.6,
-          cursor: 'not-allowed',
-          boxShadow: 'none',
+          cursor: "not-allowed",
+          boxShadow: "none",
         },
         _hover: {
           _disabled: {
-            bg: 'initial',
+            bg: "initial",
           },
         },
       },
-      theme
+      theme,
     );
 
     // Size variants
     const sizeStyles = createStyleProps(
       {
         sm: {
-          fontSize: 'sm',
-          height: '32px',
+          fontSize: "sm",
+          height: "32px",
           px: 3,
           py: 1,
         },
         md: {
-          fontSize: 'sm',
-          height: '40px',
+          fontSize: "sm",
+          height: "40px",
           px: 4,
           py: 2,
         },
         lg: {
-          fontSize: 'md',
-          height: '48px',
+          fontSize: "md",
+          height: "48px",
           px: 6,
           py: 3,
         },
       }[size],
-      theme
+      theme,
     );
 
     // Color variants
     const variantStyles = createStyleProps(
       {
         primary: {
-          bg: 'primary',
-          color: 'primaryText',
+          bg: "primary",
+          color: "primaryText",
           _hover: {
-            bg: 'primaryDark',
+            bg: "primaryDark",
           },
           _active: {
-            bg: 'primaryDarker',
+            bg: "primaryDarker",
           },
         },
         secondary: {
-          bg: 'secondary',
-          color: 'secondaryText',
+          bg: "secondary",
+          color: "secondaryText",
           _hover: {
-            bg: 'secondaryDark',
+            bg: "secondaryDark",
           },
           _active: {
-            bg: 'secondaryDarker',
+            bg: "secondaryDarker",
           },
         },
         outline: {
-          bg: 'transparent',
-          border: '1px solid',
-          borderColor: 'border',
-          color: 'text',
+          bg: "transparent",
+          border: "1px solid",
+          borderColor: "border",
+          color: "text",
           _hover: {
-            bg: 'hover',
+            bg: "hover",
           },
           _active: {
-            bg: 'active',
+            bg: "active",
           },
         },
         ghost: {
-          bg: 'transparent',
-          color: 'text',
+          bg: "transparent",
+          color: "text",
           _hover: {
-            bg: 'hover',
+            bg: "hover",
           },
           _active: {
-            bg: 'active',
+            bg: "active",
           },
         },
         link: {
-          bg: 'transparent',
-          color: 'primary',
+          bg: "transparent",
+          color: "primary",
           _hover: {
-            textDecoration: 'underline',
+            textDecoration: "underline",
           },
           _active: {
-            color: 'primaryDark',
+            color: "primaryDark",
           },
         },
         danger: {
-          bg: 'error',
-          color: 'white',
+          bg: "error",
+          color: "white",
           _hover: {
-            bg: 'errorDark',
+            bg: "errorDark",
           },
           _active: {
-            bg: 'errorDarker',
+            bg: "errorDarker",
           },
         },
       }[variant],
-      theme
+      theme,
     );
 
     // Full width
     const fullWidthStyles = fullWidth
       ? createStyleProps(
           {
-            width: '100%',
+            width: "100%",
           },
-          theme
+          theme,
         )
       : {};
 
@@ -193,11 +193,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const loadingStyles = isLoading
       ? createStyleProps(
           {
-            pointerEvents: 'none',
+            pointerEvents: "none",
             _hover: {},
             _active: {},
           },
-          theme
+          theme,
         )
       : {};
 
@@ -223,40 +223,42 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading && (
           <span
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              marginRight: '8px',
+              display: "inline-flex",
+              alignItems: "center",
+              marginRight: "8px",
             }}
           >
             <Spinner size="sm" />
           </span>
         )}
         {leftIcon && !isLoading && (
-          <span style={{ marginRight: '8px', display: 'flex' }}>{leftIcon}</span>
+          <span style={{ marginRight: "8px", display: "flex" }}>
+            {leftIcon}
+          </span>
         )}
         {children}
-        {rightIcon && <span style={{ marginLeft: '8px' }}>{rightIcon}</span>}
+        {rightIcon && <span style={{ marginLeft: "8px" }}>{rightIcon}</span>}
       </button>
     );
-  }
+  },
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export default Button;
 
 // Simple Spinner component for loading state
-const Spinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+const Spinner = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
   const sizeMap = {
-    sm: '12px',
-    md: '16px',
-    lg: '20px',
+    sm: "12px",
+    md: "16px",
+    lg: "20px",
   };
 
   return (
     <svg
       style={{
-        animation: 'spin 1s linear infinite',
+        animation: "spin 1s linear infinite",
         width: sizeMap[size],
         height: sizeMap[size],
       }}

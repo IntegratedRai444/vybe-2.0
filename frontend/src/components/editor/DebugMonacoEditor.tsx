@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react';
-import Editor, { OnMount } from '@monaco-editor/react';
-import { useEditorDebugger } from '../../hooks/useEditorDebugger';
-import { useDebounce } from 'use-debounce';
+import React, { useRef, useEffect } from "react";
+import Editor, { OnMount } from "@monaco-editor/react";
+import { useEditorDebugger } from "../../hooks/useEditorDebugger";
+import { useDebounce } from "use-debounce";
 
 interface DebugMonacoEditorProps {
   filePath: string;
@@ -20,7 +20,7 @@ export const DebugMonacoEditor: React.FC<DebugMonacoEditorProps> = ({
   onChange,
   onSave,
   options = {},
-  theme = 'vs-dark',
+  theme = "vs-dark",
 }) => {
   const editorRef = useRef<any>(null);
   const [debouncedValue] = useDebounce(value, 500);
@@ -34,7 +34,7 @@ export const DebugMonacoEditor: React.FC<DebugMonacoEditorProps> = ({
   // Handle editor mount
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
-    
+
     // Add keyboard shortcuts
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       onSave?.();
@@ -43,7 +43,7 @@ export const DebugMonacoEditor: React.FC<DebugMonacoEditorProps> = ({
     // Add custom keybindings for debugger
     editor.addCommand(monaco.KeyCode.F5, () => {
       // Handle continue/start debugging
-      console.log('F5 - Continue/Start debugging');
+      console.log("F5 - Continue/Start debugging");
     });
 
     editor.addCommand(monaco.KeyCode.F9, () => {
@@ -72,13 +72,13 @@ export const DebugMonacoEditor: React.FC<DebugMonacoEditorProps> = ({
     automaticLayout: true,
     fontSize: 14,
     tabSize: 2,
-    wordWrap: 'on' as const,
+    wordWrap: "on" as const,
     folding: true,
     lineDecorationsWidth: 10,
     contextmenu: true,
     scrollbar: {
-      vertical: 'auto',
-      horizontal: 'auto',
+      vertical: "auto",
+      horizontal: "auto",
     },
   };
 
@@ -99,4 +99,9 @@ export const DebugMonacoEditor: React.FC<DebugMonacoEditorProps> = ({
   );
 };
 
+// Default export for backward compatibility
+export const DebugMonacoEditor = DebugMonacoEditor;
+
+// Named exports
+export { DebugMonacoEditor };
 export default DebugMonacoEditor;

@@ -14,12 +14,12 @@ type SearchOptions = {
   regex: boolean;
 };
 
-export const SearchModal: React.FC<Props> = ({ 
-  isOpen, 
-  onClose, 
-  onFind, 
-  onReplace, 
-  onReplaceAll 
+export const SearchModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onFind,
+  onReplace,
+  onReplaceAll,
 }) => {
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
@@ -27,7 +27,7 @@ export const SearchModal: React.FC<Props> = ({
   const [options, setOptions] = useState<SearchOptions>({
     caseSensitive: false,
     wholeWord: false,
-    regex: false
+    regex: false,
   });
 
   useEffect(() => {
@@ -61,7 +61,9 @@ export const SearchModal: React.FC<Props> = ({
           >
             {showReplace ? "🔍" : "🔄"}
           </button>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-white">
+            ✕
+          </button>
         </div>
       </div>
 
@@ -92,7 +94,12 @@ export const SearchModal: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.caseSensitive}
-              onChange={(e) => setOptions(prev => ({ ...prev, caseSensitive: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({
+                  ...prev,
+                  caseSensitive: e.target.checked,
+                }))
+              }
               className="mr-1"
             />
             Aa
@@ -101,7 +108,9 @@ export const SearchModal: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.wholeWord}
-              onChange={(e) => setOptions(prev => ({ ...prev, wholeWord: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, wholeWord: e.target.checked }))
+              }
               className="mr-1"
             />
             Ab
@@ -110,7 +119,9 @@ export const SearchModal: React.FC<Props> = ({
             <input
               type="checkbox"
               checked={options.regex}
-              onChange={(e) => setOptions(prev => ({ ...prev, regex: e.target.checked }))}
+              onChange={(e) =>
+                setOptions((prev) => ({ ...prev, regex: e.target.checked }))
+              }
               className="mr-1"
             />
             .*
@@ -125,7 +136,7 @@ export const SearchModal: React.FC<Props> = ({
           >
             Find
           </button>
-          
+
           {showReplace && (
             <>
               <button
@@ -149,3 +160,6 @@ export const SearchModal: React.FC<Props> = ({
     </div>
   );
 };
+
+// Exports
+export { SearchModal };

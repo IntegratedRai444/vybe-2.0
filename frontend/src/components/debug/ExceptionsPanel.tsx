@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { useDebugger } from '../../contexts/DebuggerContext';
+import React, { useState, useCallback } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { useDebugger } from "../../contexts/DebuggerContext";
 
 export interface ExceptionBreakpoint {
   id: string;
@@ -11,53 +11,64 @@ export interface ExceptionBreakpoint {
 }
 
 const DEFAULT_EXCEPTIONS: ExceptionBreakpoint[] = [
-  { id: 'all', filter: '*', label: 'All Exceptions', enabled: true },
-  { id: 'uncaught', filter: 'uncaught', label: 'Uncaught Exceptions', enabled: true },
-  { id: 'user', filter: 'user-unhandled', label: 'User Unhandled Exceptions', enabled: false },
+  { id: "all", filter: "*", label: "All Exceptions", enabled: true },
+  {
+    id: "uncaught",
+    filter: "uncaught",
+    label: "Uncaught Exceptions",
+    enabled: true,
+  },
+  {
+    id: "user",
+    filter: "user-unhandled",
+    label: "User Unhandled Exceptions",
+    enabled: false,
+  },
 ];
 
 export const ExceptionsPanel: React.FC = () => {
-  const [exceptions, setExceptions] = useState<ExceptionBreakpoint[]>(DEFAULT_EXCEPTIONS);
-  const [customException, setCustomException] = useState('');
+  const [exceptions, setExceptions] =
+    useState<ExceptionBreakpoint[]>(DEFAULT_EXCEPTIONS);
+  const [customException, setCustomException] = useState("");
   const { isDebugging } = useDebugger();
 
   const toggleException = useCallback((id: string) => {
-    setExceptions(prev =>
-      prev.map(exp => 
-        exp.id === id ? { ...exp, enabled: !exp.enabled } : exp
-      )
+    setExceptions((prev) =>
+      prev.map((exp) =>
+        exp.id === id ? { ...exp, enabled: !exp.enabled } : exp,
+      ),
     );
   }, []);
 
   const addCustomException = useCallback(() => {
     if (!customException.trim()) return;
-    
+
     const id = `custom-${Date.now()}`;
-    setExceptions(prev => [
+    setExceptions((prev) => [
       ...prev,
       {
         id,
         filter: customException.trim(),
         label: `Custom: ${customException.trim()}`,
-        enabled: true
-      }
+        enabled: true,
+      },
     ]);
-    setCustomException('');
+    setCustomException("");
   }, [customException]);
 
   const removeException = useCallback((id: string) => {
-    setExceptions(prev => prev.filter(exp => exp.id !== id));
+    setExceptions((prev) => prev.filter((exp) => exp.id !== id));
   }, []);
 
   const applyExceptionFilters = useCallback(() => {
     if (!isDebugging) return;
-    
+
     // Here you would typically send the exception filters to the debugger
     const activeFilters = exceptions
-      .filter(exp => exp.enabled)
-      .map(exp => exp.filter);
-    
-    console.log('Setting exception filters:', activeFilters);
+      .filter((exp) => exp.enabled)
+      .map((exp) => exp.filter);
+
+    console.log("Setting exception filters:", activeFilters);
     // TODO: Implement actual debugger API call
     // debuggerApi.setExceptionBreakpoints(activeFilters);
   }, [exceptions, isDebugging]);
@@ -75,9 +86,9 @@ export const ExceptionsPanel: React.FC = () => {
             Apply
           </Button>
         </div>
-        
+
         <div className="space-y-2">
-          {exceptions.map(exp => (
+          {exceptions.map((exp) => (
             <div key={exp.id} className="flex items-center space-x-2">
               <input
                 type="checkbox"
@@ -89,7 +100,7 @@ export const ExceptionsPanel: React.FC = () => {
               <label htmlFor={exp.id} className="flex-1 ml-2">
                 {exp.label}
               </label>
-              {exp.id.startsWith('custom-') && (
+              {exp.id.startsWith("custom-") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -102,14 +113,16 @@ export const ExceptionsPanel: React.FC = () => {
             </div>
           ))}
         </div>
-        
+
         <div className="pt-4 border-t">
           <div className="flex space-x-2">
-            <select 
+            <select
               className="w-[180px] h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               defaultValue=""
             >
-              <option value="" disabled>Add exception...</option>
+              <option value="" disabled>
+                Add exception...
+              </option>
               <option value="uncaught">Uncaught Exceptions</option>
               <option value="user-unhandled">User Unhandled</option>
               <option value="all">All Exceptions</option>
@@ -129,10 +142,13 @@ export const ExceptionsPanel: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="text-sm text-muted-foreground">
         <p>Configure which exceptions will break the debugger.</p>
       </div>
     </div>
   );
 };
+
+// Exports
+export { ExceptionsPanel };

@@ -1,0 +1,166 @@
+import os
+import re
+from pathlib import Path
+from collections import defaultdict
+from typing import Dict, Set, List, Tuple
+import json
+
+class FileUsageAnalyzer:
+    def __init__(self, root_dir: str):
+        self.root_dir = Path(root_dir)
+        self.ignored_dirs = {'node_modules', '.git', '.next', 'dist', 'build', '__pycache__', '.idea', '.vscode'}
+        self.import_pattern = re.compile(r'import\s+(?:.*?\s+from\s+)?["\'](.*?)["\']')
+        self.require_pattern = re.compile(r'require\(["\'](.*?)["\']\)')
+        self.file_usages: Dict[Path, Set[Path]] = defaultdict(set)
+        self.all_files: Set[Path] = set()
+        self.entry_points = {
+            self.root_dir / 'src/main.tsx',
+            self.root_dir / 'src/index.tsx',
+            self.root_dir / 'vite.config.ts',
+            self.root_dir / 'index.html'
+        }
+
+    def get_all_files(self) -> None:
+        """Find all relevant files in the project."""
+        for root, _, files in os.walk(self.root_dir):
+            if any(ignored in root for ignored in self.ignored_dirs):
+                continue
+                
+            for file in files:
+                if file.endswith(('.ts', '.tsx', '.js', '.jsx', '.json', '.html')):
+                    file_path = Path(root) / file
+                    self.all_files.add(file_path.relative_to(self.root_dir))
+
+    def resolve_import(self, base_file: Path, import_path: str) -> Path:
+        """Resolve an import path to an actual file."""
+        # Handle relative imports
+        if import_path.startswith('.'):
+            # Handle directory imports (e.g., './components' -> './components/index.ts')
+            if not import_path.endswith(('.ts', '.tsx', '.js', '.jsx', '.json')):
+                for ext in ['', '.ts', '.tsx', '.js', '.jsx', '/index.ts', '/index.tsx', '/index.js', '/index.jsx']:
+                    possible_path = base_file.parent / f"{import_path}{ext}"
+                    if (self.root_dir / possible_path).exists():
+                        return possible_path
+            else:
+                possible_path = (base_file.parent / import_path).resolve().relative_to(self.root_dir)
+                if (self.root_dir / possible_path).exists():
+                    return possible_path
+        
+        # Handle node_modules imports
+        elif '/' in import_path:
+            return Path('node_modules') / import_path.split('/')[0]
+            
+        return None
+
+    def analyze_file(self, file_path: Path) -> None:
+        """Analyze a file for imports and track usage."""
+        try:
+            content = (self.root_dir / file_path).read_text(encoding='utf-8', errors='ignore')
+            
+            # Find all import statements
+            for match in self.import_pattern.finditer(content):
+                import_path = match.group(1)
+                resolved = self.resolve_import(file_path, import_path)
+                if resolved:
+                    self.file_usages[resolved].add(file_path)
+            
+            # Find require statements
+            for match in self.require_pattern.finditer(content):
+                import_path = match.group(1)
+                resolved = self.resolve_import(file_path, import_path)
+                if resolved:
+                    self.file_usages[resolved].add(file_path)
+                    
+        except Exception as e:
+            print(f"Error analyzing {file_path}: {e}")
+
+    def analyze(self) -> Dict[str, List[str]]:
+        """Analyze the entire project."""
+        print("Scanning project files...")
+        self.get_all_files()
+        
+        print("Analyzing file imports...")
+        for file in list(self.all_files):
+            self.analyze_file(file)
+        
+        # Find unused files
+        used_files = set(self.file_usages.keys())
+        unused_files = self.all_files - used_files - set(self.entry_points)
+        
+        # Filter out node_modules
+        unused_files = {f for f in unused_files if not str(f).startswith('node_modules')}
+        
+        # Categorize files
+        result = {
+            'entry_points': [str(f) for f in self.entry_points if f.exists()],
+            'used_files': [str(f) for f in sorted(used_files)],
+            'unused_files': [str(f) for f in sorted(unused_files)],
+            'potentially_unused': []
+        }
+        
+        # Find potentially unused files (imported but might not be used)
+        for file, usages in self.file_usages.items():
+            if len(usages) == 1 and 'test' in str(file):
+                result['potentially_unused'].append(str(file))
+        
+        return result
+
+def generate_report(analysis: Dict[str, List[str]], output_file: str):
+    """Generate a markdown report from the analysis."""
+    report = ["# Frontend File Usage Analysis\n"]
+    
+    # Summary
+    report.append("## Summary\n")
+    report.append(f"- Total files analyzed: {len(analysis['used_files']) + len(analysis['unused_files'])}")
+    report.append(f"- Used files: {len(analysis['used_files'])}")
+    report.append(f"- Unused files: {len(analysis['unused_files'])}")
+    report.append(f"- Potentially unused files: {len(analysis['potentially_unused'])}\n")
+    
+    # Entry points
+    report.append("## Entry Points\n")
+    for file in analysis['entry_points']:
+        report.append(f"- `{file}`")
+    
+    # Unused files
+    report.append("\n## Unused Files\n")
+    for file in sorted(analysis['unused_files']):
+        report.append(f"- `{file}`")
+    
+    # Potentially unused files
+    if analysis['potentially_unused']:
+        report.append("\n## Potentially Unused Files\n")
+        report.append("These files are only imported in test files or have minimal usage:\n")
+        for file in sorted(analysis['potentially_unused']):
+            report.append(f"- `{file}`")
+    
+    # Write to file
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(report))
+    
+    print(f"\nAnalysis complete! Report saved to {output_file}")
+
+def main():
+    # Set your frontend directory path here
+    frontend_dir = r"c:\Users\OMEN\OneDrive\Documents\vybe 2.0\frontend"
+    output_file = "frontend_file_usage_analysis.md"
+    
+    analyzer = FileUsageAnalyzer(frontend_dir)
+    analysis = analyzer.analyze()
+    
+    # Save raw analysis as JSON
+    with open('file_analysis.json', 'w', encoding='utf-8') as f:
+        json.dump(analysis, f, indent=2)
+    
+    # Generate markdown report
+    generate_report(analysis, output_file)
+    
+    # Print summary
+    print("\n=== Analysis Summary ===")
+    print(f"Total files: {len(analysis['used_files']) + len(analysis['unused_files'])}")
+    print(f"Used files: {len(analysis['used_files'])}")
+    print(f"Unused files: {len(analysis['unused_files'])}")
+    print(f"Potentially unused: {len(analysis['potentially_unused'])}")
+    print(f"\nSee '{output_file}' for detailed results.")
+
+if __name__ == "__main__":
+    main()

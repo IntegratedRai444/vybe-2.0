@@ -1,9 +1,9 @@
-import { Theme as MuiTheme } from '@mui/material/styles';
+import { Theme as MuiTheme } from "@mui/material/styles";
 
-declare module '@emotion/react' {
+declare module "@emotion/react" {
   export interface Theme extends MuiTheme {
     palette: {
-      mode: 'light' | 'dark';
+      mode: "light" | "dark";
       primary: {
         main: string;
         light: string;

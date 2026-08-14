@@ -3,6 +3,7 @@
 This guide will help you set up Gmail OAuth2 for sending emails from the Vybe AI application.
 
 ## Prerequisites
+
 - A Google Cloud Project
 - Gmail API enabled
 - Python 3.7+ installed
@@ -38,11 +39,13 @@ This guide will help you set up Gmail OAuth2 for sending emails from the Vybe AI
 ## Step 3: Run the Setup Script
 
 1. Make sure you have the required Python packages installed:
+
    ```bash
    pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
    ```
 
 2. Run the setup script:
+
    ```bash
    python test_email.py
    ```
@@ -64,6 +67,7 @@ This guide will help you set up Gmail OAuth2 for sending emails from the Vybe AI
 - If you need to reset the OAuth flow, delete the `token.pickle` file and run the script again
 
 ## Notes
+
 - The first time you run the script, you'll need to go through the OAuth consent flow
 - The `token.pickle` file stores your credentials for future use
 - Never commit `credentials.json` or `token.pickle` to version control

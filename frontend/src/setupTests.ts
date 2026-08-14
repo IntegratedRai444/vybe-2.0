@@ -28,8 +28,8 @@ jest.mock('@monaco-editor/react', () => ({
     value?: string;
     defaultValue?: string;
   }) => (
-    <textarea 
-      data-testid="monaco-editor" 
+    <textarea
+      data-testid="monaco-editor"
       value={props.value || props.defaultValue}
       onChange={(e) => props.onChange?.(e.target.value, e as any)}
       {...props}

@@ -1,12 +1,15 @@
-from pathlib import Path
-from config import DEFAULT_CODE_MODEL, LANGUAGE_MODEL_MAP, EMBEDDING_MODEL
-from ollama_client import generate, embed
-import sys
 import os
+import sys
+from pathlib import Path
+
+from config import DEFAULT_CODE_MODEL, EMBEDDING_MODEL, LANGUAGE_MODEL_MAP
+from ollama_client import embed, generate
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from vector_store import VectorStore
 
 VECTOR_STORE = VectorStore()
+
 
 def _pick_model(file_extension: str, explicit: str | None = None) -> str:
     if explicit:
@@ -14,9 +17,11 @@ def _pick_model(file_extension: str, explicit: str | None = None) -> str:
     ext = file_extension.lower().lstrip(".")
     return LANGUAGE_MODEL_MAP.get(ext, LANGUAGE_MODEL_MAP.get("*", DEFAULT_CODE_MODEL))
 
+
 def _retrieve_context(prompt: str, k: int = 5) -> list[dict]:
     q_vec = embed(prompt, model=EMBEDDING_MODEL)
     return VECTOR_STORE.search(q_vec, k=k)
+
 
 def build_prompt(user_prompt: str, context_chunks: list[dict]) -> str:
     intro = "You are an offline AI coding assistant. Use the provided project snippets as context. Answer only with the code or a short explanation."
@@ -25,6 +30,7 @@ def build_prompt(user_prompt: str, context_chunks: list[dict]) -> str:
         for c in context_chunks
     )
     return f"{intro}\n\nContext snippets:\n{snippets}\n\nUser request:\n{user_prompt}"
+
 
 def handle_request(
     user_prompt: str,
@@ -37,7 +43,9 @@ def handle_request(
         full_prompt = build_prompt(user_prompt, context)
         ext = Path(file_path).suffix
         model_name = _pick_model(ext, explicit=model_override)
-        system_prompt = f"You are a coding assistant specialized in {ext.lstrip('.')} files."
+        system_prompt = (
+            f"You are a coding assistant specialized in {ext.lstrip('.')} files."
+        )
         result = generate(
             model=model_name,
             system_prompt=system_prompt,
