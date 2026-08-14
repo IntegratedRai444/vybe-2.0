@@ -621,13 +621,46 @@ class CodeCompletionService:
                     documentation=f"Import {imp} module",
                     insert_text=f"import {imp}",
                     score=0.6
-                ))
-
         return items
 
+    def detect_language(self, filepath: str) -> str:
+        if not filepath:
+            return "text"
+
+        filename = os.path.basename(filepath).lower()
+        ext = os.path.splitext(filepath)[1].lower()
+
+        language_map = {
+            ".py": "python",
+            ".js": "javascript",
+            ".jsx": "javascript",
+            ".ts": "typescript",
+            ".tsx": "typescript",
+            ".html": "html",
+            ".css": "css",
+            ".json": "json",
+            ".yaml": "yaml",
+            ".yml": "yaml",
+            ".toml": "toml",
+            ".md": "markdown",
+            ".sql": "sql",
+            ".sh": "shell",
+            ".bash": "shell",
+            ".zsh": "shell",
+            ".ps1": "powershell",
+            ".bat": "batch",
+            ".cmd": "batch",
+            ".go": "go",
+            ".rs": "rust",
+            ".java": "java",
+            ".c": "c",
+            ".h": "c",
+            ".cpp": "cpp",
+            ".hpp": "cpp",
+            ".cs": "csharp",
             # Build/Config files (exact matches)
-            **{f: 'dockerfile' for f in ['dockerfile', 'dockerfile.prod', 'dockerfile.dev']},
-            **{f: 'makefile' for f in ['makefile', 'gnumakefile', 'makefile.*']},
+            **{f: "dockerfile" for f in ["dockerfile", "dockerfile.prod", "dockerfile.dev"]},
+            **{f: "makefile" for f in ["makefile", "gnumakefile", "makefile.*"]},
             **{'.gitignore': 'gitignore'},
             **{'.env': 'dotenv'},
 
